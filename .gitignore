@@ -1,0 +1,7 @@
+.bin
+bin
+.idea
+tmp
+.env
+.secret
+testdata/jwt/.secret

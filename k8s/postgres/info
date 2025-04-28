@@ -1,0 +1,7 @@
+Запустить postgres:
+kubectl apply -f secret.yaml -f persistent-volume.yaml -f persistent-volume-claim.yaml -f deployment.yaml -f service.yaml
+
+Для более защищенности сикретов мы сделали кодирование значений в base64:
+echo -n "admin" | base64  -  YWRtaW4=
+echo -n "test" | base64  -  dGVzdA==
+echo -n "test_db" | base64  -  dGVzdF9kYg==

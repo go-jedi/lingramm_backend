@@ -1,0 +1,63 @@
+run:
+  go: '1.24.0'
+  tests: false
+
+linters-settings:
+  goconst:
+    min-len: 5
+    min-occurrences: 4
+  misspell:
+    locale: US
+
+linters:
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - depguard
+    - dogsled
+    - dupl
+    - errcheck
+    - exhaustive
+    - gci
+    - gochecknoinits
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - godot
+    - err113
+    - gofmt
+    - gofumpt
+    - goimports
+    - revive
+    - mnd
+    - gomodguard
+    - gosec
+    - gosimple
+    - govet
+    - ineffassign
+    - misspell
+    - nakedret
+    - nestif
+    - noctx
+    - nolintlint
+    - prealloc
+    - copyloopvar
+    - staticcheck
+    - unused
+    - stylecheck
+    - typecheck
+    - unconvert
+    - unparam
+    - unused
+    - whitespace
+
+issues:
+  exclude:
+    - is not allowed from list 'Main'
+    - a blank import should be only in a main or test package
+    - Comment should end in a period
+    - lines are duplicate
+    - File is not `gofumpt`-ed
+    - File is not properly formatted

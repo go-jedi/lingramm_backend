@@ -1,0 +1,14 @@
+[Unit]
+Description=Lingvogramm backend service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/root/lingvogramm_backend
+ExecStart=/root/lingvogramm_backend/app --config=/root/lingvogramm_backend/config.yaml
+Restart=always
+RestartSec=4
+StandardOutput=inherit
+
+[Install]
+WantedBy=multi-user.target

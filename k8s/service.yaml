@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: lingvogramm_backend
+spec:
+  type: ClusterIP
+  selector:
+    app: lingvogramm_backend
+  ports:
+    - protocol: TCP # какой протокол использовать
+      port: 50050 # внешний порт
+      targetPort: 50050 # внутренний порт

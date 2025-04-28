@@ -1,0 +1,8 @@
+Запустить pgadmin для подключения к postgres:
+1) kubectl apply -f secret.yaml -f persistent-volume-claim.yaml -f deployment.yaml -f service.yaml
+2) minikube service pgadmin
+3) логин и пароль указаны в configmap.yaml файле
+
+Для более защищенности сикретов мы сделали кодирование значений в base64:
+echo -n "admin@example.com" | base64  -  YWRtaW5AZXhhbXBsZS5jb20=
+echo -n "admin" | base64  -  YWRtaW4=

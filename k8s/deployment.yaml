@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lingvogramm_backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lingvogramm_backend
+  template:
+    metadata:
+      labels:
+        app: lingvogramm_backend
+    spec:
+      containers:
+        - name: scraper-scraper
+          image: gojedi/lingvogramm_backend:latest
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 50050
