@@ -23,8 +23,8 @@ This project is a telegram web apps application for a foreign language tutor tha
 ### Installation Steps
 1. <b>Clone the repository:</b> 
 ```
-git clone <repository-url>
-cd <repository-directory>
+git clone github.com/go-jedi/lingvogramm_backend
+cd lingvogramm_backend
 ```
 
 2. <b>Create and configure the .env file:</b> <br>
