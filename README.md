@@ -30,18 +30,18 @@ cd <repository-directory>
 2. <b>Create and configure the .env file:</b> <br>
 Create a <b>.env</b> file in the root directory of the project and add the necessary environment variables:
 ```
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=your_db_user
-DB_PASSWORD=your_db_password
-DB_NAME=your_db_name
-REDIS_HOST=localhost
+POSTGRES_DB=lingvogramm_db
+POSTGRES_USER=admin
+POSTGRES_PASSWORD=test
+
+REDIS_PASSWORD=auth
 REDIS_PORT=6379
+REDIS_DATABASES=0
 ```
 
 3. <b>Start the containers using Docker Compose:</b>
 ```
-docker-compose up --build
+docker compose up -d
 ```
 
 4. Configure Kubernetes (if used): <br>
