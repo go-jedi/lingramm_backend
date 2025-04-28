@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: lingvogramm_backend
+  name: lingvogramm-backend
 spec:
   type: ClusterIP
   selector:
-    app: lingvogramm_backend
+    app: lingvogramm-backend
   ports:
     - protocol: TCP # какой протокол использовать
       port: 50050 # внешний порт

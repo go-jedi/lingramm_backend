@@ -29,5 +29,9 @@
 - выполняем sudo ss -tuln | grep 50051 и должно быть в ответе такой результат:
   tcp    LISTEN  0       4096           0.0.0.0:50051        0.0.0.0:*
 
+#### docker build and push to docker hub:
+- `docker build -t gojedi/lingvogramm_backend:latest .`
+- `docker push gojedi/lingvogramm_backend:latest`
+
 #### remove all local branch without main:
 - `git branch | grep -v "main" | xargs git branch -D`

@@ -1,19 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lingvogramm_backend
+  name: lingvogramm-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lingvogramm_backend
+      app: lingvogramm-backend
   template:
     metadata:
       labels:
-        app: lingvogramm_backend
+        app: lingvogramm-backend
     spec:
       containers:
-        - name: scraper-scraper
+        - name: lingvogramm-backend
           image: gojedi/lingvogramm_backend:latest
           resources:
             limits:
