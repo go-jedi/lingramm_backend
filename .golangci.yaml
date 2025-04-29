@@ -1,63 +1,75 @@
+version: "2"
 run:
-  go: '1.24.0'
+  go: 1.24.2
   tests: false
-
-linters-settings:
-  goconst:
-    min-len: 5
-    min-occurrences: 4
-  misspell:
-    locale: US
-
 linters:
-  disable-all: true
+  default: none
   enable:
     - asciicheck
     - bodyclose
+    - copyloopvar
     - depguard
     - dogsled
     - dupl
+    - err113
     - errcheck
     - exhaustive
-    - gci
     - gochecknoinits
     - gocognit
     - goconst
     - gocritic
     - gocyclo
     - godot
-    - err113
-    - gofmt
-    - gofumpt
-    - goimports
-    - revive
-    - mnd
     - gomodguard
     - gosec
-    - gosimple
     - govet
     - ineffassign
     - misspell
+    - mnd
     - nakedret
     - nestif
     - noctx
     - nolintlint
     - prealloc
-    - copyloopvar
+    - revive
     - staticcheck
-    - unused
-    - stylecheck
-    - typecheck
     - unconvert
     - unparam
     - unused
     - whitespace
-
-issues:
-  exclude:
-    - is not allowed from list 'Main'
-    - a blank import should be only in a main or test package
-    - Comment should end in a period
-    - lines are duplicate
-    - File is not `gofumpt`-ed
-    - File is not properly formatted
+  settings:
+    goconst:
+      min-len: 5
+      min-occurrences: 4
+    misspell:
+      locale: US
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    rules:
+      - path: (.+)\.go$
+        text: is not allowed from list 'Main'
+      - path: (.+)\.go$
+        text: a blank import should be only in a main or test package
+    paths:
+      - mocks
+      - third_party$
+      - builtin$
+      - examples$
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  exclusions:
+    generated: lax
+    paths:
+      - mocks
+      - third_party$
+      - builtin$
+      - examples$

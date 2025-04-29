@@ -102,10 +102,12 @@ func (hs *HTTPServer) Start() error {
 		}
 	}()
 
+	const waitTimeSec = 5
+
 	select {
 	case err := <-errChan:
 		return err
-	case <-time.After(5 * time.Second): // wait for 5 seconds to ensure server starts.
+	case <-time.After(waitTimeSec * time.Second): // wait for 5 seconds to ensure server starts.
 		log.Println("server started successfully")
 	}
 
