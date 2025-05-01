@@ -18,6 +18,12 @@ run-air:
 lint:
 	GOBIN=$(LOCAL_BIN) golangci-lint run ./... --config .golangci.yaml
 
+gosec:
+	gosec ./...
+
+gocritic:
+	gocritic check ./...
+
 test-coverage:
 	go test -short -count=1 -coverprofile=coverage.out ./...
 	go tool cover -html=coverage.out
