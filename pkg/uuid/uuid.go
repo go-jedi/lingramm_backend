@@ -16,6 +16,9 @@ type IUUID interface {
 
 type UUID struct{}
 
+// Make sure UUID implements IUUID.
+var _ IUUID = (*UUID)(nil)
+
 func New() *UUID {
 	return &UUID{}
 }
