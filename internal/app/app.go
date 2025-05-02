@@ -8,6 +8,7 @@ import (
 	"github.com/go-jedi/lingvogramm_backend/pkg/httpserver"
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
 	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingvogramm_backend/pkg/uuid"
 	"github.com/go-jedi/lingvogramm_backend/pkg/validator"
 )
 
@@ -15,6 +16,7 @@ type App struct {
 	cfg          config.Config
 	logger       *logger.Logger
 	validator    *validator.Validator
+	uuid         *uuid.UUID
 	postgres     *postgres.Postgres
 	hs           *httpserver.HTTPServer
 	dependencies *dependencies.Dependencies
@@ -41,6 +43,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initConfig,
 		a.initLogger,
 		a.initValidator,
+		a.initUUID,
 		a.initPostgres,
 		a.initHTTPServer,
 		a.initDependencies,
@@ -77,9 +80,15 @@ func (a *App) initValidator(_ context.Context) error {
 	return nil
 }
 
+// initUUID initialize uuid.
+func (a *App) initUUID(_ context.Context) error {
+	a.uuid = uuid.New()
+	return nil
+}
+
 // initPostgres initialize postgres.
 func (a *App) initPostgres(ctx context.Context) (err error) {
-	a.postgres, err = postgres.New(ctx, a.cfg.Postgres)
+	a.postgres, err = postgres.New(ctx, a.cfg.Postgres, a.logger)
 	if err != nil {
 		return err
 	}
@@ -103,6 +112,7 @@ func (a *App) initDependencies(_ context.Context) error {
 		a.hs.App,
 		a.logger,
 		a.validator,
+		a.uuid,
 		a.postgres,
 	)
 
