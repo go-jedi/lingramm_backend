@@ -3,6 +3,7 @@ module github.com/go-jedi/lingvogramm_backend
 go 1.24.2
 
 require (
+	github.com/brianvoe/gofakeit/v7 v7.2.1
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/gofiber/fiber/v3 v3.0.0-beta.4
 	github.com/golang-migrate/migrate/v4 v4.18.3

@@ -1,13 +1,24 @@
 package user
 
-import "github.com/go-jedi/lingvogramm_backend/pkg/logger"
+import (
+	"github.com/go-jedi/lingvogramm_backend/internal/repository/user/create"
+	"github.com/go-jedi/lingvogramm_backend/internal/repository/user/exists"
+	getbytelegramid "github.com/go-jedi/lingvogramm_backend/internal/repository/user/get_by_telegram_id"
+	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+)
 
 type Repository struct {
-	logger logger.ILogger
+	Create          *create.Create
+	Exists          *exists.Exists
+	GetByTelegramID *getbytelegramid.GetByTelegramID
 }
 
-func New(logger logger.ILogger) *Repository {
+func New(
+	logger logger.ILogger,
+) *Repository {
 	return &Repository{
-		logger: logger,
+		Create:          create.New(logger),
+		Exists:          exists.New(logger),
+		GetByTelegramID: getbytelegramid.New(logger),
 	}
 }
