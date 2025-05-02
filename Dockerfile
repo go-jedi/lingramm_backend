@@ -1,4 +1,4 @@
-FROM golang:1.24.0-alpine AS builder
+FROM golang:1.24.2-alpine AS builder
 
 WORKDIR /github.com/go-jedi/lingvogramm_backend/app
 COPY . /github.com/go-jedi/lingvogramm_backend/app

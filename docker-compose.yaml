@@ -4,7 +4,7 @@ volumes:
 services:
 #  lingvogramm_backend:
 #    build: .
-#    container_name: backend
+#    container_name: lingvogramm_backend
 #    restart: always
 #    ports:
 #      - '50050:50050'
