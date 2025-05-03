@@ -20,16 +20,16 @@ type ISignIn interface {
 
 type SignIn struct {
 	userRepository *userrepository.Repository
-	logger         *logger.Logger
+	logger         logger.ILogger
 	postgres       *postgres.Postgres
-	uuid           *uuid.UUID
+	uuid           uuid.IUUID
 }
 
 func New(
 	userRepository *userrepository.Repository,
-	logger *logger.Logger,
+	logger logger.ILogger,
 	postgres *postgres.Postgres,
-	uuid *uuid.UUID,
+	uuid uuid.IUUID,
 ) *SignIn {
 	return &SignIn{
 		userRepository: userRepository,

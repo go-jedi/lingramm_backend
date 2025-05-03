@@ -7,7 +7,7 @@ import (
 
 	mock "github.com/stretchr/testify/mock"
 
-	postgres "github.com/go-jedi/lingvogramm_backend/pkg/postgres"
+	pgx "github.com/jackc/pgx/v5"
 
 	user "github.com/go-jedi/lingvogramm_backend/internal/domain/user"
 )
@@ -18,7 +18,7 @@ type ICreate struct {
 }
 
 // Execute provides a mock function with given fields: ctx, tx, dto
-func (_m *ICreate) Execute(ctx context.Context, tx postgres.ITx, dto user.CreateDTO) (user.User, error) {
+func (_m *ICreate) Execute(ctx context.Context, tx pgx.Tx, dto user.CreateDTO) (user.User, error) {
 	ret := _m.Called(ctx, tx, dto)
 
 	if len(ret) == 0 {
@@ -27,16 +27,16 @@ func (_m *ICreate) Execute(ctx context.Context, tx postgres.ITx, dto user.Create
 
 	var r0 user.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, postgres.ITx, user.CreateDTO) (user.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, pgx.Tx, user.CreateDTO) (user.User, error)); ok {
 		return rf(ctx, tx, dto)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, postgres.ITx, user.CreateDTO) user.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, pgx.Tx, user.CreateDTO) user.User); ok {
 		r0 = rf(ctx, tx, dto)
 	} else {
 		r0 = ret.Get(0).(user.User)
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, postgres.ITx, user.CreateDTO) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, pgx.Tx, user.CreateDTO) error); ok {
 		r1 = rf(ctx, tx, dto)
 	} else {
 		r1 = ret.Error(1)
