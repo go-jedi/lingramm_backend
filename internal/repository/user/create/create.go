@@ -9,11 +9,12 @@ import (
 	"github.com/go-jedi/lingvogramm_backend/internal/domain/user"
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
 	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
+	"github.com/jackc/pgx/v5"
 )
 
 //go:generate mockery --name=ICreate --output=mocks --case=underscore
 type ICreate interface {
-	Execute(ctx context.Context, tx postgres.ITx, dto user.CreateDTO) (user.User, error)
+	Execute(ctx context.Context, tx pgx.Tx, dto user.CreateDTO) (user.User, error)
 }
 
 type Create struct {
@@ -37,7 +38,7 @@ func (c *Create) init() {
 	}
 }
 
-func (c *Create) Execute(ctx context.Context, tx postgres.ITx, dto user.CreateDTO) (user.User, error) {
+func (c *Create) Execute(ctx context.Context, tx pgx.Tx, dto user.CreateDTO) (user.User, error) {
 	c.logger.Debug("[create a new user] execute repository")
 
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)

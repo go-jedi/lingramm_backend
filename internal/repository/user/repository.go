@@ -8,9 +8,9 @@ import (
 )
 
 type Repository struct {
-	Create          *create.Create
-	Exists          *exists.Exists
-	GetByTelegramID *getbytelegramid.GetByTelegramID
+	Create          create.ICreate
+	Exists          exists.IExists
+	GetByTelegramID getbytelegramid.IGetByTelegramID
 }
 
 func New(
