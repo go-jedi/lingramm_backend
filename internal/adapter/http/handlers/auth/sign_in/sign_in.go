@@ -46,6 +46,7 @@ func (si *SignIn) Execute(c fiber.Ctx) error {
 	result, err := si.authService.SignIn.Execute(c.Context(), dto)
 	if err != nil {
 		si.logger.Error("failed to sign in user", "error", err)
+		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(response.New(false, "failed to sign in user", err.Error(), nil))
 	}
 

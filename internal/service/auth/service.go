@@ -9,14 +9,14 @@ import (
 )
 
 type Service struct {
-	SignIn *signin.SignIn
+	SignIn signin.ISignIn
 }
 
 func New(
 	userRepository *user.Repository,
-	logger *logger.Logger,
+	logger logger.ILogger,
 	postgres *postgres.Postgres,
-	uuid *uuid.UUID,
+	uuid uuid.IUUID,
 ) *Service {
 	return &Service{
 		SignIn: signin.New(userRepository, logger, postgres, uuid),
