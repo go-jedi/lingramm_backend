@@ -2,6 +2,8 @@
 
 #### create:
 - `migrate create -ext sql -dir migrations -seq users_table`
+- `migrate create -ext sql -dir migrations -seq user_profiles_table`
+- `migrate create -ext sql -dir migrations -seq levels_table`
 
 #### execute:
 - `migrate -database postgresql://admin:test@localhost:54320/lingvogramm_db?sslmode=disable -path migrations up`
