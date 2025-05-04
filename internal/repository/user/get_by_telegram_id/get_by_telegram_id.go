@@ -22,9 +22,13 @@ type GetByTelegramID struct {
 	logger       logger.ILogger
 }
 
-func New(logger logger.ILogger) *GetByTelegramID {
+func New(
+	queryTimeout int64,
+	logger logger.ILogger,
+) *GetByTelegramID {
 	gbti := &GetByTelegramID{
-		logger: logger,
+		queryTimeout: queryTimeout,
+		logger:       logger,
 	}
 
 	gbti.init()

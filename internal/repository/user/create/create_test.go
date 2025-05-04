@@ -51,6 +51,7 @@ func TestExecute(t *testing.T) {
 			CreatedAt:  createdAt,
 			UpdatedAt:  updatedAt,
 		}
+		queryTimeout = int64(2)
 	)
 
 	tests := []struct {
@@ -203,7 +204,7 @@ func TestExecute(t *testing.T) {
 				test.mockLoggerBehavior(mockLogger)
 			}
 
-			create := New(mockLogger)
+			create := New(queryTimeout, mockLogger)
 
 			result, err := create.Execute(test.in.ctx, mockTx, test.in.dto)
 

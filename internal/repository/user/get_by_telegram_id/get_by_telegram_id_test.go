@@ -38,6 +38,7 @@ func TestExecute(t *testing.T) {
 			CreatedAt:  gofakeit.Date(),
 			UpdatedAt:  gofakeit.Date(),
 		}
+		queryTimeout = int64(2)
 	)
 
 	tests := []struct {
@@ -187,7 +188,7 @@ func TestExecute(t *testing.T) {
 				test.mockLoggerBehavior(mockLogger)
 			}
 
-			getByTelegramID := New(mockLogger)
+			getByTelegramID := New(queryTimeout, mockLogger)
 
 			result, err := getByTelegramID.Execute(test.in.ctx, mockTx, test.in.telegramID)
 

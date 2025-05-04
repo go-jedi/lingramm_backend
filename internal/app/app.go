@@ -2,14 +2,17 @@ package app
 
 import (
 	"context"
+	"os"
 
 	"github.com/go-jedi/lingvogramm_backend/config"
 	"github.com/go-jedi/lingvogramm_backend/internal/app/dependencies"
+	fileserver "github.com/go-jedi/lingvogramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingvogramm_backend/pkg/httpserver"
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
 	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
 	"github.com/go-jedi/lingvogramm_backend/pkg/uuid"
 	"github.com/go-jedi/lingvogramm_backend/pkg/validator"
+	"github.com/gofiber/fiber/v3/middleware/static"
 )
 
 type App struct {
@@ -19,6 +22,7 @@ type App struct {
 	uuid         *uuid.UUID
 	postgres     *postgres.Postgres
 	hs           *httpserver.HTTPServer
+	fileServer   *fileserver.FileServer
 	dependencies *dependencies.Dependencies
 }
 
@@ -46,6 +50,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initUUID,
 		a.initPostgres,
 		a.initHTTPServer,
+		a.initFileServer,
 		a.initDependencies,
 	}
 
@@ -106,6 +111,23 @@ func (a *App) initHTTPServer(_ context.Context) (err error) {
 	return
 }
 
+// initFileServer initialize file server.
+func (a *App) initFileServer(_ context.Context) error {
+	a.fileServer = fileserver.New(a.cfg.FileServer, a.uuid)
+
+	// initialize static for client assets.
+	a.hs.App.Get(a.cfg.FileServer.ClientAssets.Path, static.New("", static.Config{
+		FS:       os.DirFS(a.cfg.FileServer.ClientAssets.Dir),
+		Browse:   a.cfg.FileServer.ClientAssets.Browse,
+		Compress: a.cfg.FileServer.ClientAssets.Compress,
+		// Next: func(c fiber.Ctx) bool { // need don't show any format.
+		//	return strings.HasSuffix(c.Path(), ".webp")
+		// },
+	}))
+
+	return nil
+}
+
 // initDependencies initialize dependencies.
 func (a *App) initDependencies(_ context.Context) error {
 	a.dependencies = dependencies.New(
@@ -114,6 +136,7 @@ func (a *App) initDependencies(_ context.Context) error {
 		a.validator,
 		a.uuid,
 		a.postgres,
+		a.fileServer,
 	)
 
 	return nil
