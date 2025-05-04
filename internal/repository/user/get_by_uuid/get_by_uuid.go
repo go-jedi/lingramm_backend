@@ -22,9 +22,13 @@ type GetByUUID struct {
 	logger       logger.ILogger
 }
 
-func New(logger logger.ILogger) *GetByUUID {
+func New(
+	queryTimeout int64,
+	logger logger.ILogger,
+) *GetByUUID {
 	gbui := &GetByUUID{
-		logger: logger,
+		queryTimeout: queryTimeout,
+		logger:       logger,
 	}
 
 	gbui.init()

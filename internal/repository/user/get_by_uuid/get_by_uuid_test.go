@@ -38,6 +38,7 @@ func TestExecute(t *testing.T) {
 			CreatedAt:  gofakeit.Date(),
 			UpdatedAt:  gofakeit.Date(),
 		}
+		queryTimeout = int64(2)
 	)
 
 	tests := []struct {
@@ -187,7 +188,7 @@ func TestExecute(t *testing.T) {
 				test.mockLoggerBehavior(mockLogger)
 			}
 
-			getByUUID := New(mockLogger)
+			getByUUID := New(queryTimeout, mockLogger)
 
 			result, err := getByUUID.Execute(test.in.ctx, mockTx, test.in.uuid)
 

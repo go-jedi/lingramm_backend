@@ -16,12 +16,13 @@ type Repository struct {
 }
 
 func New(
+	queryTimeout int64,
 	logger logger.ILogger,
 ) *Repository {
 	return &Repository{
-		Create:          create.New(logger),
-		Exists:          exists.New(logger),
-		GetByTelegramID: getbytelegramid.New(logger),
-		GetByUUID:       getbyuuid.New(logger),
+		Create:          create.New(queryTimeout, logger),
+		Exists:          exists.New(queryTimeout, logger),
+		GetByTelegramID: getbytelegramid.New(queryTimeout, logger),
+		GetByUUID:       getbyuuid.New(queryTimeout, logger),
 	}
 }

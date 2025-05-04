@@ -7,6 +7,7 @@ require (
 	github.com/go-playground/validator/v10 v10.26.0
 	github.com/gofiber/fiber/v3 v3.0.0-beta.4
 	github.com/golang-migrate/migrate/v4 v4.18.3
+	github.com/h2non/bimg v1.1.9
 	github.com/jackc/pgx/v5 v5.7.4
 	github.com/json-iterator/go v1.1.12
 	github.com/natefinch/lumberjack v2.0.0+incompatible

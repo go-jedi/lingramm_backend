@@ -22,9 +22,13 @@ type Create struct {
 	logger       logger.ILogger
 }
 
-func New(logger logger.ILogger) *Create {
+func New(
+	queryTimeout int64,
+	logger logger.ILogger,
+) *Create {
 	c := &Create{
-		logger: logger,
+		queryTimeout: queryTimeout,
+		logger:       logger,
 	}
 
 	c.init()

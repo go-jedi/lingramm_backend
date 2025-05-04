@@ -21,9 +21,13 @@ type Exists struct {
 	logger       logger.ILogger
 }
 
-func New(logger logger.ILogger) *Exists {
+func New(
+	queryTimeout int64,
+	logger logger.ILogger,
+) *Exists {
 	e := &Exists{
-		logger: logger,
+		queryTimeout: queryTimeout,
+		logger:       logger,
 	}
 
 	e.init()

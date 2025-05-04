@@ -25,10 +25,11 @@ func TestExecute(t *testing.T) {
 	}
 
 	var (
-		ctx        = context.TODO()
-		telegramID = gofakeit.UUID()
-		username   = gofakeit.Username()
-		exists     = gofakeit.Bool()
+		ctx          = context.TODO()
+		telegramID   = gofakeit.UUID()
+		username     = gofakeit.Username()
+		exists       = gofakeit.Bool()
+		queryTimeout = int64(2)
 	)
 
 	tests := []struct {
@@ -148,7 +149,7 @@ func TestExecute(t *testing.T) {
 				test.mockLoggerBehavior(mockLogger)
 			}
 
-			exists := New(mockLogger)
+			exists := New(queryTimeout, mockLogger)
 
 			result, err := exists.Execute(test.in.ctx, mockTx, test.in.telegramID, test.in.username)
 

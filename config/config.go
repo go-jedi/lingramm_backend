@@ -31,6 +31,22 @@ type PostgresConfig struct {
 	QueryTimeout  int64  `yaml:"query_timeout"`
 }
 
+type ClientAssets struct {
+	Path         string `yaml:"path"`
+	URL          string `yaml:"url"`
+	Dir          string `yaml:"dir"`
+	Browse       bool   `yaml:"browse"`
+	Compress     bool   `yaml:"compress"`
+	MaxFileSize  int64  `yaml:"max_file_size"`
+	ImageQuality int    `yaml:"image_quality"`
+}
+
+type FileServerConfig struct {
+	ClientAssets ClientAssets `yaml:"client_assets"`
+	DirPerm      uint32       `yaml:"dir_perm"`
+	FilePerm     uint32       `yaml:"file_perm"`
+}
+
 type CorsConfig struct {
 	AllowOrigins        []string `yaml:"allow_origins"`
 	AllowMethods        []string `yaml:"allow_methods"`
@@ -52,6 +68,7 @@ type HTTPServerConfig struct {
 type Config struct {
 	Logger     LoggerConfig     `yaml:"logger"`
 	Postgres   PostgresConfig   `yaml:"postgres"`
+	FileServer FileServerConfig `yaml:"file_server"`
 	HTTPServer HTTPServerConfig `yaml:"httpserver"`
 }
 

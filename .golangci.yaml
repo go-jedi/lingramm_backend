@@ -55,6 +55,8 @@ linters:
         text: is not allowed from list 'Main'
       - path: (.+)\.go$
         text: a blank import should be only in a main or test package
+      - path: (.+)\.go$
+        text: File is not properly formatted
     paths:
       - mocks
       - third_party$

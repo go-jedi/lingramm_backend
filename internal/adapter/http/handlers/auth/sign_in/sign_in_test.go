@@ -82,11 +82,7 @@ func TestExecute(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				response: response.Response{
-					Status:  true,
-					Message: "success",
-					Data:    testUser,
-				},
+				response:   response.New[user.User](true, "success", "", testUser),
 			},
 		},
 		{
@@ -100,7 +96,7 @@ func TestExecute(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusBadRequest,
-				response:   "json: cannot unmarshal string into Go value of type auth.SignInDTO",
+				response:   response.New[any](false, "failed to bind body", mock.Anything, nil),
 			},
 		},
 		{
@@ -117,7 +113,7 @@ func TestExecute(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusBadRequest,
-				response:   "validation error",
+				response:   response.New[any](false, "failed to validate struct", "validation error", nil),
 			},
 		},
 		{
@@ -137,7 +133,7 @@ func TestExecute(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
-				response:   "service error",
+				response:   response.New[any](false, "failed to sign in user", "service error", nil),
 			},
 		},
 	}

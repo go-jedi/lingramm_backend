@@ -19,6 +19,18 @@ postgres:
   migrations_dir: file://migrations
   query_timeout: 2000000000 # 2 second
 
+file_server:
+  client_assets:
+    path: /images/client*
+    url: /images/client
+    dir: testdata/file_server/images/client
+    max_file_size: 10485760 # 10 MB
+    image_quality: 30
+    browse: true
+    compress: true
+  dir_perm: 0755
+  file_perm: 0644
+
 httpserver:
   host: 127.0.0.1
   port: 50050
