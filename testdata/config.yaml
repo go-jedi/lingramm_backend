@@ -19,6 +19,16 @@ postgres:
   migrations_dir: file://migrations
   query_timeout: 2000000000 # 2 second
 
+big_cache:
+  shards: 512
+  life_window: 5 # minutes
+  clean_window: 1 # minutes
+  max_entries_in_window: 1_000_000
+  max_entry_size: 512
+  hard_max_cache_size: 600
+  verbose: true
+  is_on_remove_with_reason: true
+
 file_server:
   client_assets:
     path: /images/client*

@@ -31,14 +31,27 @@ type PostgresConfig struct {
 	QueryTimeout  int64  `yaml:"query_timeout"`
 }
 
+type BigCacheConfig struct {
+	Shards               int  `yaml:"shards"`
+	LifeWindow           int  `yaml:"life_window"`
+	CleanWindow          int  `yaml:"clean_window"`
+	MaxEntriesInWindow   int  `yaml:"max_entries_in_window"`
+	MaxEntrySize         int  `yaml:"max_entry_size"`
+	HardMaxCacheSize     int  `yaml:"hard_max_cache_size"`
+	Verbose              bool `yaml:"verbose"`
+	IsOnRemoveWithReason bool `yaml:"is_on_remove_with_reason"`
+}
+
 type ClientAssets struct {
-	Path         string `yaml:"path"`
-	URL          string `yaml:"url"`
-	Dir          string `yaml:"dir"`
-	Browse       bool   `yaml:"browse"`
-	Compress     bool   `yaml:"compress"`
-	MaxFileSize  int64  `yaml:"max_file_size"`
-	ImageQuality int    `yaml:"image_quality"`
+	Path               string `yaml:"path"`
+	URL                string `yaml:"url"`
+	Dir                string `yaml:"dir"`
+	Browse             bool   `yaml:"browse"`
+	Compress           bool   `yaml:"compress"`
+	MaxFileSize        int64  `yaml:"max_file_size"`
+	ImageQuality       int    `yaml:"image_quality"`
+	IsNext             bool   `yaml:"is_next"`
+	IsNextIgnoreFormat string `yaml:"is_next_ignore_format"`
 }
 
 type FileServerConfig struct {
@@ -68,6 +81,7 @@ type HTTPServerConfig struct {
 type Config struct {
 	Logger     LoggerConfig     `yaml:"logger"`
 	Postgres   PostgresConfig   `yaml:"postgres"`
+	BigCache   BigCacheConfig   `yaml:"big_cache"`
 	FileServer FileServerConfig `yaml:"file_server"`
 	HTTPServer HTTPServerConfig `yaml:"httpserver"`
 }

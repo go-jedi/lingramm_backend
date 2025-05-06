@@ -3,9 +3,11 @@ package signin
 import (
 	"context"
 	"errors"
+	"fmt"
 	"testing"
 	"time"
 
+	"github.com/allegro/bigcache"
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/go-jedi/lingvogramm_backend/internal/domain/auth"
 	"github.com/go-jedi/lingvogramm_backend/internal/domain/user"
@@ -13,6 +15,8 @@ import (
 	createmocks "github.com/go-jedi/lingvogramm_backend/internal/repository/user/create/mocks"
 	existsmocks "github.com/go-jedi/lingvogramm_backend/internal/repository/user/exists/mocks"
 	getbytelegramidmocks "github.com/go-jedi/lingvogramm_backend/internal/repository/user/get_by_telegram_id/mocks"
+	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
+	userbigcachemocks "github.com/go-jedi/lingvogramm_backend/pkg/bigcache/user/mocks"
 	loggermocks "github.com/go-jedi/lingvogramm_backend/pkg/logger/mocks"
 	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
 	poolsmocks "github.com/go-jedi/lingvogramm_backend/pkg/postgres/mocks"
@@ -70,6 +74,7 @@ func TestExecute(t *testing.T) {
 			AccessMode: pgx.ReadWrite,
 		}
 		queryTimeout = int64(2)
+		errCache     = errors.New("cache set failed")
 	)
 
 	tests := []struct {
@@ -78,6 +83,7 @@ func TestExecute(t *testing.T) {
 		mockTxBehavior              func(tx *poolsmocks.ITx)
 		mockLoggerBehavior          func(m *loggermocks.ILogger)
 		mockUUIDBehavior            func(m *uuidmocks.IUUID)
+		mockUserBigCache            func(m *userbigcachemocks.IUser)
 		mockExistsBehavior          func(mock *existsmocks.IExists, tx *poolsmocks.ITx)
 		mockGetByTelegramIDBehavior func(mock *getbytelegramidmocks.IGetByTelegramID, tx *poolsmocks.ITx)
 		mockCreateBehavior          func(mock *createmocks.ICreate, tx *poolsmocks.ITx)
@@ -85,7 +91,7 @@ func TestExecute(t *testing.T) {
 		want                        want
 	}{
 		{
-			name: "ok_user_exists_find_or_return_existing",
+			name: "ok_user_exists_cache_miss_db_hit",
 			mockPoolBehavior: func(m *poolsmocks.IPool, tx *poolsmocks.ITx) {
 				m.On("BeginTx", mock.Anything, txOptions).Return(tx, nil)
 			},
@@ -94,6 +100,10 @@ func TestExecute(t *testing.T) {
 			},
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
 				m.On("Debug", "[sign in user] execute service")
+			},
+			mockUserBigCache: func(m *userbigcachemocks.IUser) {
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Get", dto.TelegramID).Return(user.User{}, bigcache.ErrEntryNotFound)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -122,6 +132,30 @@ func TestExecute(t *testing.T) {
 			},
 		},
 		{
+			name: "ok_user_exists_cache_hit",
+			mockPoolBehavior: func(m *poolsmocks.IPool, tx *poolsmocks.ITx) {
+				m.On("BeginTx", mock.Anything, txOptions).Return(tx, nil)
+			},
+			mockTxBehavior: func(tx *poolsmocks.ITx) {
+				tx.On("Commit", mock.Anything).Return(nil)
+			},
+			mockLoggerBehavior: func(m *loggermocks.ILogger) {
+				m.On("Debug", "[sign in user] execute service")
+			},
+			mockUserBigCache: func(m *userbigcachemocks.IUser) {
+				m.On("Exists", dto.TelegramID).Return(true, nil)
+				m.On("Get", dto.TelegramID).Return(testUser, nil)
+			},
+			in: in{
+				ctx: ctx,
+				dto: dto,
+			},
+			want: want{
+				user: testUser,
+				err:  nil,
+			},
+		},
+		{
 			name: "ok_user_does_not_exists_create_user",
 			mockPoolBehavior: func(m *poolsmocks.IPool, tx *poolsmocks.ITx) {
 				m.On("BeginTx", mock.Anything, txOptions).Return(tx, nil)
@@ -134,6 +168,55 @@ func TestExecute(t *testing.T) {
 			},
 			mockUUIDBehavior: func(m *uuidmocks.IUUID) {
 				m.On("Generate").Return(uuid, nil)
+			},
+			mockUserBigCache: func(m *userbigcachemocks.IUser) {
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Set", testUser.TelegramID, testUser).Return(nil)
+			},
+			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
+				m.On(
+					"Execute",
+					ctx,
+					tx,
+					dto.TelegramID,
+					dto.Username,
+				).Return(false, nil)
+			},
+			mockCreateBehavior: func(m *createmocks.ICreate, tx *poolsmocks.ITx) {
+				m.On(
+					"Execute",
+					ctx,
+					tx,
+					createDTO,
+				).Return(testUser, nil)
+			},
+			in: in{
+				ctx: ctx,
+				dto: dto,
+			},
+			want: want{
+				user: testUser,
+				err:  nil,
+			},
+		},
+		{
+			name: "ok_user_created_cache_set_failed",
+			mockPoolBehavior: func(m *poolsmocks.IPool, tx *poolsmocks.ITx) {
+				m.On("BeginTx", mock.Anything, txOptions).Return(tx, nil)
+			},
+			mockTxBehavior: func(tx *poolsmocks.ITx) {
+				tx.On("Commit", mock.Anything).Return(nil)
+			},
+			mockLoggerBehavior: func(m *loggermocks.ILogger) {
+				m.On("Debug", "[sign in user] execute service")
+				m.On("Warn", fmt.Sprintf("failed to cache new user: %v", errCache))
+			},
+			mockUUIDBehavior: func(m *uuidmocks.IUUID) {
+				m.On("Generate").Return(uuid, nil)
+			},
+			mockUserBigCache: func(m *userbigcachemocks.IUser) {
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Set", testUser.TelegramID, testUser).Return(errCache)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -189,6 +272,9 @@ func TestExecute(t *testing.T) {
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
 				m.On("Debug", "[sign in user] execute service")
 			},
+			mockUserBigCache: func(m *userbigcachemocks.IUser) {
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
 					"Execute",
@@ -208,6 +294,49 @@ func TestExecute(t *testing.T) {
 			},
 		},
 		{
+			name: "rollback_transaction_on_create_user_error",
+			mockPoolBehavior: func(m *poolsmocks.IPool, tx *poolsmocks.ITx) {
+				m.On("BeginTx", mock.Anything, txOptions).Return(tx, nil)
+			},
+			mockTxBehavior: func(tx *poolsmocks.ITx) {
+				tx.On("Rollback", mock.Anything).Return(nil)
+			},
+			mockLoggerBehavior: func(m *loggermocks.ILogger) {
+				m.On("Debug", "[sign in user] execute service")
+			},
+			mockUUIDBehavior: func(m *uuidmocks.IUUID) {
+				m.On("Generate").Return(uuid, nil)
+			},
+			mockUserBigCache: func(m *userbigcachemocks.IUser) {
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+			},
+			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
+				m.On(
+					"Execute",
+					ctx,
+					tx,
+					dto.TelegramID,
+					dto.Username,
+				).Return(false, nil)
+			},
+			mockCreateBehavior: func(m *createmocks.ICreate, tx *poolsmocks.ITx) {
+				m.On(
+					"Execute",
+					ctx,
+					tx,
+					createDTO,
+				).Return(user.User{}, errors.New("create user in database error"))
+			},
+			in: in{
+				ctx: ctx,
+				dto: dto,
+			},
+			want: want{
+				user: user.User{},
+				err:  errors.New("create user in database error"),
+			},
+		},
+		{
 			name: "rollback_transaction_on_get_by_telegram_id_error",
 			mockPoolBehavior: func(m *poolsmocks.IPool, tx *poolsmocks.ITx) {
 				m.On("BeginTx", mock.Anything, txOptions).Return(tx, nil)
@@ -217,6 +346,10 @@ func TestExecute(t *testing.T) {
 			},
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
 				m.On("Debug", "[sign in user] execute service")
+			},
+			mockUserBigCache: func(m *userbigcachemocks.IUser) {
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Get", dto.TelegramID).Return(user.User{}, bigcache.ErrEntryNotFound)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -255,6 +388,10 @@ func TestExecute(t *testing.T) {
 			},
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
 				m.On("Debug", "[sign in user] execute service")
+			},
+			mockUserBigCache: func(m *userbigcachemocks.IUser) {
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Get", dto.TelegramID).Return(user.User{}, bigcache.ErrEntryNotFound)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -296,6 +433,9 @@ func TestExecute(t *testing.T) {
 			mockUUIDBehavior: func(m *uuidmocks.IUUID) {
 				m.On("Generate").Return("", errors.New("generate error"))
 			},
+			mockUserBigCache: func(m *userbigcachemocks.IUser) {
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
 					"Execute",
@@ -322,6 +462,7 @@ func TestExecute(t *testing.T) {
 			mockTx := poolsmocks.NewITx(t)
 			mockLogger := loggermocks.NewILogger(t)
 			mockUUID := uuidmocks.NewIUUID(t)
+			mockUserBigCache := userbigcachemocks.NewIUser(t)
 			mockExists := existsmocks.NewIExists(t)
 			mockGetByTelegramID := getbytelegramidmocks.NewIGetByTelegramID(t)
 			mockCreate := createmocks.NewICreate(t)
@@ -337,6 +478,9 @@ func TestExecute(t *testing.T) {
 			}
 			if test.mockUUIDBehavior != nil {
 				test.mockUUIDBehavior(mockUUID)
+			}
+			if test.mockUserBigCache != nil {
+				test.mockUserBigCache(mockUserBigCache)
 			}
 			if test.mockExistsBehavior != nil {
 				test.mockExistsBehavior(mockExists, mockTx)
@@ -359,7 +503,11 @@ func TestExecute(t *testing.T) {
 				QueryTimeout: queryTimeout,
 			}
 
-			signIn := New(ur, mockLogger, pg, mockUUID)
+			bc := &bigcachepkg.BigCache{
+				User: mockUserBigCache,
+			}
+
+			signIn := New(ur, mockLogger, pg, bc, mockUUID)
 
 			result, err := signIn.Execute(test.in.ctx, test.in.dto)
 

@@ -8,6 +8,7 @@ import (
 	userrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/user"
 	authservice "github.com/go-jedi/lingvogramm_backend/internal/service/auth"
 	clientassetsservice "github.com/go-jedi/lingvogramm_backend/internal/service/file_server/client_assets"
+	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingvogramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
 	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
@@ -23,6 +24,7 @@ type Dependencies struct {
 	uuid       *uuid.UUID
 	middleware *middleware.Middleware
 	postgres   *postgres.Postgres
+	bigCache   *bigcachepkg.BigCache
 	fileServer *fileserver.FileServer
 
 	// auth
@@ -44,6 +46,7 @@ func New(
 	validator *validator.Validator,
 	uuid *uuid.UUID,
 	postgres *postgres.Postgres,
+	bigCache *bigcachepkg.BigCache,
 	fileServer *fileserver.FileServer,
 ) *Dependencies {
 	d := &Dependencies{
@@ -52,6 +55,7 @@ func New(
 		validator:  validator,
 		uuid:       uuid,
 		postgres:   postgres,
+		bigCache:   bigCache,
 		fileServer: fileServer,
 	}
 

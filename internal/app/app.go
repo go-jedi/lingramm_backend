@@ -3,15 +3,18 @@ package app
 import (
 	"context"
 	"os"
+	"strings"
 
 	"github.com/go-jedi/lingvogramm_backend/config"
 	"github.com/go-jedi/lingvogramm_backend/internal/app/dependencies"
+	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingvogramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingvogramm_backend/pkg/httpserver"
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
 	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
 	"github.com/go-jedi/lingvogramm_backend/pkg/uuid"
 	"github.com/go-jedi/lingvogramm_backend/pkg/validator"
+	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/static"
 )
 
@@ -21,6 +24,7 @@ type App struct {
 	validator    *validator.Validator
 	uuid         *uuid.UUID
 	postgres     *postgres.Postgres
+	bigCache     *bigcachepkg.BigCache
 	hs           *httpserver.HTTPServer
 	fileServer   *fileserver.FileServer
 	dependencies *dependencies.Dependencies
@@ -49,6 +53,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initValidator,
 		a.initUUID,
 		a.initPostgres,
+		a.initBigCache,
 		a.initHTTPServer,
 		a.initFileServer,
 		a.initDependencies,
@@ -101,6 +106,16 @@ func (a *App) initPostgres(ctx context.Context) (err error) {
 	return
 }
 
+// initBigCache initialize big cache.
+func (a *App) initBigCache(_ context.Context) (err error) {
+	a.bigCache, err = bigcachepkg.New(a.cfg.BigCache)
+	if err != nil {
+		return err
+	}
+
+	return
+}
+
 // initHTTPServer initialize http server.
 func (a *App) initHTTPServer(_ context.Context) (err error) {
 	a.hs, err = httpserver.New(a.cfg.HTTPServer)
@@ -115,15 +130,19 @@ func (a *App) initHTTPServer(_ context.Context) (err error) {
 func (a *App) initFileServer(_ context.Context) error {
 	a.fileServer = fileserver.New(a.cfg.FileServer, a.uuid)
 
-	// initialize static for client assets.
-	a.hs.App.Get(a.cfg.FileServer.ClientAssets.Path, static.New("", static.Config{
+	clientAssetsStaticCfg := static.Config{
 		FS:       os.DirFS(a.cfg.FileServer.ClientAssets.Dir),
 		Browse:   a.cfg.FileServer.ClientAssets.Browse,
 		Compress: a.cfg.FileServer.ClientAssets.Compress,
-		// Next: func(c fiber.Ctx) bool { // need don't show any format.
-		//	return strings.HasSuffix(c.Path(), ".webp")
-		// },
-	}))
+	}
+	if a.cfg.FileServer.ClientAssets.IsNext {
+		clientAssetsStaticCfg.Next = func(c fiber.Ctx) bool { // need don't show any format.
+			return strings.HasSuffix(c.Path(), a.cfg.FileServer.ClientAssets.IsNextIgnoreFormat)
+		}
+	}
+
+	// initialize static for client assets.
+	a.hs.App.Get(a.cfg.FileServer.ClientAssets.Path, static.New("", clientAssetsStaticCfg))
 
 	return nil
 }
@@ -136,6 +155,7 @@ func (a *App) initDependencies(_ context.Context) error {
 		a.validator,
 		a.uuid,
 		a.postgres,
+		a.bigCache,
 		a.fileServer,
 	)
 
