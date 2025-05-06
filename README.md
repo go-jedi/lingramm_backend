@@ -5,7 +5,8 @@ This project is a telegram web apps application for a foreign language tutor tha
 ## Technologies Stack 
 * <b>Golang:</b> Programming language.
 * <b>Fiber v3:</b> Fast and lightweight web framework for Golang.
-* <b>Redis:</b> In-memory database for caching and session management.
+* <b>BigCache:</b> In-memory database for caching.
+* <b>MessagePack:</b> Serialization data for cache and http requests.
 * <b>PostgreSQL:</b> Relational SQL database for storing data.
 * <b>Docker:</b> Containerization for simplifying deployment and management of the application.
 * <b>Kubernetes (K8s):</b> Container orchestration for managing deployment and scaling.
@@ -33,10 +34,6 @@ Create a <b>.env</b> file in the root directory of the project and add the neces
 POSTGRES_DB=lingvogramm_db
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=test
-
-REDIS_PASSWORD=auth
-REDIS_PORT=6379
-REDIS_DATABASES=0
 ```
 
 3. <b>Start the containers using Docker Compose:</b>
