@@ -11,6 +11,7 @@ func (d *Dependencies) AuthService() *authservice.Service {
 			d.UserRepository(),
 			d.logger,
 			d.postgres,
+			d.bigCache,
 			d.uuid,
 		)
 	}
