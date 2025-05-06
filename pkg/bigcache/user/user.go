@@ -10,39 +10,61 @@ import (
 	"github.com/vmihailenco/msgpack/v5"
 )
 
+const (
+	prefixUser       = "user:"
+	prefixTelegramID = "telegram_id:"
+	prefixUUID       = "uuid:"
+)
+
 //go:generate mockery --name=IUser --output=mocks --case=underscore
 type IUser interface {
-	Set(key string, val user.User) error
-	All() ([]user.User, error)
-	Get(key string) (user.User, error)
-	Exists(key string) (bool, error)
-	Delete(key string) error
+	GetPrefixTelegramID() string
+	GetPrefixUUID() string
+	Set(key string, val user.User, prefix string) error
+	All(prefix string) ([]user.User, error)
+	Get(key string, prefix string) (user.User, error)
+	Exists(key string, prefix string) (bool, error)
+	Delete(key string, prefix string) error
 }
 
 type User struct {
-	prefix   string
-	bigCache *bigcache.BigCache
+	prefixUser       string
+	prefixTelegramID string
+	prefixUUID       string
+	bigCache         *bigcache.BigCache
 }
 
 func New(bigCache *bigcache.BigCache) *User {
 	return &User{
-		prefix:   "user:",
-		bigCache: bigCache,
+		prefixUser:       prefixUser,
+		prefixTelegramID: prefixTelegramID,
+		prefixUUID:       prefixUUID,
+		bigCache:         bigCache,
 	}
 }
 
+// GetPrefixTelegramID get prefix telegram_id.
+func (u *User) GetPrefixTelegramID() string {
+	return u.prefixTelegramID
+}
+
+// GetPrefixUUID get prefix uuid.
+func (u *User) GetPrefixUUID() string {
+	return u.prefixUUID
+}
+
 // Set stores a user in BigCache using MessagePack serialization.
-func (u *User) Set(key string, val user.User) error {
+func (u *User) Set(key string, val user.User, prefix string) error {
 	b, err := msgpack.Marshal(val)
 	if err != nil {
 		return err
 	}
 
-	return u.bigCache.Set(u.prefix+key, b)
+	return u.bigCache.Set(u.prefixUser+prefix+key, b)
 }
 
 // All retrieves all user entries from the cache that match the prefix.
-func (u *User) All() ([]user.User, error) {
+func (u *User) All(prefix string) ([]user.User, error) {
 	var results []user.User
 
 	iter := u.bigCache.Iterator()
@@ -55,7 +77,7 @@ func (u *User) All() ([]user.User, error) {
 
 		key := entry.Key()
 
-		if !strings.HasPrefix(key, u.prefix) {
+		if !strings.HasPrefix(key, u.prefixUser+prefix) {
 			continue
 		}
 
@@ -72,10 +94,10 @@ func (u *User) All() ([]user.User, error) {
 }
 
 // Get retrieves a user from BigCache and deserializes it using MessagePack.
-func (u *User) Get(key string) (user.User, error) {
+func (u *User) Get(key string, prefix string) (user.User, error) {
 	var result user.User
 
-	data, err := u.bigCache.Get(u.prefix + key)
+	data, err := u.bigCache.Get(u.prefixUser + prefix + key)
 	if err != nil {
 		return result, err
 	}
@@ -88,8 +110,8 @@ func (u *User) Get(key string) (user.User, error) {
 }
 
 // Exists checks whether a user exists in BigCache by key.
-func (u *User) Exists(key string) (bool, error) {
-	_, err := u.bigCache.Get(u.prefix + key)
+func (u *User) Exists(key string, prefix string) (bool, error) {
+	_, err := u.bigCache.Get(u.prefixUser + prefix + key)
 	if err != nil {
 		if errors.Is(err, bigcache.ErrEntryNotFound) {
 			return false, nil
@@ -100,6 +122,6 @@ func (u *User) Exists(key string) (bool, error) {
 }
 
 // Delete removes a user from the cache by key.
-func (u *User) Delete(key string) error {
-	return u.bigCache.Delete(u.prefix + key)
+func (u *User) Delete(key string, prefix string) error {
+	return u.bigCache.Delete(u.prefixUser + prefix + key)
 }
