@@ -6,11 +6,14 @@ import (
 
 	"github.com/allegro/bigcache"
 	"github.com/go-jedi/lingvogramm_backend/config"
+	"github.com/go-jedi/lingvogramm_backend/pkg/bigcache/iterator"
 	"github.com/go-jedi/lingvogramm_backend/pkg/bigcache/user"
 )
 
 type BigCache struct {
-	User user.IUser
+	User     user.IUser
+	Iterator iterator.IIterator
+	bigCache *bigcache.BigCache
 }
 
 func New(cfg config.BigCacheConfig) (*BigCache, error) {
@@ -18,8 +21,8 @@ func New(cfg config.BigCacheConfig) (*BigCache, error) {
 
 	bigCacheConfig := bigcache.Config{
 		Shards:             cfg.Shards,
-		LifeWindow:         time.Duration(cfg.LifeWindow) * time.Second,
-		CleanWindow:        time.Duration(cfg.CleanWindow) * time.Second,
+		LifeWindow:         time.Duration(cfg.LifeWindow) * time.Minute,
+		CleanWindow:        time.Duration(cfg.CleanWindow) * time.Minute,
 		MaxEntriesInWindow: cfg.MaxEntriesInWindow,
 		MaxEntrySize:       cfg.MaxEntrySize,
 		HardMaxCacheSize:   cfg.HardMaxCacheSize,
@@ -36,7 +39,9 @@ func New(cfg config.BigCacheConfig) (*BigCache, error) {
 		return nil, err
 	}
 
+	bc.bigCache = bigCache
 	bc.User = user.New(bigCache)
+	bc.Iterator = iterator.New(bigCache)
 
 	return bc, nil
 }
