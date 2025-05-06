@@ -97,7 +97,7 @@ func (si *SignIn) Execute(ctx context.Context, dto auth.SignInDTO) (user.User, e
 func (si *SignIn) checkExistsUser(ctx context.Context, tx pgx.Tx, telegramID string, username string) (bool, error) {
 	// Check if the user exists in the cache by Telegram ID.
 	// If found and no error occurred, return true immediately.
-	ieFromCache, err := si.bigCache.User.Exists(telegramID)
+	ieFromCache, err := si.bigCache.User.Exists(telegramID, si.bigCache.User.GetPrefixTelegramID())
 	if err == nil && ieFromCache {
 		return true, nil
 	}
@@ -137,7 +137,7 @@ func (si *SignIn) createUser(ctx context.Context, tx pgx.Tx, dto auth.SignInDTO)
 	}
 
 	// save the newly created user in the cache.
-	if err := si.bigCache.User.Set(u.TelegramID, u); err != nil {
+	if err := si.bigCache.User.Set(u.TelegramID, u, si.bigCache.User.GetPrefixTelegramID()); err != nil {
 		si.logger.Warn(fmt.Sprintf("failed to cache new user: %v", err))
 	}
 
@@ -149,7 +149,7 @@ func (si *SignIn) createUser(ctx context.Context, tx pgx.Tx, dto auth.SignInDTO)
 // Otherwise, it queries the database to retrieve the user by Telegram ID.
 func (si *SignIn) findOrReturnExisting(ctx context.Context, tx pgx.Tx, telegramID string) (user.User, error) {
 	// Try to get the user from the cache.
-	userFromCache, err := si.bigCache.User.Get(telegramID)
+	userFromCache, err := si.bigCache.User.Get(telegramID, si.bigCache.User.GetPrefixTelegramID())
 	if err == nil && userFromCache.TelegramID == telegramID {
 		// Cache hit and valid data — return the cached user.
 		return userFromCache, nil

@@ -102,8 +102,10 @@ func TestExecute(t *testing.T) {
 				m.On("Debug", "[sign in user] execute service")
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
-				m.On("Get", dto.TelegramID).Return(user.User{}, bigcache.ErrEntryNotFound)
+				prefix := "telegram_id:"
+				m.On("GetPrefixTelegramID").Return(prefix)
+				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Get", dto.TelegramID, prefix).Return(user.User{}, bigcache.ErrEntryNotFound)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -143,8 +145,10 @@ func TestExecute(t *testing.T) {
 				m.On("Debug", "[sign in user] execute service")
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				m.On("Exists", dto.TelegramID).Return(true, nil)
-				m.On("Get", dto.TelegramID).Return(testUser, nil)
+				prefix := "telegram_id:"
+				m.On("GetPrefixTelegramID").Return(prefix)
+				m.On("Exists", dto.TelegramID, prefix).Return(true, nil)
+				m.On("Get", dto.TelegramID, prefix).Return(testUser, nil)
 			},
 			in: in{
 				ctx: ctx,
@@ -170,8 +174,10 @@ func TestExecute(t *testing.T) {
 				m.On("Generate").Return(uuid, nil)
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
-				m.On("Set", testUser.TelegramID, testUser).Return(nil)
+				prefix := "telegram_id:"
+				m.On("GetPrefixTelegramID").Return(prefix)
+				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Set", testUser.TelegramID, testUser, prefix).Return(nil)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -215,8 +221,10 @@ func TestExecute(t *testing.T) {
 				m.On("Generate").Return(uuid, nil)
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
-				m.On("Set", testUser.TelegramID, testUser).Return(errCache)
+				prefix := "telegram_id:"
+				m.On("GetPrefixTelegramID").Return(prefix)
+				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Set", testUser.TelegramID, testUser, prefix).Return(errCache)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -273,7 +281,9 @@ func TestExecute(t *testing.T) {
 				m.On("Debug", "[sign in user] execute service")
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+				prefix := "telegram_id:"
+				m.On("GetPrefixTelegramID").Return(prefix)
+				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -308,7 +318,9 @@ func TestExecute(t *testing.T) {
 				m.On("Generate").Return(uuid, nil)
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+				prefix := "telegram_id:"
+				m.On("GetPrefixTelegramID").Return(prefix)
+				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -348,8 +360,10 @@ func TestExecute(t *testing.T) {
 				m.On("Debug", "[sign in user] execute service")
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
-				m.On("Get", dto.TelegramID).Return(user.User{}, bigcache.ErrEntryNotFound)
+				prefix := "telegram_id:"
+				m.On("GetPrefixTelegramID").Return(prefix)
+				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Get", dto.TelegramID, prefix).Return(user.User{}, bigcache.ErrEntryNotFound)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -390,8 +404,10 @@ func TestExecute(t *testing.T) {
 				m.On("Debug", "[sign in user] execute service")
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
-				m.On("Get", dto.TelegramID).Return(user.User{}, bigcache.ErrEntryNotFound)
+				prefix := "telegram_id:"
+				m.On("GetPrefixTelegramID").Return(prefix)
+				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Get", dto.TelegramID, prefix).Return(user.User{}, bigcache.ErrEntryNotFound)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -434,7 +450,9 @@ func TestExecute(t *testing.T) {
 				m.On("Generate").Return("", errors.New("generate error"))
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
+				prefix := "telegram_id:"
+				m.On("GetPrefixTelegramID").Return(prefix)
+				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
