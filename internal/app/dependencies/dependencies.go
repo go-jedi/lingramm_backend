@@ -2,11 +2,13 @@ package dependencies
 
 import (
 	authhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/auth"
+	bigcachehandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/bigcache"
 	clientassetshandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/file_server/client_assets"
 	"github.com/go-jedi/lingvogramm_backend/internal/middleware"
 	clientassetsrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/file_server/client_assets"
 	userrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/user"
 	authservice "github.com/go-jedi/lingvogramm_backend/internal/service/auth"
+	bigcacheservice "github.com/go-jedi/lingvogramm_backend/internal/service/bigcache"
 	clientassetsservice "github.com/go-jedi/lingvogramm_backend/internal/service/file_server/client_assets"
 	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingvogramm_backend/pkg/file_server"
@@ -38,6 +40,10 @@ type Dependencies struct {
 	clientAssetsRepository *clientassetsrepository.Repository
 	clientAssetsService    *clientassetsservice.Service
 	clientAssetsHandler    *clientassetshandler.Handler
+
+	// bigcache
+	bigCacheService *bigcacheservice.Service
+	bigCacheHandler *bigcachehandler.Handler
 }
 
 func New(
@@ -74,4 +80,5 @@ func (d *Dependencies) initMiddleware() {
 func (d *Dependencies) initHandler() {
 	_ = d.AuthHandler()
 	_ = d.ClientAssetsHandler()
+	_ = d.BigCacheHandler()
 }

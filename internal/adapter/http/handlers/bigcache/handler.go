@@ -1,0 +1,33 @@
+package bigcache
+
+import (
+	"github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/bigcache/iterator"
+	bigcacheservice "github.com/go-jedi/lingvogramm_backend/internal/service/bigcache"
+	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+	"github.com/gofiber/fiber/v3"
+)
+
+type Handler struct {
+	iterator *iterator.Iterator
+}
+
+func New(
+	bigCacheService *bigcacheservice.Service,
+	app *fiber.App,
+	logger logger.ILogger,
+) *Handler {
+	h := &Handler{
+		iterator: iterator.New(bigCacheService, logger),
+	}
+
+	h.initRoutes(app)
+
+	return h
+}
+
+func (h *Handler) initRoutes(app *fiber.App) {
+	api := app.Group("/v1/bigcache")
+	{
+		api.Get("/info", h.iterator.Execute)
+	}
+}
