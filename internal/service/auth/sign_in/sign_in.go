@@ -136,8 +136,13 @@ func (si *SignIn) createUser(ctx context.Context, tx pgx.Tx, dto auth.SignInDTO)
 		return user.User{}, err
 	}
 
-	// save the newly created user in the cache.
+	// save the newly created user in the cache (prefix: telegram_id:).
 	if err := si.bigCache.User.Set(u.TelegramID, u, si.bigCache.User.GetPrefixTelegramID()); err != nil {
+		si.logger.Warn(fmt.Sprintf("failed to cache new user: %v", err))
+	}
+
+	// save the newly created user in the cache (prefix: uuid:).
+	if err := si.bigCache.User.Set(u.TelegramID, u, si.bigCache.User.GetPrefixUUID()); err != nil {
 		si.logger.Warn(fmt.Sprintf("failed to cache new user: %v", err))
 	}
 

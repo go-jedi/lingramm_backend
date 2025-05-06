@@ -174,10 +174,13 @@ func TestExecute(t *testing.T) {
 				m.On("Generate").Return(uuid, nil)
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
-				m.On("Set", testUser.TelegramID, testUser, prefix).Return(nil)
+				prefixTelegramID := "telegram_id:"
+				prefixUUID := "uuid:"
+				m.On("GetPrefixTelegramID").Return(prefixTelegramID)
+				m.On("GetPrefixUUID").Return(prefixUUID)
+				m.On("Exists", dto.TelegramID, prefixTelegramID).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Set", testUser.TelegramID, testUser, prefixTelegramID).Return(nil)
+				m.On("Set", testUser.TelegramID, testUser, prefixUUID).Return(nil)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
@@ -221,10 +224,13 @@ func TestExecute(t *testing.T) {
 				m.On("Generate").Return(uuid, nil)
 			},
 			mockUserBigCache: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
-				m.On("Set", testUser.TelegramID, testUser, prefix).Return(errCache)
+				prefixTelegramID := "telegram_id:"
+				prefixUUID := "uuid:"
+				m.On("GetPrefixTelegramID").Return(prefixTelegramID)
+				m.On("GetPrefixUUID").Return(prefixUUID)
+				m.On("Exists", dto.TelegramID, prefixTelegramID).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Set", testUser.TelegramID, testUser, prefixTelegramID).Return(errCache)
+				m.On("Set", testUser.TelegramID, testUser, prefixUUID).Return(errCache)
 			},
 			mockExistsBehavior: func(m *existsmocks.IExists, tx *poolsmocks.ITx) {
 				m.On(
