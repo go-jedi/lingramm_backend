@@ -122,10 +122,10 @@ func TestExecute(t *testing.T) {
 				}
 			}(resp.Body)
 
+			assert.Equal(t, test.want.statusCode, resp.StatusCode)
+
 			respBody, err := io.ReadAll(resp.Body)
 			assert.NoError(t, err)
-
-			assert.Equal(t, test.want.statusCode, resp.StatusCode)
 
 			switch test.name {
 			case "ok":

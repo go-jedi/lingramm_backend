@@ -191,17 +191,18 @@ func TestExecute(t *testing.T) {
 				}
 			}(resp.Body)
 
+			assert.Equal(t, test.want.statusCode, resp.StatusCode)
+
 			respBody, err := io.ReadAll(resp.Body)
 			assert.NoError(t, err)
 
-			assert.Equal(t, test.want.statusCode, resp.StatusCode)
-
-			if test.name == "ok" {
+			switch test.name {
+			case "ok":
 				var result response.Response[clientassets.ClientAssets]
 				err = jsoniter.Unmarshal(respBody, &result)
 				assert.NoError(t, err)
 				assert.Equal(t, testClientAsset, result.Data)
-			} else {
+			default:
 				var result response.Response[any]
 				err = jsoniter.Unmarshal(respBody, &result)
 				assert.NoError(t, err)

@@ -192,6 +192,22 @@ func TestExecute(t *testing.T) {
 
 			assert.Equal(t, test.want.statusCode, resp.StatusCode)
 
+			respBody, err := io.ReadAll(resp.Body)
+			assert.NoError(t, err)
+
+			switch test.name {
+			case "ok":
+				var result response.Response[user.User]
+				err := jsoniter.Unmarshal(respBody, &result)
+				assert.NoError(t, err)
+				assert.NotNil(t, result.Data)
+			default:
+				var result response.Response[any]
+				err := jsoniter.Unmarshal(respBody, &result)
+				assert.NoError(t, err)
+				assert.Nil(t, result.Data)
+			}
+
 			mockSignIn.AssertExpectations(t)
 			mockLogger.AssertExpectations(t)
 			mockValidator.AssertExpectations(t)
