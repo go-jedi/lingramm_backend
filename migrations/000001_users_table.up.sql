@@ -5,6 +5,6 @@ CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(255) UNIQUE, -- Username пользователя.
     first_name VARCHAR(255), -- Имя пользователя.
     last_name VARCHAR(255), -- Фамилия пользователя.
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(), -- Дата создания записи.
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW() -- Дата обновления записи.
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() -- Дата обновления записи.
 );

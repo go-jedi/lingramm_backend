@@ -7,6 +7,6 @@ CREATE TABLE IF NOT EXISTS client_assets(
     quality INTEGER NOT NULL, -- Выставленное качество.
     old_name_file TEXT NOT NULL, -- Имя файла до конвертирования.
     old_extension VARCHAR(255) NOT NULL, -- Расширение файла до конвертирования.
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(), -- Дата создания записи.
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW() -- Дата обновления записи.
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() -- Дата обновления записи.
 );

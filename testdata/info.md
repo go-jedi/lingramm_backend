@@ -5,6 +5,11 @@
 - `migrate create -ext sql -dir migrations -seq user_profiles_table`
 - `migrate create -ext sql -dir migrations -seq levels_table`
 - `migrate create -ext sql -dir migrations -seq client_assets_table`
+- `migrate create -ext sql -dir migrations -seq user_balances_table`
+- `migrate create -ext sql -dir migrations -seq balance_events_table`
+- `migrate create -ext sql -dir migrations -seq balance_transactions_table`
+- `migrate create -ext sql -dir migrations -seq balance_transactions_index`
+- `migrate create -ext sql -dir migrations -seq currency_rates_table`
 
 #### execute:
 - `migrate -database postgresql://admin:test@localhost:54320/lingvogramm_db?sslmode=disable -path migrations up`
