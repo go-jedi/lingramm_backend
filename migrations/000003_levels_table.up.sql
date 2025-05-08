@@ -3,8 +3,8 @@ CREATE TABLE IF NOT EXISTS levels(
     level_name VARCHAR(50) NOT NULL, -- Название уровня.
     level_number BIGINT NOT NULL, -- Числовое значение уровня.
     required_experience BIGINT NOT NULL, -- Требуемый опыт.
-    created_at TIMESTAMP NOT NULL DEFAULT NOW(), -- Дата создания записи.
-    updated_at TIMESTAMP NOT NULL DEFAULT NOW() -- Дата обновления записи.
+    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
+    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() -- Дата обновления записи.
 );
 
 INSERT INTO levels (level_name, level_number, required_experience) VALUES

@@ -1,10 +1,8 @@
-CREATE TABLE IF NOT EXISTS user_profiles(
+CREATE TABLE IF NOT EXISTS user_balances( -- храним актуальный баланс пользователя.
     id SERIAL PRIMARY KEY, -- Уникальный идентификатор.
-    uuid TEXT NOT NULL UNIQUE, -- UUID пользователя.
     telegram_id TEXT NOT NULL UNIQUE, -- Telegram id пользователя.
-    experience_points BIGINT NOT NULL DEFAULT 0, -- Шкала опыта.
+    balance NUMERIC(20, 2) NOT NULL DEFAULT 0, -- Баланс пользователя.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата обновления записи.
-    FOREIGN KEY (uuid) REFERENCES users(uuid) ON DELETE CASCADE,
     FOREIGN KEY (telegram_id) REFERENCES users(telegram_id) ON DELETE CASCADE
 );
