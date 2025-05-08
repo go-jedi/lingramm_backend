@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.user_create(JSON);

@@ -2,6 +2,7 @@
 
 #### create:
 - `migrate create -ext sql -dir migrations -seq users_table`
+- `migrate create -ext sql -dir migrations -seq user_create_function`
 - `migrate create -ext sql -dir migrations -seq user_profiles_table`
 - `migrate create -ext sql -dir migrations -seq levels_table`
 - `migrate create -ext sql -dir migrations -seq client_assets_table`

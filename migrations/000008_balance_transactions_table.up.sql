@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS balance_transactions( -- история операций по балансу.
+CREATE TABLE IF NOT EXISTS balance_transactions( -- История операций по балансу.
     id SERIAL PRIMARY KEY, -- Уникальный идентификатор.
     event_id BIGINT NOT NULL, -- Идентификатор события.
     telegram_id TEXT NOT NULL, -- Telegram id пользователя.

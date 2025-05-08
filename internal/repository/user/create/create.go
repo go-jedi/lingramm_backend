@@ -10,6 +10,7 @@ import (
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
 	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
 	"github.com/jackc/pgx/v5"
+	jsoniter "github.com/json-iterator/go"
 )
 
 //go:generate mockery --name=ICreate --output=mocks --case=underscore
@@ -48,24 +49,19 @@ func (c *Create) Execute(ctx context.Context, tx pgx.Tx, dto user.CreateDTO) (us
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	q := `
-		INSERT INTO users(
-			uuid,
-		    telegram_id,
-		    username,
-		    first_name,
-		    last_name
-		) VALUES($1, $2, $3, $4, $5)
-		ON CONFLICT (telegram_id) DO NOTHING
-		RETURNING *;
-	`
+	rawData, err := jsoniter.Marshal(dto)
+	if err != nil {
+		c.logger.Error("failed to marshal user data", "err", err)
+		return user.User{}, err
+	}
+
+	q := `SELECT * FROM public.user_create($1);`
 
 	var nu user.User
 
 	if err := tx.QueryRow(
 		ctxTimeout, q,
-		dto.UUID, dto.TelegramID, dto.Username,
-		dto.FirstName, dto.LastName,
+		rawData,
 	).Scan(
 		&nu.ID, &nu.UUID, &nu.TelegramID,
 		&nu.Username, &nu.FirstName, &nu.LastName,
