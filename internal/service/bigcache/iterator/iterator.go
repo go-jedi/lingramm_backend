@@ -7,6 +7,11 @@ import (
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
 )
 
+//go:generate mockery --name=IIterator --output=mocks --case=underscore
+type IIterator interface {
+	Execute(ctx context.Context) (map[string]any, error)
+}
+
 type Iterator struct {
 	logger   logger.ILogger
 	bigCache *bigcachepkg.BigCache

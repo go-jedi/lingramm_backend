@@ -7,7 +7,7 @@ import (
 )
 
 type Service struct {
-	Iterator *iterator.Iterator
+	Iterator iterator.IIterator
 }
 
 func New(
