@@ -19,6 +19,13 @@ type LoggerConfig struct {
 	MaxAge     int    `yaml:"max_age"`
 }
 
+type JWTConfig struct {
+	SecretPath    string `yaml:"secret_path"`
+	SecretHashLen int    `yaml:"secret_hash_len"`
+	AccessExpAt   int    `yaml:"access_exp_at"`
+	RefreshExpAt  int    `yaml:"refresh_exp_at"`
+}
+
 type PostgresConfig struct {
 	Host          string `yaml:"host"`
 	User          string `yaml:"user"`
@@ -80,6 +87,7 @@ type HTTPServerConfig struct {
 
 type Config struct {
 	Logger     LoggerConfig     `yaml:"logger"`
+	JWT        JWTConfig        `yaml:"jwt"`
 	Postgres   PostgresConfig   `yaml:"postgres"`
 	BigCache   BigCacheConfig   `yaml:"big_cache"`
 	FileServer FileServerConfig `yaml:"file_server"`
