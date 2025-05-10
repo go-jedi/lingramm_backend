@@ -4,12 +4,15 @@ import (
 	authhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/auth"
 	bigcachehandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/bigcache"
 	clientassetshandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/file_server/client_assets"
+	internalcurrencyhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/internal_currency"
 	"github.com/go-jedi/lingvogramm_backend/internal/middleware"
 	clientassetsrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/file_server/client_assets"
+	internalcurrencyrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/internal_currency"
 	userrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/user"
 	authservice "github.com/go-jedi/lingvogramm_backend/internal/service/auth"
 	bigcacheservice "github.com/go-jedi/lingvogramm_backend/internal/service/bigcache"
 	clientassetsservice "github.com/go-jedi/lingvogramm_backend/internal/service/file_server/client_assets"
+	internalcurrencyservice "github.com/go-jedi/lingvogramm_backend/internal/service/internal_currency"
 	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingvogramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
@@ -44,6 +47,11 @@ type Dependencies struct {
 	// bigcache
 	bigCacheService *bigcacheservice.Service
 	bigCacheHandler *bigcachehandler.Handler
+
+	// internal currency
+	internalCurrencyRepository *internalcurrencyrepository.Repository
+	internalCurrencyService    *internalcurrencyservice.Service
+	internalCurrencyHandler    *internalcurrencyhandler.Handler
 }
 
 func New(
@@ -81,4 +89,5 @@ func (d *Dependencies) initHandler() {
 	_ = d.AuthHandler()
 	_ = d.ClientAssetsHandler()
 	_ = d.BigCacheHandler()
+	_ = d.InternalCurrencyHandler()
 }
