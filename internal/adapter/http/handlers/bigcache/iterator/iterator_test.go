@@ -61,7 +61,7 @@ func TestExecute(t *testing.T) {
 				m.On("Debug", "[iterator for show data in bigcache] execute handler")
 			},
 			want: want{
-				statusCode: http.StatusOK,
+				statusCode: fiber.StatusOK,
 				status:     true,
 				message:    "success",
 				error:      "",
