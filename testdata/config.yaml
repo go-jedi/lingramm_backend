@@ -8,6 +8,12 @@ logger:
   max_backups: 3
   max_age: 7
 
+jwt:
+  secret_path: testdata/jwt/.secret # path to file with secret key
+  secret_hash_len: 30
+  access_exp_at: 30 # minutes
+  refresh_exp_at: 60 # days
+
 postgres:
   host: localhost
   user: admin
