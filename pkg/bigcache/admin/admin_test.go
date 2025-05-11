@@ -1,4 +1,4 @@
-package user
+package admin
 
 import (
 	"testing"
@@ -6,11 +6,11 @@ import (
 
 	"github.com/allegro/bigcache"
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/go-jedi/lingvogramm_backend/internal/domain/user"
+	"github.com/go-jedi/lingvogramm_backend/internal/domain/admin"
 	"github.com/stretchr/testify/assert"
 )
 
-func setupCache(t *testing.T) *User {
+func setupCache(t *testing.T) *Admin {
 	config := bigcache.DefaultConfig(10 * time.Minute)
 
 	cache, err := bigcache.NewBigCache(config)
@@ -24,26 +24,22 @@ func setupCache(t *testing.T) *User {
 func TestSet(t *testing.T) {
 	type in struct {
 		key    string
-		val    user.User
+		val    admin.Admin
 		prefix string
 	}
 
 	type want struct {
-		user user.User
-		err  error
+		admin admin.Admin
+		err   error
 	}
 
 	var (
 		telegramID = gofakeit.UUID()
-		testUser   = user.User{
+		testAdmin  = admin.Admin{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
-			Username:   gofakeit.Username(),
-			FirstName:  gofakeit.FirstName(),
-			LastName:   gofakeit.LastName(),
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
+			CreatedAt:  gofakeit.Date(),
+			UpdatedAt:  gofakeit.Date(),
 		}
 	)
 
@@ -56,12 +52,12 @@ func TestSet(t *testing.T) {
 			name: "ok",
 			in: in{
 				key:    telegramID,
-				val:    testUser,
+				val:    testAdmin,
 				prefix: "telegram_id:",
 			},
 			want: want{
-				user: testUser,
-				err:  nil,
+				admin: testAdmin,
+				err:   nil,
 			},
 		},
 	}
@@ -76,15 +72,11 @@ func TestSet(t *testing.T) {
 			got, err := cache.Get(test.in.key, test.in.prefix)
 			assert.Equal(t, test.want.err, err)
 
-			assert.Equal(t, test.want.user.ID, got.ID)
-			assert.Equal(t, test.want.user.UUID, got.UUID)
-			assert.Equal(t, test.want.user.TelegramID, got.TelegramID)
-			assert.Equal(t, test.want.user.Username, got.Username)
-			assert.Equal(t, test.want.user.FirstName, got.FirstName)
-			assert.Equal(t, test.want.user.LastName, got.LastName)
+			assert.Equal(t, test.want.admin.ID, got.ID)
+			assert.Equal(t, test.want.admin.TelegramID, got.TelegramID)
 
-			assert.WithinDuration(t, test.want.user.CreatedAt, got.CreatedAt, time.Millisecond)
-			assert.WithinDuration(t, test.want.user.UpdatedAt, got.UpdatedAt, time.Millisecond)
+			assert.WithinDuration(t, test.want.admin.CreatedAt, got.CreatedAt, time.Millisecond)
+			assert.WithinDuration(t, test.want.admin.UpdatedAt, got.UpdatedAt, time.Millisecond)
 		})
 	}
 }
@@ -92,26 +84,22 @@ func TestSet(t *testing.T) {
 func TestAll(t *testing.T) {
 	type in struct {
 		key    string
-		val    user.User
+		val    admin.Admin
 		prefix string
 	}
 
 	type want struct {
-		user []user.User
-		err  error
+		admin []admin.Admin
+		err   error
 	}
 
 	var (
 		telegramID = gofakeit.UUID()
-		testUser   = user.User{
+		testAdmin  = admin.Admin{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
-			Username:   gofakeit.Username(),
-			FirstName:  gofakeit.FirstName(),
-			LastName:   gofakeit.LastName(),
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
+			CreatedAt:  gofakeit.Date(),
+			UpdatedAt:  gofakeit.Date(),
 		}
 	)
 
@@ -124,12 +112,12 @@ func TestAll(t *testing.T) {
 			name: "ok",
 			in: in{
 				key:    telegramID,
-				val:    testUser,
+				val:    testAdmin,
 				prefix: "telegram_id:",
 			},
 			want: want{
-				user: []user.User{testUser},
-				err:  nil,
+				admin: []admin.Admin{testAdmin},
+				err:   nil,
 			},
 		},
 	}
@@ -144,17 +132,13 @@ func TestAll(t *testing.T) {
 			got, err := cache.All(test.in.prefix)
 			assert.Equal(t, test.want.err, err)
 
-			assert.Len(t, got, len(test.want.user))
+			assert.Len(t, got, len(test.want.admin))
 
-			assert.Equal(t, test.want.user[0].ID, got[0].ID)
-			assert.Equal(t, test.want.user[0].UUID, got[0].UUID)
-			assert.Equal(t, test.want.user[0].TelegramID, got[0].TelegramID)
-			assert.Equal(t, test.want.user[0].Username, got[0].Username)
-			assert.Equal(t, test.want.user[0].FirstName, got[0].FirstName)
-			assert.Equal(t, test.want.user[0].LastName, got[0].LastName)
+			assert.Equal(t, test.want.admin[0].ID, got[0].ID)
+			assert.Equal(t, test.want.admin[0].TelegramID, got[0].TelegramID)
 
-			assert.WithinDuration(t, test.want.user[0].CreatedAt, got[0].CreatedAt, time.Millisecond)
-			assert.WithinDuration(t, test.want.user[0].UpdatedAt, got[0].UpdatedAt, time.Millisecond)
+			assert.WithinDuration(t, test.want.admin[0].CreatedAt, got[0].CreatedAt, time.Millisecond)
+			assert.WithinDuration(t, test.want.admin[0].UpdatedAt, got[0].UpdatedAt, time.Millisecond)
 		})
 	}
 }
@@ -162,26 +146,22 @@ func TestAll(t *testing.T) {
 func TestGet(t *testing.T) {
 	type in struct {
 		key    string
-		val    user.User
+		val    admin.Admin
 		prefix string
 	}
 
 	type want struct {
-		user user.User
-		err  error
+		admin admin.Admin
+		err   error
 	}
 
 	var (
 		telegramID = gofakeit.UUID()
-		testUser   = user.User{
+		testAdmin  = admin.Admin{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
-			Username:   gofakeit.Username(),
-			FirstName:  gofakeit.FirstName(),
-			LastName:   gofakeit.LastName(),
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
+			CreatedAt:  gofakeit.Date(),
+			UpdatedAt:  gofakeit.Date(),
 		}
 	)
 
@@ -194,24 +174,24 @@ func TestGet(t *testing.T) {
 			name: "ok",
 			in: in{
 				key:    telegramID,
-				val:    testUser,
+				val:    testAdmin,
 				prefix: "telegram_id:",
 			},
 			want: want{
-				user: testUser,
-				err:  nil,
+				admin: testAdmin,
+				err:   nil,
 			},
 		},
 		{
 			name: "not found",
 			in: in{
 				key:    telegramID,
-				val:    user.User{},
+				val:    admin.Admin{},
 				prefix: "telegram_id:",
 			},
 			want: want{
-				user: user.User{},
-				err:  bigcache.ErrEntryNotFound,
+				admin: admin.Admin{},
+				err:   bigcache.ErrEntryNotFound,
 			},
 		},
 	}
@@ -228,15 +208,11 @@ func TestGet(t *testing.T) {
 				got, err := cache.Get(test.in.key, test.in.prefix)
 				assert.Equal(t, test.want.err, err)
 
-				assert.Equal(t, test.want.user.ID, got.ID)
-				assert.Equal(t, test.want.user.UUID, got.UUID)
-				assert.Equal(t, test.want.user.TelegramID, got.TelegramID)
-				assert.Equal(t, test.want.user.Username, got.Username)
-				assert.Equal(t, test.want.user.FirstName, got.FirstName)
-				assert.Equal(t, test.want.user.LastName, got.LastName)
+				assert.Equal(t, test.want.admin.ID, got.ID)
+				assert.Equal(t, test.want.admin.TelegramID, got.TelegramID)
 
-				assert.WithinDuration(t, test.want.user.CreatedAt, got.CreatedAt, time.Millisecond)
-				assert.WithinDuration(t, test.want.user.UpdatedAt, got.UpdatedAt, time.Millisecond)
+				assert.WithinDuration(t, test.want.admin.CreatedAt, got.CreatedAt, time.Millisecond)
+				assert.WithinDuration(t, test.want.admin.UpdatedAt, got.UpdatedAt, time.Millisecond)
 			default:
 				_, err := cache.Get(test.in.key, test.in.prefix)
 				assert.Equal(t, test.want.err, err)
@@ -248,7 +224,7 @@ func TestGet(t *testing.T) {
 func TestExists(t *testing.T) {
 	type in struct {
 		key    string
-		val    user.User
+		val    admin.Admin
 		prefix string
 	}
 
@@ -259,15 +235,11 @@ func TestExists(t *testing.T) {
 
 	var (
 		telegramID = gofakeit.UUID()
-		testUser   = user.User{
+		testAdmin  = admin.Admin{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
-			Username:   gofakeit.Username(),
-			FirstName:  gofakeit.FirstName(),
-			LastName:   gofakeit.LastName(),
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
+			CreatedAt:  gofakeit.Date(),
+			UpdatedAt:  gofakeit.Date(),
 		}
 	)
 
@@ -280,7 +252,7 @@ func TestExists(t *testing.T) {
 			name: "ok",
 			in: in{
 				key:    telegramID,
-				val:    testUser,
+				val:    testAdmin,
 				prefix: "telegram_id:",
 			},
 			want: want{
@@ -292,7 +264,7 @@ func TestExists(t *testing.T) {
 			name: "not found",
 			in: in{
 				key:    telegramID,
-				val:    testUser,
+				val:    testAdmin,
 				prefix: "telegram_id:",
 			},
 			want: want{
@@ -326,26 +298,22 @@ func TestExists(t *testing.T) {
 func TestDelete(t *testing.T) {
 	type in struct {
 		key    string
-		val    user.User
+		val    admin.Admin
 		prefix string
 	}
 
 	type want struct {
-		user user.User
-		err  error
+		admin admin.Admin
+		err   error
 	}
 
 	var (
 		telegramID = gofakeit.UUID()
-		testUser   = user.User{
+		testAdmin  = admin.Admin{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
-			Username:   gofakeit.Username(),
-			FirstName:  gofakeit.FirstName(),
-			LastName:   gofakeit.LastName(),
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
+			CreatedAt:  gofakeit.Date(),
+			UpdatedAt:  gofakeit.Date(),
 		}
 	)
 
@@ -358,12 +326,12 @@ func TestDelete(t *testing.T) {
 			name: "ok",
 			in: in{
 				key:    telegramID,
-				val:    testUser,
+				val:    testAdmin,
 				prefix: "telegram_id:",
 			},
 			want: want{
-				user: testUser,
-				err:  nil,
+				admin: testAdmin,
+				err:   nil,
 			},
 		},
 	}

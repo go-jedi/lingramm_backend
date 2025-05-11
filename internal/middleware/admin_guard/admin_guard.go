@@ -2,9 +2,9 @@ package adminguard
 
 import (
 	"errors"
-	"fmt"
 	"strings"
 
+	adminservice "github.com/go-jedi/lingvogramm_backend/internal/service/admin"
 	"github.com/go-jedi/lingvogramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingvogramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
@@ -23,12 +23,17 @@ var (
 )
 
 type Middleware struct {
-	jwt *jwt.JWT
+	adminService *adminservice.Service
+	jwt          *jwt.JWT
 }
 
-func New(jwt *jwt.JWT) *Middleware {
+func New(
+	adminService *adminservice.Service,
+	jwt *jwt.JWT,
+) *Middleware {
 	return &Middleware{
-		jwt: jwt,
+		adminService: adminService,
+		jwt:          jwt,
 	}
 }
 
@@ -45,28 +50,16 @@ func (m *Middleware) AdminGuardMiddleware(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to parse token", err.Error(), nil))
 	}
 
-	fmt.Println(vr.TelegramID)
-	// вызываем сервис проверяющий является ли пользователь администратором.
-	// если является администратором, то пропускаем дальше, а иначе ошибку.
-	/*
+	ie, err := m.adminService.ExistsByTelegramID.Execute(c.Context(), vr.TelegramID)
+	if err != nil {
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(response.New[any](false, "internal server error", err.Error(), nil))
+	}
 
-		ie, err := m.adminService.ExistsByTelegramID(c.Request.Context(), vr.TelegramID)
-		if err != nil {
-			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
-				"status":  http.StatusInternalServerError,
-				"message": "internal server error",
-			})
-			return
-		}
-
-		if !ie {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
-				"status":  http.StatusForbidden,
-				"message": ErrAccessDenied.Error(),
-			})
-			return
-		}
-	*/
+	if !ie {
+		c.Status(fiber.StatusForbidden)
+		return c.JSON(response.New[any](false, "access denied", ErrAccessDenied.Error(), nil))
+	}
 
 	return c.Next()
 }
