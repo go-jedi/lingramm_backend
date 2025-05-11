@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/allegro/bigcache"
+	"github.com/go-jedi/lingvogramm_backend/internal/domain/admin"
 	"github.com/go-jedi/lingvogramm_backend/internal/domain/user"
 	"github.com/vmihailenco/msgpack/v5"
 )
@@ -31,7 +32,8 @@ func New(bigCache *bigcache.BigCache) *Iterator {
 	return &Iterator{
 		bigCache: bigCache,
 		typeLookup: map[string]TypeFactory{
-			"user:": func() any { return new(user.User) },
+			"user:":  func() any { return new(user.User) },
+			"admin:": func() any { return new(admin.Admin) },
 		},
 	}
 }

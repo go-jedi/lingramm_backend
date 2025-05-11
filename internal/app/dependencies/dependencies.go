@@ -1,14 +1,17 @@
 package dependencies
 
 import (
+	adminhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/admin"
 	authhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/auth"
 	bigcachehandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/bigcache"
 	clientassetshandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/file_server/client_assets"
 	internalcurrencyhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/internal_currency"
 	"github.com/go-jedi/lingvogramm_backend/internal/middleware"
+	adminrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/admin"
 	clientassetsrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/file_server/client_assets"
 	internalcurrencyrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/internal_currency"
 	userrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/user"
+	adminservice "github.com/go-jedi/lingvogramm_backend/internal/service/admin"
 	authservice "github.com/go-jedi/lingvogramm_backend/internal/service/auth"
 	bigcacheservice "github.com/go-jedi/lingvogramm_backend/internal/service/bigcache"
 	clientassetsservice "github.com/go-jedi/lingvogramm_backend/internal/service/file_server/client_assets"
@@ -54,6 +57,11 @@ type Dependencies struct {
 	internalCurrencyRepository *internalcurrencyrepository.Repository
 	internalCurrencyService    *internalcurrencyservice.Service
 	internalCurrencyHandler    *internalcurrencyhandler.Handler
+
+	// admin
+	adminRepository *adminrepository.Repository
+	adminService    *adminservice.Service
+	adminHandler    *adminhandler.Handler
 }
 
 func New(
@@ -85,7 +93,10 @@ func New(
 
 // initMiddleware initialize middlewares.
 func (d *Dependencies) initMiddleware() {
-	d.middleware = middleware.New(d.jwt)
+	d.middleware = middleware.New(
+		d.AdminService(),
+		d.jwt,
+	)
 }
 
 // initHandler initialize handlers.
@@ -94,4 +105,5 @@ func (d *Dependencies) initHandler() {
 	_ = d.ClientAssetsHandler()
 	_ = d.BigCacheHandler()
 	_ = d.InternalCurrencyHandler()
+	_ = d.AdminHandler()
 }

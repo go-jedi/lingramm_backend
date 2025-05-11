@@ -6,12 +6,14 @@ import (
 
 	"github.com/allegro/bigcache"
 	"github.com/go-jedi/lingvogramm_backend/config"
+	"github.com/go-jedi/lingvogramm_backend/pkg/bigcache/admin"
 	"github.com/go-jedi/lingvogramm_backend/pkg/bigcache/iterator"
 	"github.com/go-jedi/lingvogramm_backend/pkg/bigcache/user"
 )
 
 type BigCache struct {
 	User     user.IUser
+	Admin    admin.IAdmin
 	Iterator iterator.IIterator
 	bigCache *bigcache.BigCache
 }
@@ -40,7 +42,9 @@ func New(cfg config.BigCacheConfig) (*BigCache, error) {
 	}
 
 	bc.bigCache = bigCache
+
 	bc.User = user.New(bigCache)
+	bc.Admin = admin.New(bigCache)
 	bc.Iterator = iterator.New(bigCache)
 
 	return bc, nil
