@@ -1,7 +1,19 @@
 package middleware
 
-type Middleware struct{}
+import (
+	adminguard "github.com/go-jedi/lingvogramm_backend/internal/middleware/admin_guard"
+	"github.com/go-jedi/lingvogramm_backend/internal/middleware/auth"
+	"github.com/go-jedi/lingvogramm_backend/pkg/jwt"
+)
 
-func New() *Middleware {
-	return &Middleware{}
+type Middleware struct {
+	Auth       *auth.Middleware
+	AdminGuard *adminguard.Middleware
+}
+
+func New(jwt *jwt.JWT) *Middleware {
+	return &Middleware{
+		Auth:       auth.New(jwt),
+		AdminGuard: adminguard.New(jwt),
+	}
 }

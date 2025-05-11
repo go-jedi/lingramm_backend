@@ -10,6 +10,7 @@ import (
 	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingvogramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingvogramm_backend/pkg/httpserver"
+	"github.com/go-jedi/lingvogramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
 	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
 	"github.com/go-jedi/lingvogramm_backend/pkg/uuid"
@@ -23,6 +24,7 @@ type App struct {
 	logger       *logger.Logger
 	validator    *validator.Validator
 	uuid         *uuid.UUID
+	jwt          *jwt.JWT
 	postgres     *postgres.Postgres
 	bigCache     *bigcachepkg.BigCache
 	hs           *httpserver.HTTPServer
@@ -52,6 +54,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initLogger,
 		a.initValidator,
 		a.initUUID,
+		a.initJWT,
 		a.initPostgres,
 		a.initBigCache,
 		a.initHTTPServer,
@@ -94,6 +97,16 @@ func (a *App) initValidator(_ context.Context) error {
 func (a *App) initUUID(_ context.Context) error {
 	a.uuid = uuid.New()
 	return nil
+}
+
+// initJWT initialize jwt.
+func (a *App) initJWT(_ context.Context) (err error) {
+	a.jwt, err = jwt.New(a.cfg.JWT, a.uuid)
+	if err != nil {
+		return err
+	}
+
+	return
 }
 
 // initPostgres initialize postgres.
@@ -154,6 +167,7 @@ func (a *App) initDependencies(_ context.Context) error {
 		a.logger,
 		a.validator,
 		a.uuid,
+		a.jwt,
 		a.postgres,
 		a.bigCache,
 		a.fileServer,

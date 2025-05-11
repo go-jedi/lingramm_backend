@@ -15,6 +15,7 @@ import (
 	internalcurrencyservice "github.com/go-jedi/lingvogramm_backend/internal/service/internal_currency"
 	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingvogramm_backend/pkg/file_server"
+	"github.com/go-jedi/lingvogramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
 	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
 	"github.com/go-jedi/lingvogramm_backend/pkg/uuid"
@@ -27,6 +28,7 @@ type Dependencies struct {
 	logger     *logger.Logger
 	validator  *validator.Validator
 	uuid       *uuid.UUID
+	jwt        *jwt.JWT
 	middleware *middleware.Middleware
 	postgres   *postgres.Postgres
 	bigCache   *bigcachepkg.BigCache
@@ -59,6 +61,7 @@ func New(
 	logger *logger.Logger,
 	validator *validator.Validator,
 	uuid *uuid.UUID,
+	jwt *jwt.JWT,
 	postgres *postgres.Postgres,
 	bigCache *bigcachepkg.BigCache,
 	fileServer *fileserver.FileServer,
@@ -68,6 +71,7 @@ func New(
 		logger:     logger,
 		validator:  validator,
 		uuid:       uuid,
+		jwt:        jwt,
 		postgres:   postgres,
 		bigCache:   bigCache,
 		fileServer: fileServer,
@@ -81,7 +85,7 @@ func New(
 
 // initMiddleware initialize middlewares.
 func (d *Dependencies) initMiddleware() {
-	d.middleware = middleware.New()
+	d.middleware = middleware.New(d.jwt)
 }
 
 // initHandler initialize handlers.
