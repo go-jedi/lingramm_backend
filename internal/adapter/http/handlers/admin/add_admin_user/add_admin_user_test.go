@@ -1,4 +1,4 @@
-package getuserbalance
+package addadminuser
 
 import (
 	"errors"
@@ -7,14 +7,13 @@ import (
 	"testing"
 
 	"github.com/brianvoe/gofakeit/v7"
-	userbalance "github.com/go-jedi/lingvogramm_backend/internal/domain/user_balance"
-	internalcurrencyservice "github.com/go-jedi/lingvogramm_backend/internal/service/internal_currency"
-	getuserbalancemocks "github.com/go-jedi/lingvogramm_backend/internal/service/internal_currency/get_user_balance/mocks"
+	"github.com/go-jedi/lingvogramm_backend/internal/domain/admin"
+	adminservice "github.com/go-jedi/lingvogramm_backend/internal/service/admin"
+	addadminuserservicemocks "github.com/go-jedi/lingvogramm_backend/internal/service/admin/add_admin_user/mocks"
 	loggermocks "github.com/go-jedi/lingvogramm_backend/pkg/logger/mocks"
 	"github.com/go-jedi/lingvogramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -30,65 +29,64 @@ func TestExecute(t *testing.T) {
 	}
 
 	var (
-		telegramID      = gofakeit.UUID()
-		testUserBalance = userbalance.UserBalance{
+		telegramID = gofakeit.UUID()
+		testAdmin  = admin.Admin{
 			ID:         gofakeit.Int64(),
 			TelegramID: telegramID,
-			Balance:    decimal.NewFromFloat(0.00),
 			CreatedAt:  gofakeit.Date(),
 			UpdatedAt:  gofakeit.Date(),
 		}
 	)
 
 	tests := []struct {
-		name                       string
-		mockGetUserBalanceBehavior func(m *getuserbalancemocks.IGetUserBalance)
-		mockLoggerBehavior         func(m *loggermocks.ILogger)
-		in                         in
-		want                       want
+		name                     string
+		mockAddAdminUserBehavior func(m *addadminuserservicemocks.IAddAdminUser)
+		mockLoggerBehavior       func(m *loggermocks.ILogger)
+		in                       in
+		want                     want
 	}{
 		{
 			name: "ok",
-			mockGetUserBalanceBehavior: func(m *getuserbalancemocks.IGetUserBalance) {
-				m.On("Execute", mock.Anything, telegramID).Return(testUserBalance, nil)
+			mockAddAdminUserBehavior: func(m *addadminuserservicemocks.IAddAdminUser) {
+				m.On("Execute", mock.Anything, telegramID).Return(testAdmin, nil)
 			},
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
-				m.On("Debug", "[get user balance] execute handler")
+				m.On("Debug", "[add a new admin user] execute handler")
 			},
 			in: in{
 				telegramID: telegramID,
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				response:   response.New[userbalance.UserBalance](true, "success", "", testUserBalance),
+				response:   response.New[admin.Admin](true, "success", "", testAdmin),
 			},
 		},
 		{
 			name: "service_error",
-			mockGetUserBalanceBehavior: func(m *getuserbalancemocks.IGetUserBalance) {
-				m.On("Execute", mock.Anything, telegramID).Return(userbalance.UserBalance{}, errors.New("service error"))
+			mockAddAdminUserBehavior: func(m *addadminuserservicemocks.IAddAdminUser) {
+				m.On("Execute", mock.Anything, telegramID).Return(admin.Admin{}, errors.New("service error"))
 			},
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
-				m.On("Debug", "[get user balance] execute handler")
-				m.On("Error", "failed to get user balance", "error", errors.New("service error"))
+				m.On("Debug", "[add a new admin user] execute handler")
+				m.On("Error", "failed to add admin user", "error", errors.New("service error"))
 			},
 			in: in{
 				telegramID: telegramID,
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
-				response:   response.New[any](false, "failed to exists user by telegram id", "service error", nil),
+				response:   response.New[any](false, "failed to add admin user", "service error", nil),
 			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			mockGetUserBalance := getuserbalancemocks.NewIGetUserBalance(t)
+			mockAddAdminUser := addadminuserservicemocks.NewIAddAdminUser(t)
 			mockLogger := loggermocks.NewILogger(t)
 
-			if test.mockGetUserBalanceBehavior != nil {
-				test.mockGetUserBalanceBehavior(mockGetUserBalance)
+			if test.mockAddAdminUserBehavior != nil {
+				test.mockAddAdminUserBehavior(mockAddAdminUser)
 			}
 			if test.mockLoggerBehavior != nil {
 				test.mockLoggerBehavior(mockLogger)
@@ -96,15 +94,15 @@ func TestExecute(t *testing.T) {
 
 			app := fiber.New()
 
-			ics := &internalcurrencyservice.Service{
-				GetUserBalance: mockGetUserBalance,
+			as := &adminservice.Service{
+				AddAdminUser: mockAddAdminUser,
 			}
 
-			getUserBalance := New(ics, mockLogger)
+			addAdminUser := New(as, mockLogger)
 
-			app.Get("/v1/internal_currency/user/balance/:telegramID", getUserBalance.Execute)
+			app.Get("/v1/admin/add/:telegramID", addAdminUser.Execute)
 
-			req := httptest.NewRequest(fiber.MethodGet, "/v1/internal_currency/user/balance/"+test.in.telegramID, nil)
+			req := httptest.NewRequest(fiber.MethodGet, "/v1/admin/add/"+test.in.telegramID, nil)
 			req.Header.Set("Content-Type", "application/json")
 
 			resp, err := app.Test(req)
@@ -122,7 +120,7 @@ func TestExecute(t *testing.T) {
 
 			switch test.name {
 			case "ok":
-				var result response.Response[userbalance.UserBalance]
+				var result response.Response[admin.Admin]
 				err := jsoniter.Unmarshal(respBody, &result)
 				assert.NoError(t, err)
 				assert.NotNil(t, result.Data)
@@ -133,7 +131,7 @@ func TestExecute(t *testing.T) {
 				assert.Nil(t, result.Data)
 			}
 
-			mockGetUserBalance.AssertExpectations(t)
+			mockAddAdminUser.AssertExpectations(t)
 			mockLogger.AssertExpectations(t)
 		})
 	}
