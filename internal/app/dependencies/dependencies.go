@@ -21,6 +21,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
@@ -34,6 +35,7 @@ type Dependencies struct {
 	jwt        *jwt.JWT
 	middleware *middleware.Middleware
 	postgres   *postgres.Postgres
+	redis      *redis.Redis
 	bigCache   *bigcachepkg.BigCache
 	fileServer *fileserver.FileServer
 
@@ -71,6 +73,7 @@ func New(
 	uuid *uuid.UUID,
 	jwt *jwt.JWT,
 	postgres *postgres.Postgres,
+	redis *redis.Redis,
 	bigCache *bigcachepkg.BigCache,
 	fileServer *fileserver.FileServer,
 ) *Dependencies {
@@ -81,6 +84,7 @@ func New(
 		uuid:       uuid,
 		jwt:        jwt,
 		postgres:   postgres,
+		redis:      redis,
 		bigCache:   bigCache,
 		fileServer: fileServer,
 	}
@@ -96,6 +100,7 @@ func (d *Dependencies) initMiddleware() {
 	d.middleware = middleware.New(
 		d.AdminService(),
 		d.jwt,
+		d.redis,
 	)
 }
 

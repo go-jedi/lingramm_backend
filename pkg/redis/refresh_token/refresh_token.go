@@ -15,6 +15,16 @@ const (
 	prefixTelegramID   = "telegram_id:"
 )
 
+//go:generate mockery --name=IRefreshToken --output=mocks --case=underscore
+type IRefreshToken interface {
+	Set(ctx context.Context, key string, val string) error
+	All(ctx context.Context) (map[string]string, error)
+	Get(ctx context.Context, key string) (string, error)
+	Exists(ctx context.Context, key string) (bool, error)
+	Delete(ctx context.Context, key string) error
+	DeleteKeys(ctx context.Context, keys []string) error
+}
+
 type RefreshToken struct {
 	client             *redis.Client
 	prefixRefreshToken string
@@ -31,16 +41,6 @@ func New(cfg config.RedisConfig, client *redis.Client) *RefreshToken {
 		queryTimeout:       cfg.RefreshToken.QueryTimeout,
 		expiration:         cfg.RefreshToken.Expiration,
 	}
-}
-
-// getPrefixRefreshToken get prefix refresh token.
-func (rf *RefreshToken) getPrefixRefreshToken() string {
-	return rf.prefixRefreshToken
-}
-
-// getPrefixTelegramID get prefix telegram id.
-func (rf *RefreshToken) getPrefixTelegramID() string {
-	return rf.prefixTelegramID
 }
 
 // Set stores refresh token in Redis using MessagePack serialization.
@@ -70,52 +70,45 @@ func (rf *RefreshToken) All(ctx context.Context) (map[string]string, error) {
 	var (
 		cursor uint64
 		result = make(map[string]string)
+		match  = rf.getPrefixRefreshToken() + rf.getPrefixTelegramID() + "*"
 	)
 
 	for {
-		keys, nextCursor, err := rf.client.Scan(
-			ctx,
-			cursor,
-			rf.getPrefixRefreshToken()+rf.getPrefixTelegramID()+"*",
-			count,
-		).Result()
+		keys, nextCursor, err := rf.client.Scan(ctx, cursor, match, count).Result()
 		if err != nil {
 			return nil, err
 		}
 
-		if len(keys) > 0 {
-			values, err := rf.client.MGet(ctx, keys...).Result()
-			if err != nil {
-				return nil, err
+		if len(keys) == 0 {
+			if nextCursor == 0 {
+				break
+			}
+			cursor = nextCursor
+			continue
+		}
+
+		values, err := rf.client.MGet(ctx, keys...).Result()
+		if err != nil {
+			return nil, err
+		}
+
+		for i := range values {
+			rawData := rf.convertToBytes(values[i])
+			if rawData == nil {
+				continue
 			}
 
-			for i := range values {
-				if values[i] == nil {
-					continue
-				}
-
-				rawData, ok := values[i].([]byte)
-				if !ok {
-					str, ok := values[i].(string)
-					if !ok {
-						continue
-					}
-					rawData = []byte(str)
-				}
-
-				var item string
-				if err := msgpack.Unmarshal(rawData, &item); err != nil {
-					continue
-				}
-
-				result[keys[i]] = item
+			var item string
+			if err := msgpack.Unmarshal(rawData, &item); err != nil {
+				continue
 			}
+
+			result[keys[i]] = item
 		}
 
 		if nextCursor == 0 {
 			break
 		}
-
 		cursor = nextCursor
 	}
 
@@ -180,7 +173,29 @@ func (rf *RefreshToken) DeleteKeys(ctx context.Context, keys []string) error {
 	return rf.client.Del(ctx, fullKeys...).Err()
 }
 
+// getPrefixRefreshToken get prefix refresh token.
+func (rf *RefreshToken) getPrefixRefreshToken() string {
+	return rf.prefixRefreshToken
+}
+
+// getPrefixTelegramID get prefix telegram id.
+func (rf *RefreshToken) getPrefixTelegramID() string {
+	return rf.prefixTelegramID
+}
+
 // getExpiration get expiration date for row in cache.
 func (rf *RefreshToken) getExpiration() time.Duration {
 	return time.Duration(rf.expiration) * 24 * time.Hour
+}
+
+// convertToBytes safely converts interface{} to []byte.
+func (rf *RefreshToken) convertToBytes(val interface{}) []byte {
+	switch v := val.(type) {
+	case []byte:
+		return v
+	case string:
+		return []byte(v)
+	default:
+		return nil
+	}
 }

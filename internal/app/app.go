@@ -13,6 +13,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
@@ -26,6 +27,7 @@ type App struct {
 	uuid         *uuid.UUID
 	jwt          *jwt.JWT
 	postgres     *postgres.Postgres
+	redis        *redis.Redis
 	bigCache     *bigcachepkg.BigCache
 	hs           *httpserver.HTTPServer
 	fileServer   *fileserver.FileServer
@@ -56,6 +58,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initUUID,
 		a.initJWT,
 		a.initPostgres,
+		a.initRedis,
 		a.initBigCache,
 		a.initHTTPServer,
 		a.initFileServer,
@@ -119,6 +122,16 @@ func (a *App) initPostgres(ctx context.Context) (err error) {
 	return
 }
 
+// initRedis initialize redis.
+func (a *App) initRedis(ctx context.Context) (err error) {
+	a.redis, err = redis.New(ctx, a.cfg.Redis)
+	if err != nil {
+		return err
+	}
+
+	return
+}
+
 // initBigCache initialize big cache.
 func (a *App) initBigCache(_ context.Context) (err error) {
 	a.bigCache, err = bigcachepkg.New(a.cfg.BigCache)
@@ -169,6 +182,7 @@ func (a *App) initDependencies(_ context.Context) error {
 		a.uuid,
 		a.jwt,
 		a.postgres,
+		a.redis,
 		a.bigCache,
 		a.fileServer,
 	)

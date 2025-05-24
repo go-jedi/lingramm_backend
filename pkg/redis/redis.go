@@ -7,12 +7,15 @@ import (
 	"time"
 
 	"github.com/go-jedi/lingramm_backend/config"
+	refreshtoken "github.com/go-jedi/lingramm_backend/pkg/redis/refresh_token"
 	"github.com/redis/go-redis/v9"
 )
 
 var ErrRedisPingFailed = errors.New("redis ping failed")
 
-type Redis struct{}
+type Redis struct {
+	RefreshToken refreshtoken.IRefreshToken
+}
 
 func New(ctx context.Context, cfg config.RedisConfig) (*Redis, error) {
 	r := &Redis{}
@@ -33,10 +36,11 @@ func New(ctx context.Context, cfg config.RedisConfig) (*Redis, error) {
 		MaxRetryBackoff: time.Duration(cfg.MaxRetryBackoff) * time.Millisecond,
 	})
 
-	_, err := c.Ping(ctx).Result()
-	if err != nil {
+	if _, err := c.Ping(ctx).Result(); err != nil {
 		return nil, fmt.Errorf("%w: %v", ErrRedisPingFailed, err)
 	}
+
+	r.RefreshToken = refreshtoken.New(cfg, c)
 
 	return r, nil
 }

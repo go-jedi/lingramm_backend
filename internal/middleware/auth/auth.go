@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
+	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
@@ -30,12 +31,17 @@ type IMiddleware interface {
 }
 
 type Middleware struct {
-	jwt *jwt.JWT
+	jwt   *jwt.JWT
+	redis *redis.Redis
 }
 
-func New(jwt *jwt.JWT) *Middleware {
+func New(
+	jwt *jwt.JWT,
+	redis *redis.Redis,
+) *Middleware {
 	return &Middleware{
-		jwt: jwt,
+		jwt:   jwt,
+		redis: redis,
 	}
 }
 
@@ -43,13 +49,27 @@ func (m *Middleware) AuthMiddleware(c fiber.Ctx) error {
 	token, err := m.extractTokenFromHeader(c)
 	if err != nil {
 		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(response.New[any](false, "failed to extract token from header", err.Error(), nil))
+		return c.JSON(response.New[any](false, "unauthorized: invalid or missing token", err.Error(), nil))
 	}
 
 	vr, err := m.jwt.ParseToken(token)
 	if err != nil {
 		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(response.New[any](false, "failed to parse token", err.Error(), nil))
+		return c.JSON(response.New[any](false, "unauthorized: invalid token signature", err.Error(), nil))
+	}
+
+	tokenFromCache, err := m.redis.RefreshToken.Get(c.Context(), vr.TelegramID)
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON(response.New[any](false, "unauthorized: could not retrieve refresh token", err.Error(), nil))
+	}
+	if tokenFromCache == "" {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON(response.New[any](false, "unauthorized: no active session found", "", nil))
+	}
+	if token != tokenFromCache {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON(response.New[any](false, "unauthorized: token mismatch or expired", "", nil))
 	}
 
 	c.Locals(telegramIDCtx, vr.TelegramID)

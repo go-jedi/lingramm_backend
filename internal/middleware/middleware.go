@@ -7,6 +7,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/internal/middleware/auth"
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/admin"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
+	"github.com/go-jedi/lingramm_backend/pkg/redis"
 )
 
 type Middleware struct {
@@ -17,13 +18,17 @@ type Middleware struct {
 func New(
 	adminService *adminservice.Service,
 	jwt *jwt.JWT,
+	redis *redis.Redis,
 ) *Middleware {
 	if jwt == nil {
-		log.Fatal("JWT instance cannot be nil")
+		log.Fatal("jwt instance cannot be nil")
+	}
+	if redis == nil {
+		log.Fatal("redis instance cannot be nil")
 	}
 
 	return &Middleware{
-		Auth:       auth.New(jwt),
+		Auth:       auth.New(jwt, redis),
 		AdminGuard: adminguard.New(adminService, jwt),
 	}
 }
