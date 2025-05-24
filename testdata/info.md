@@ -13,6 +13,7 @@
 - `migrate create -ext sql -dir migrations -seq currency_rates_table`
 - `migrate create -ext sql -dir migrations -seq users_blacklist_table`
 - `migrate create -ext sql -dir migrations -seq admins_table`
+- `migrate create -ext sql -dir migrations -seq languages_table`
 
 #### execute:
 - `migrate -database postgresql://admin:test@localhost:54320/lingvogramm_db?sslmode=disable -path migrations up`

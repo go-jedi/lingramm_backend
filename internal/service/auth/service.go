@@ -1,12 +1,12 @@
 package auth
 
 import (
-	"github.com/go-jedi/lingvogramm_backend/internal/repository/user"
-	signin "github.com/go-jedi/lingvogramm_backend/internal/service/auth/sign_in"
-	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
-	"github.com/go-jedi/lingvogramm_backend/pkg/uuid"
+	"github.com/go-jedi/lingramm_backend/internal/repository/user"
+	signin "github.com/go-jedi/lingramm_backend/internal/service/auth/sign_in"
+	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 )
 
 type Service struct {

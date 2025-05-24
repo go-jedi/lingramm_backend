@@ -1,12 +1,12 @@
 package user
 
 import (
-	"github.com/go-jedi/lingvogramm_backend/internal/repository/user/create"
-	"github.com/go-jedi/lingvogramm_backend/internal/repository/user/exists"
-	existsbytelegramid "github.com/go-jedi/lingvogramm_backend/internal/repository/user/exists_by_telegram_id"
-	getbytelegramid "github.com/go-jedi/lingvogramm_backend/internal/repository/user/get_by_telegram_id"
-	getbyuuid "github.com/go-jedi/lingvogramm_backend/internal/repository/user/get_by_uuid"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/internal/repository/user/create"
+	"github.com/go-jedi/lingramm_backend/internal/repository/user/exists"
+	existsbytelegramid "github.com/go-jedi/lingramm_backend/internal/repository/user/exists_by_telegram_id"
+	getbytelegramid "github.com/go-jedi/lingramm_backend/internal/repository/user/get_by_telegram_id"
+	getbyuuid "github.com/go-jedi/lingramm_backend/internal/repository/user/get_by_uuid"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
 )
 
 type Repository struct {

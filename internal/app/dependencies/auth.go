@@ -1,8 +1,8 @@
 package dependencies
 
 import (
-	authhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/auth"
-	authservice "github.com/go-jedi/lingvogramm_backend/internal/service/auth"
+	authhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/auth"
+	authservice "github.com/go-jedi/lingramm_backend/internal/service/auth"
 )
 
 func (d *Dependencies) AuthService() *authservice.Service {

@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/allegro/bigcache"
-	"github.com/go-jedi/lingvogramm_backend/config"
-	"github.com/go-jedi/lingvogramm_backend/pkg/bigcache/admin"
-	"github.com/go-jedi/lingvogramm_backend/pkg/bigcache/iterator"
-	"github.com/go-jedi/lingvogramm_backend/pkg/bigcache/user"
+	"github.com/go-jedi/lingramm_backend/config"
+	"github.com/go-jedi/lingramm_backend/pkg/bigcache/admin"
+	"github.com/go-jedi/lingramm_backend/pkg/bigcache/iterator"
+	"github.com/go-jedi/lingramm_backend/pkg/bigcache/user"
 )
 
 type BigCache struct {

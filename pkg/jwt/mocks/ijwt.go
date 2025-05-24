@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	jwt "github.com/go-jedi/lingvogramm_backend/pkg/jwt"
+	jwt "github.com/go-jedi/lingramm_backend/pkg/jwt"
 	mock "github.com/stretchr/testify/mock"
 )
 

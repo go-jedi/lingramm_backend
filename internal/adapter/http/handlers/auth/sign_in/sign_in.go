@@ -1,12 +1,12 @@
 package signin
 
 import (
-	"github.com/go-jedi/lingvogramm_backend/internal/domain/auth"
-	"github.com/go-jedi/lingvogramm_backend/internal/domain/user"
-	authservice "github.com/go-jedi/lingvogramm_backend/internal/service/auth"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/response"
-	"github.com/go-jedi/lingvogramm_backend/pkg/validator"
+	"github.com/go-jedi/lingramm_backend/internal/domain/auth"
+	"github.com/go-jedi/lingramm_backend/internal/domain/user"
+	authservice "github.com/go-jedi/lingramm_backend/internal/service/auth"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/response"
+	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 )
 

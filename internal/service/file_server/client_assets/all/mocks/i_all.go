@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	clientassets "github.com/go-jedi/lingvogramm_backend/internal/domain/file_server/client_assets"
+	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
 
 	mock "github.com/stretchr/testify/mock"
 )

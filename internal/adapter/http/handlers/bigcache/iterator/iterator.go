@@ -1,9 +1,9 @@
 package iterator
 
 import (
-	bigcacheservice "github.com/go-jedi/lingvogramm_backend/internal/service/bigcache"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/response"
+	bigcacheservice "github.com/go-jedi/lingramm_backend/internal/service/bigcache"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
 

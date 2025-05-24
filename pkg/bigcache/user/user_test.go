@@ -6,7 +6,7 @@ import (
 
 	"github.com/allegro/bigcache"
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/go-jedi/lingvogramm_backend/internal/domain/user"
+	"github.com/go-jedi/lingramm_backend/internal/domain/user"
 	"github.com/stretchr/testify/assert"
 )
 

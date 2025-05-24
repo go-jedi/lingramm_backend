@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
-	userbalance "github.com/go-jedi/lingvogramm_backend/internal/domain/user_balance"
-	loggermocks "github.com/go-jedi/lingvogramm_backend/pkg/logger/mocks"
-	poolsmocks "github.com/go-jedi/lingvogramm_backend/pkg/postgres/mocks"
+	userbalance "github.com/go-jedi/lingramm_backend/internal/domain/user_balance"
+	loggermocks "github.com/go-jedi/lingramm_backend/pkg/logger/mocks"
+	poolsmocks "github.com/go-jedi/lingramm_backend/pkg/postgres/mocks"
 	"github.com/shopspring/decimal"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

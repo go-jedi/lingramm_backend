@@ -1,11 +1,11 @@
 package all
 
 import (
-	clientassets "github.com/go-jedi/lingvogramm_backend/internal/domain/file_server/client_assets"
-	clientassetsservice "github.com/go-jedi/lingvogramm_backend/internal/service/file_server/client_assets"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/response"
-	"github.com/go-jedi/lingvogramm_backend/pkg/validator"
+	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
+	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/file_server/client_assets"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/response"
+	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 )
 

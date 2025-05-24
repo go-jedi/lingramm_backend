@@ -3,10 +3,10 @@ package middleware
 import (
 	"log"
 
-	adminguard "github.com/go-jedi/lingvogramm_backend/internal/middleware/admin_guard"
-	"github.com/go-jedi/lingvogramm_backend/internal/middleware/auth"
-	adminservice "github.com/go-jedi/lingvogramm_backend/internal/service/admin"
-	"github.com/go-jedi/lingvogramm_backend/pkg/jwt"
+	adminguard "github.com/go-jedi/lingramm_backend/internal/middleware/admin_guard"
+	"github.com/go-jedi/lingramm_backend/internal/middleware/auth"
+	adminservice "github.com/go-jedi/lingramm_backend/internal/service/admin"
+	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 )
 
 type Middleware struct {

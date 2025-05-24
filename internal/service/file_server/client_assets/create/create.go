@@ -6,11 +6,11 @@ import (
 	"mime/multipart"
 	"os"
 
-	clientassets "github.com/go-jedi/lingvogramm_backend/internal/domain/file_server/client_assets"
-	clientassetsrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/file_server/client_assets"
-	fileserver "github.com/go-jedi/lingvogramm_backend/pkg/file_server"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
+	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
+	clientassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/file_server/client_assets"
+	fileserver "github.com/go-jedi/lingramm_backend/pkg/file_server"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/jackc/pgx/v5"
 )
 

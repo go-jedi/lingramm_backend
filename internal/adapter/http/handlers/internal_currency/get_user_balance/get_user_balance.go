@@ -1,11 +1,11 @@
 package getuserbalance
 
 import (
-	userbalance "github.com/go-jedi/lingvogramm_backend/internal/domain/user_balance"
-	internalcurrency "github.com/go-jedi/lingvogramm_backend/internal/service/internal_currency"
-	"github.com/go-jedi/lingvogramm_backend/pkg/apperrors"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/response"
+	userbalance "github.com/go-jedi/lingramm_backend/internal/domain/user_balance"
+	internalcurrency "github.com/go-jedi/lingramm_backend/internal/service/internal_currency"
+	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
 

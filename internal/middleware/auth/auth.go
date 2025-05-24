@@ -4,8 +4,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/go-jedi/lingvogramm_backend/pkg/jwt"
-	"github.com/go-jedi/lingvogramm_backend/pkg/response"
+	"github.com/go-jedi/lingramm_backend/pkg/jwt"
+	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
 

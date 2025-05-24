@@ -3,8 +3,8 @@ package iterator
 import (
 	"context"
 
-	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
 )
 
 //go:generate mockery --name=IIterator --output=mocks --case=underscore

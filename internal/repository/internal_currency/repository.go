@@ -1,8 +1,8 @@
 package internalcurrency
 
 import (
-	getuserbalance "github.com/go-jedi/lingvogramm_backend/internal/repository/internal_currency/get_user_balance"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+	getuserbalance "github.com/go-jedi/lingramm_backend/internal/repository/internal_currency/get_user_balance"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
 )
 
 type Repository struct {

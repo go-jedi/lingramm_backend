@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/go-jedi/lingvogramm_backend/config"
-	"github.com/go-jedi/lingvogramm_backend/pkg/uuid"
+	"github.com/go-jedi/lingramm_backend/config"
+	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 	"github.com/golang-jwt/jwt/v5"
 )
 

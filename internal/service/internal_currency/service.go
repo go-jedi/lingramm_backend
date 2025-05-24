@@ -1,12 +1,12 @@
 package internalcurrency
 
 import (
-	internalcurrency "github.com/go-jedi/lingvogramm_backend/internal/repository/internal_currency"
-	userrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/user"
-	getuserbalance "github.com/go-jedi/lingvogramm_backend/internal/service/internal_currency/get_user_balance"
-	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
+	internalcurrency "github.com/go-jedi/lingramm_backend/internal/repository/internal_currency"
+	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/user"
+	getuserbalance "github.com/go-jedi/lingramm_backend/internal/service/internal_currency/get_user_balance"
+	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 )
 
 type Service struct {

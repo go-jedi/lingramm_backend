@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	userbalance "github.com/go-jedi/lingvogramm_backend/internal/domain/user_balance"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
+	userbalance "github.com/go-jedi/lingramm_backend/internal/domain/user_balance"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/jackc/pgx/v5"
 )
 

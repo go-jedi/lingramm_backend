@@ -1,10 +1,10 @@
 package admin
 
 import (
-	addadminuserhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/admin/add_admin_user"
-	existsbytelegramid "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/admin/exists_by_telegram_id"
-	adminservice "github.com/go-jedi/lingvogramm_backend/internal/service/admin"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+	addadminuserhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/admin/add_admin_user"
+	existsbytelegramid "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/admin/exists_by_telegram_id"
+	adminservice "github.com/go-jedi/lingramm_backend/internal/service/admin"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/gofiber/fiber/v3"
 )
 

@@ -1,9 +1,9 @@
 package dependencies
 
 import (
-	adminhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/admin"
-	adminrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/admin"
-	adminservice "github.com/go-jedi/lingvogramm_backend/internal/service/admin"
+	adminhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/admin"
+	adminrepository "github.com/go-jedi/lingramm_backend/internal/repository/admin"
+	adminservice "github.com/go-jedi/lingramm_backend/internal/service/admin"
 )
 
 func (d *Dependencies) AdminRepository() *adminrepository.Repository {

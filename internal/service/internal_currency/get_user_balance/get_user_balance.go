@@ -4,13 +4,13 @@ import (
 	"context"
 	"log"
 
-	userbalance "github.com/go-jedi/lingvogramm_backend/internal/domain/user_balance"
-	internalcurrency "github.com/go-jedi/lingvogramm_backend/internal/repository/internal_currency"
-	userrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/user"
-	"github.com/go-jedi/lingvogramm_backend/pkg/apperrors"
-	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
+	userbalance "github.com/go-jedi/lingramm_backend/internal/domain/user_balance"
+	internalcurrency "github.com/go-jedi/lingramm_backend/internal/repository/internal_currency"
+	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/user"
+	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
+	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/jackc/pgx/v5"
 )
 

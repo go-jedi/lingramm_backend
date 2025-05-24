@@ -7,13 +7,11 @@ DECLARE
     _u users;
 BEGIN
     INSERT INTO users(
-        uuid,
         telegram_id,
         username,
         first_name,
         last_name
     ) VALUES(
-        _src->>'uuid',
         _src->>'telegram_id',
         _src->>'username',
         _src->>'first_name',
@@ -22,10 +20,8 @@ BEGIN
     RETURNING * INTO _u;
 
     INSERT INTO user_profiles(
-        uuid,
         telegram_id
     ) VALUES(
-        _src->>'uuid',
         _src->>'telegram_id'
     );
 

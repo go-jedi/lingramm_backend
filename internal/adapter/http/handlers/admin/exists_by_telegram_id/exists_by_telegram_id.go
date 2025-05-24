@@ -1,10 +1,10 @@
 package existsbytelegramid
 
 import (
-	adminservice "github.com/go-jedi/lingvogramm_backend/internal/service/admin"
-	"github.com/go-jedi/lingvogramm_backend/pkg/apperrors"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/response"
+	adminservice "github.com/go-jedi/lingramm_backend/internal/service/admin"
+	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
 

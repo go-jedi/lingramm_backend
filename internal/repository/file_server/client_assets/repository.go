@@ -1,9 +1,9 @@
 package clientassets
 
 import (
-	"github.com/go-jedi/lingvogramm_backend/internal/repository/file_server/client_assets/all"
-	"github.com/go-jedi/lingvogramm_backend/internal/repository/file_server/client_assets/create"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/internal/repository/file_server/client_assets/all"
+	"github.com/go-jedi/lingramm_backend/internal/repository/file_server/client_assets/create"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
 )
 
 type Repository struct {

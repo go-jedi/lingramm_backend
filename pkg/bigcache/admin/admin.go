@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/allegro/bigcache"
-	"github.com/go-jedi/lingvogramm_backend/internal/domain/admin"
+	"github.com/go-jedi/lingramm_backend/internal/domain/admin"
 	"github.com/vmihailenco/msgpack/v5"
 )
 

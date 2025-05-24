@@ -7,10 +7,10 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
-	"github.com/go-jedi/lingvogramm_backend/internal/domain/user"
-	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
-	iteratorbigcachemocks "github.com/go-jedi/lingvogramm_backend/pkg/bigcache/iterator/mocks"
-	loggermocks "github.com/go-jedi/lingvogramm_backend/pkg/logger/mocks"
+	"github.com/go-jedi/lingramm_backend/internal/domain/user"
+	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
+	iteratorbigcachemocks "github.com/go-jedi/lingramm_backend/pkg/bigcache/iterator/mocks"
+	loggermocks "github.com/go-jedi/lingramm_backend/pkg/logger/mocks"
 	"github.com/stretchr/testify/assert"
 )
 

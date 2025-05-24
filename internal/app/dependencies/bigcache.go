@@ -1,8 +1,8 @@
 package dependencies
 
 import (
-	bigcachehandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/bigcache"
-	bigcacheservice "github.com/go-jedi/lingvogramm_backend/internal/service/bigcache"
+	bigcachehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/bigcache"
+	bigcacheservice "github.com/go-jedi/lingramm_backend/internal/service/bigcache"
 )
 
 func (d *Dependencies) BigCacheService() *bigcacheservice.Service {

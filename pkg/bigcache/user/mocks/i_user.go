@@ -3,7 +3,7 @@
 package mocks
 
 import (
-	user "github.com/go-jedi/lingvogramm_backend/internal/domain/user"
+	user "github.com/go-jedi/lingramm_backend/internal/domain/user"
 	mock "github.com/stretchr/testify/mock"
 )
 

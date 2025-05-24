@@ -1,9 +1,9 @@
 package dependencies
 
 import (
-	internalcurrencyhandler "github.com/go-jedi/lingvogramm_backend/internal/adapter/http/handlers/internal_currency"
-	internalcurrencyrepository "github.com/go-jedi/lingvogramm_backend/internal/repository/internal_currency"
-	internalcurrencyservice "github.com/go-jedi/lingvogramm_backend/internal/service/internal_currency"
+	internalcurrencyhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/internal_currency"
+	internalcurrencyrepository "github.com/go-jedi/lingramm_backend/internal/repository/internal_currency"
+	internalcurrencyservice "github.com/go-jedi/lingramm_backend/internal/service/internal_currency"
 )
 
 func (d *Dependencies) InternalCurrencyRepository() *internalcurrencyrepository.Repository {

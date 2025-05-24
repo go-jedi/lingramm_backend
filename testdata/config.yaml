@@ -11,8 +11,8 @@ logger:
 jwt:
   secret_path: testdata/jwt/.secret # path to file with secret key
   secret_hash_len: 30
-  access_exp_at: 30 # minutes
-  refresh_exp_at: 60 # days
+  access_exp_at: 5 # minutes
+  refresh_exp_at: 7 # days
 
 postgres:
   host: localhost
@@ -34,6 +34,24 @@ big_cache:
   hard_max_cache_size: 600
   verbose: true
   is_on_remove_with_reason: true
+
+redis:
+  addr: 127.0.0.1:63790
+  password: auth
+  db: 0
+  dial_timeout: 5 # second
+  read_timeout: 3 # second
+  write_timeout: 3 # second
+  pool_size: 10
+  min_idle_conns: 3
+  pool_timeout: 4 # second
+  max_retries: 3
+  min_retry_backoff: 8 # millisecond
+  max_retry_backoff: 512 # millisecond
+  dur_cache_update: 60 # minutes
+  refresh_token:
+    query_timeout: 2 # second
+    expiration: 7 # days
 
 file_server:
   client_assets:

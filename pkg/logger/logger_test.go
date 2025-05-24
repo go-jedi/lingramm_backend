@@ -7,7 +7,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/go-jedi/lingvogramm_backend/config"
+	"github.com/go-jedi/lingramm_backend/config"
 	"github.com/stretchr/testify/assert"
 )
 

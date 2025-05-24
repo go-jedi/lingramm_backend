@@ -1,9 +1,9 @@
 package bigcache
 
 import (
-	"github.com/go-jedi/lingvogramm_backend/internal/service/bigcache/iterator"
-	bigcachepkg "github.com/go-jedi/lingvogramm_backend/pkg/bigcache"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/internal/service/bigcache/iterator"
+	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
 )
 
 type Service struct {

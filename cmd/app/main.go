@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 
-	"github.com/go-jedi/lingvogramm_backend/internal/app"
+	"github.com/go-jedi/lingramm_backend/internal/app"
 )
 
 func main() {

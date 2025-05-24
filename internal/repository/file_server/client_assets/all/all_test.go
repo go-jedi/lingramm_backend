@@ -7,9 +7,9 @@ import (
 	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
-	clientassets "github.com/go-jedi/lingvogramm_backend/internal/domain/file_server/client_assets"
-	loggermocks "github.com/go-jedi/lingvogramm_backend/pkg/logger/mocks"
-	poolsmocks "github.com/go-jedi/lingvogramm_backend/pkg/postgres/mocks"
+	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
+	loggermocks "github.com/go-jedi/lingramm_backend/pkg/logger/mocks"
+	poolsmocks "github.com/go-jedi/lingramm_backend/pkg/postgres/mocks"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/stretchr/testify/assert"

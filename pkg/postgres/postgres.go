@@ -7,8 +7,8 @@ import (
 	"log"
 	"time"
 
-	"github.com/go-jedi/lingvogramm_backend/config"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/config"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"

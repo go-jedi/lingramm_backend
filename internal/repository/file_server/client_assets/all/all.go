@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"time"
 
-	clientassets "github.com/go-jedi/lingvogramm_backend/internal/domain/file_server/client_assets"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
-	"github.com/go-jedi/lingvogramm_backend/pkg/postgres"
+	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/jackc/pgx/v5"
 )
 

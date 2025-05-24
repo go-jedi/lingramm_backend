@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	admin "github.com/go-jedi/lingvogramm_backend/internal/domain/admin"
+	admin "github.com/go-jedi/lingramm_backend/internal/domain/admin"
 
 	mock "github.com/stretchr/testify/mock"
 )

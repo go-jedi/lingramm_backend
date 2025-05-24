@@ -12,10 +12,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/go-jedi/lingvogramm_backend/config"
-	clientassets "github.com/go-jedi/lingvogramm_backend/internal/domain/file_server/client_assets"
-	"github.com/go-jedi/lingvogramm_backend/pkg/apperrors"
-	"github.com/go-jedi/lingvogramm_backend/pkg/uuid"
+	"github.com/go-jedi/lingramm_backend/config"
+	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
+	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
+	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 	"github.com/h2non/bimg"
 )
 

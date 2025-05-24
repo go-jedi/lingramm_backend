@@ -5,7 +5,7 @@ package mocks
 import (
 	context "context"
 
-	iterator "github.com/go-jedi/lingvogramm_backend/pkg/bigcache/iterator"
+	iterator "github.com/go-jedi/lingramm_backend/pkg/bigcache/iterator"
 	mock "github.com/stretchr/testify/mock"
 )
 

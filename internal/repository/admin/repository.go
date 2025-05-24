@@ -1,9 +1,9 @@
 package admin
 
 import (
-	addadminuser "github.com/go-jedi/lingvogramm_backend/internal/repository/admin/add_admin_user"
-	existsbytelegramid "github.com/go-jedi/lingvogramm_backend/internal/repository/admin/exists_by_telegram_id"
-	"github.com/go-jedi/lingvogramm_backend/pkg/logger"
+	addadminuser "github.com/go-jedi/lingramm_backend/internal/repository/admin/add_admin_user"
+	existsbytelegramid "github.com/go-jedi/lingramm_backend/internal/repository/admin/exists_by_telegram_id"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
 )
 
 type Repository struct {

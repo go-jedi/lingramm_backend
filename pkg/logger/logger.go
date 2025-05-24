@@ -6,7 +6,7 @@ import (
 	"log/slog"
 	"os"
 
-	"github.com/go-jedi/lingvogramm_backend/config"
+	"github.com/go-jedi/lingramm_backend/config"
 	"github.com/natefinch/lumberjack"
 )
 
