@@ -30,26 +30,26 @@ func New(
 	}
 }
 
-func (cr *Create) Execute(c fiber.Ctx) error {
-	cr.logger.Debug("[create a client assets] execute handler")
+func (h *Create) Execute(c fiber.Ctx) error {
+	h.logger.Debug("[create a client assets] execute handler")
 
 	fileHeader, err := c.FormFile("file")
 	if err != nil {
-		cr.logger.Error("failed to get the first file for the provided form key", "error", err)
+		h.logger.Error("failed to get the first file for the provided form key", "error", err)
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(response.New[any](false, "failed to get the first file for the provided form key", err.Error(), nil))
 	}
 
 	contentType := fileHeader.Header.Get("Content-Type")
 	if _, ok := clientassets.SupportedImageTypes[contentType]; !ok {
-		cr.logger.Error(fmt.Sprintf("unsupported file type: %s", contentType), "error")
+		h.logger.Error(fmt.Sprintf("unsupported file type: %s", contentType), "error")
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(response.New[any](false, "unsupported file type", fmt.Errorf("%w: %s", apperrors.ErrUnsupportedFormat, contentType).Error(), nil))
 	}
 
-	result, err := cr.clientAssetsService.Create.Execute(c.Context(), fileHeader)
+	result, err := h.clientAssetsService.Create.Execute(c.Context(), fileHeader)
 	if err != nil {
-		cr.logger.Error("failed to create a client assets", "error", err)
+		h.logger.Error("failed to create a client assets", "error", err)
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(response.New[any](false, "failed to create a client assets", err.Error(), nil))
 	}

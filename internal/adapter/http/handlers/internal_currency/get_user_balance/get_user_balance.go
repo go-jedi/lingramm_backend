@@ -24,19 +24,19 @@ func New(
 	}
 }
 
-func (gub *GetUserBalance) Execute(c fiber.Ctx) error {
-	gub.logger.Debug("[get user balance] execute handler")
+func (h *GetUserBalance) Execute(c fiber.Ctx) error {
+	h.logger.Debug("[get user balance] execute handler")
 
 	telegramID := c.Params("telegramID")
 	if telegramID == "" {
-		gub.logger.Error("failed to get param telegramID", "error", apperrors.ErrParamIsRequired)
+		h.logger.Error("failed to get param telegramID", "error", apperrors.ErrParamIsRequired)
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(response.New[any](false, "failed to get param telegramID", apperrors.ErrParamIsRequired.Error(), nil))
 	}
 
-	result, err := gub.internalCurrencyService.GetUserBalance.Execute(c.Context(), telegramID)
+	result, err := h.internalCurrencyService.GetUserBalance.Execute(c.Context(), telegramID)
 	if err != nil {
-		gub.logger.Error("failed to get user balance", "error", err)
+		h.logger.Error("failed to get user balance", "error", err)
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(response.New[any](false, "failed to exists user by telegram id", err.Error(), nil))
 	}

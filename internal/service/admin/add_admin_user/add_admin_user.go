@@ -40,12 +40,12 @@ func New(
 	}
 }
 
-func (aad *AddAdminUser) Execute(ctx context.Context, telegramID string) (admin.Admin, error) {
-	aad.logger.Debug("[add a new admin user] execute service")
+func (s *AddAdminUser) Execute(ctx context.Context, telegramID string) (admin.Admin, error) {
+	s.logger.Debug("[add a new admin user] execute service")
 
 	var err error
 
-	tx, err := aad.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
+	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
 		AccessMode: pgx.ReadWrite,
 	})
@@ -60,7 +60,7 @@ func (aad *AddAdminUser) Execute(ctx context.Context, telegramID string) (admin.
 		}
 	}()
 
-	ie, err := aad.checkExistsAdmin(ctx, tx, telegramID)
+	ie, err := s.checkExistsAdmin(ctx, tx, telegramID)
 	if err != nil {
 		return admin.Admin{}, err
 	}
@@ -69,7 +69,7 @@ func (aad *AddAdminUser) Execute(ctx context.Context, telegramID string) (admin.
 		return admin.Admin{}, apperrors.ErrAdminAlreadyExists
 	}
 
-	na, err := aad.createAdmin(ctx, tx, telegramID)
+	na, err := s.createAdmin(ctx, tx, telegramID)
 	if err != nil {
 		return admin.Admin{}, err
 	}
@@ -87,17 +87,17 @@ func (aad *AddAdminUser) Execute(ctx context.Context, telegramID string) (admin.
 // If not found (or if an error occurs other than "entry not found"), it queries the database using Telegram ID.
 // Returns true if the admin exists, otherwise false.
 // Any unexpected error (e.g., cache failure or database error) will be returned.
-func (aad *AddAdminUser) checkExistsAdmin(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
+func (s *AddAdminUser) checkExistsAdmin(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
 	// Check if the admin exists in the cache by Telegram ID.
 	// If found and no error occurred, return true immediately.
-	ieFromCache, err := aad.bigCache.Admin.Exists(telegramID, aad.bigCache.Admin.GetPrefixTelegramID())
+	ieFromCache, err := s.bigCache.Admin.Exists(telegramID, s.bigCache.Admin.GetPrefixTelegramID())
 	if err == nil && ieFromCache {
 		return true, nil
 	}
 
 	// If the admin is not found in the cache (or an error occurred),
 	// query the database to check if the admin exists.
-	ieFromDB, err := aad.adminRepository.ExistsByTelegramID.Execute(ctx, tx, telegramID)
+	ieFromDB, err := s.adminRepository.ExistsByTelegramID.Execute(ctx, tx, telegramID)
 	if err != nil {
 		return false, err
 	}
@@ -108,16 +108,16 @@ func (aad *AddAdminUser) checkExistsAdmin(ctx context.Context, tx pgx.Tx, telegr
 
 // createAdmin creates a new admin in the database.
 // After creation, the admin is cached using the Telegram ID as the key.
-func (aad *AddAdminUser) createAdmin(ctx context.Context, tx pgx.Tx, telegramID string) (admin.Admin, error) {
+func (s *AddAdminUser) createAdmin(ctx context.Context, tx pgx.Tx, telegramID string) (admin.Admin, error) {
 	// add the admin in the database.
-	na, err := aad.adminRepository.AddAdminUser.Execute(ctx, tx, telegramID)
+	na, err := s.adminRepository.AddAdminUser.Execute(ctx, tx, telegramID)
 	if err != nil {
 		return admin.Admin{}, err
 	}
 
 	// save the newly created admin in the cache (prefix: telegram_id:).
-	if err := aad.bigCache.Admin.Set(na.TelegramID, na, aad.bigCache.Admin.GetPrefixTelegramID()); err != nil {
-		aad.logger.Warn(fmt.Sprintf("failed to cache new admin: %v", err))
+	if err := s.bigCache.Admin.Set(na.TelegramID, na, s.bigCache.Admin.GetPrefixTelegramID()); err != nil {
+		s.logger.Warn(fmt.Sprintf("failed to cache new admin: %v", err))
 	}
 
 	// Return the result from the database.

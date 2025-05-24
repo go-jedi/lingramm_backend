@@ -13,6 +13,7 @@ func (d *Dependencies) AuthService() *authservice.Service {
 			d.postgres,
 			d.bigCache,
 			d.uuid,
+			d.jwt,
 		)
 	}
 

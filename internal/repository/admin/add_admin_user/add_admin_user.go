@@ -26,26 +26,26 @@ func New(
 	queryTimeout int64,
 	logger logger.ILogger,
 ) *AddAdminUser {
-	aad := &AddAdminUser{
+	r := &AddAdminUser{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
 
-	aad.init()
+	r.init()
 
-	return aad
+	return r
 }
 
-func (aad *AddAdminUser) init() {
-	if aad.queryTimeout == 0 {
-		aad.queryTimeout = postgres.DefaultQueryTimeout
+func (r *AddAdminUser) init() {
+	if r.queryTimeout == 0 {
+		r.queryTimeout = postgres.DefaultQueryTimeout
 	}
 }
 
-func (aad *AddAdminUser) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (admin.Admin, error) {
-	aad.logger.Debug("[add a new admin user] execute repository")
+func (r *AddAdminUser) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (admin.Admin, error) {
+	r.logger.Debug("[add a new admin user] execute repository")
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(aad.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
 	q := `
@@ -65,10 +65,10 @@ func (aad *AddAdminUser) Execute(ctx context.Context, tx pgx.Tx, telegramID stri
 		&na.CreatedAt, &na.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			aad.logger.Error("request timed out while add admin user", "err", err)
+			r.logger.Error("request timed out while add admin user", "err", err)
 			return admin.Admin{}, fmt.Errorf("the request timed out: %w", err)
 		}
-		aad.logger.Error("failed to add admin user", "err", err)
+		r.logger.Error("failed to add admin user", "err", err)
 		return admin.Admin{}, fmt.Errorf("could not add admin user: %w", err)
 	}
 

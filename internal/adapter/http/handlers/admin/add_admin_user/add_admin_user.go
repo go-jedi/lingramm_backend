@@ -24,19 +24,19 @@ func New(
 	}
 }
 
-func (aau *AddAdminUser) Execute(c fiber.Ctx) error {
-	aau.logger.Debug("[add a new admin user] execute handler")
+func (h *AddAdminUser) Execute(c fiber.Ctx) error {
+	h.logger.Debug("[add a new admin user] execute handler")
 
 	telegramID := c.Params("telegramID")
 	if telegramID == "" {
-		aau.logger.Error("failed to get param telegramID", "error", apperrors.ErrParamIsRequired)
+		h.logger.Error("failed to get param telegramID", "error", apperrors.ErrParamIsRequired)
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(response.New[any](false, "failed to get param telegramID", apperrors.ErrParamIsRequired.Error(), nil))
 	}
 
-	result, err := aau.adminService.AddAdminUser.Execute(c.Context(), telegramID)
+	result, err := h.adminService.AddAdminUser.Execute(c.Context(), telegramID)
 	if err != nil {
-		aau.logger.Error("failed to add admin user", "error", err)
+		h.logger.Error("failed to add admin user", "error", err)
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(response.New[any](false, "failed to add admin user", err.Error(), nil))
 	}

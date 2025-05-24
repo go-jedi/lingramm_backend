@@ -26,26 +26,26 @@ func New(
 	queryTimeout int64,
 	logger logger.ILogger,
 ) *All {
-	a := &All{
+	r := &All{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
 
-	a.init()
+	r.init()
 
-	return a
+	return r
 }
 
-func (a *All) init() {
-	if a.queryTimeout == 0 {
-		a.queryTimeout = postgres.DefaultQueryTimeout
+func (r *All) init() {
+	if r.queryTimeout == 0 {
+		r.queryTimeout = postgres.DefaultQueryTimeout
 	}
 }
 
-func (a *All) Execute(ctx context.Context, tx pgx.Tx) ([]clientassets.ClientAssets, error) {
-	a.logger.Debug("[get all client assets] execute repository")
+func (r *All) Execute(ctx context.Context, tx pgx.Tx) ([]clientassets.ClientAssets, error) {
+	r.logger.Debug("[get all client assets] execute repository")
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(a.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
 	q := `
@@ -57,10 +57,10 @@ func (a *All) Execute(ctx context.Context, tx pgx.Tx) ([]clientassets.ClientAsse
 	rows, err := tx.Query(ctxTimeout, q)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			a.logger.Error("request timed out while get all client assets", "err", err)
+			r.logger.Error("request timed out while get all client assets", "err", err)
 			return nil, fmt.Errorf("the request timed out: %w", err)
 		}
-		a.logger.Error("failed to get all client assets", "err", err)
+		r.logger.Error("failed to get all client assets", "err", err)
 		return nil, fmt.Errorf("could not get all client assets: %w", err)
 	}
 	defer rows.Close()
@@ -75,7 +75,7 @@ func (a *All) Execute(ctx context.Context, tx pgx.Tx) ([]clientassets.ClientAsse
 			&clientAsset.ClientPathFile, &clientAsset.Extension, &clientAsset.Quality,
 			&clientAsset.OldNameFile, &clientAsset.OldExtension, &clientAsset.CreatedAt, &clientAsset.UpdatedAt,
 		); err != nil {
-			a.logger.Error("failed to scan row to get all client assets", "err", err)
+			r.logger.Error("failed to scan row to get all client assets", "err", err)
 			return nil, fmt.Errorf("failed to scan row to get all client assets: %w", err)
 		}
 
@@ -83,7 +83,7 @@ func (a *All) Execute(ctx context.Context, tx pgx.Tx) ([]clientassets.ClientAsse
 	}
 
 	if err := rows.Err(); err != nil {
-		a.logger.Error("failed to get all client assets", "err", rows.Err())
+		r.logger.Error("failed to get all client assets", "err", rows.Err())
 		return nil, fmt.Errorf("failed to get all client assets: %w", err)
 	}
 

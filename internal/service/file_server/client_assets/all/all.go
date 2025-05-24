@@ -34,12 +34,12 @@ func New(
 	}
 }
 
-func (a *All) Execute(ctx context.Context) ([]clientassets.ClientAssets, error) {
-	a.logger.Debug("[get all client assets] execute service")
+func (s *All) Execute(ctx context.Context) ([]clientassets.ClientAssets, error) {
+	s.logger.Debug("[get all client assets] execute service")
 
 	var err error
 
-	tx, err := a.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
+	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
 		AccessMode: pgx.ReadWrite,
 	})
@@ -55,7 +55,7 @@ func (a *All) Execute(ctx context.Context) ([]clientassets.ClientAssets, error) 
 	}()
 
 	// get all client assets from database postgres.
-	result, err := a.clientAssetsRepository.All.Execute(ctx, tx)
+	result, err := s.clientAssetsRepository.All.Execute(ctx, tx)
 	if err != nil {
 		return nil, err
 	}

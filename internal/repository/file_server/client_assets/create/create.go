@@ -26,26 +26,26 @@ func New(
 	queryTimeout int64,
 	logger logger.ILogger,
 ) *Create {
-	c := &Create{
+	r := &Create{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
 
-	c.init()
+	r.init()
 
-	return c
+	return r
 }
 
-func (c *Create) init() {
-	if c.queryTimeout == 0 {
-		c.queryTimeout = postgres.DefaultQueryTimeout
+func (r *Create) init() {
+	if r.queryTimeout == 0 {
+		r.queryTimeout = postgres.DefaultQueryTimeout
 	}
 }
 
-func (c *Create) Execute(ctx context.Context, tx pgx.Tx, data clientassets.UploadAndConvertToWebpResponse) (clientassets.ClientAssets, error) {
-	c.logger.Debug("[create a client assets] execute repository")
+func (r *Create) Execute(ctx context.Context, tx pgx.Tx, data clientassets.UploadAndConvertToWebpResponse) (clientassets.ClientAssets, error) {
+	r.logger.Debug("[create a client assets] execute repository")
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
 	q := `
@@ -73,10 +73,10 @@ func (c *Create) Execute(ctx context.Context, tx pgx.Tx, data clientassets.Uploa
 		&ca.OldNameFile, &ca.OldExtension, &ca.CreatedAt, &ca.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			c.logger.Error("request timed out while create a client assets", "err", err)
+			r.logger.Error("request timed out while create a client assets", "err", err)
 			return clientassets.ClientAssets{}, fmt.Errorf("the request timed out: %w", err)
 		}
-		c.logger.Error("failed to create a client assets", "err", err)
+		r.logger.Error("failed to create a client assets", "err", err)
 		return clientassets.ClientAssets{}, fmt.Errorf("could not create a client assets: %w", err)
 	}
 

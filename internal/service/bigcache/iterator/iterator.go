@@ -27,10 +27,10 @@ func New(
 	}
 }
 
-func (i *Iterator) Execute(ctx context.Context) (map[string]any, error) {
-	i.logger.Debug("[iterator for show data in bigcache] execute service")
+func (s *Iterator) Execute(ctx context.Context) (map[string]any, error) {
+	s.logger.Debug("[iterator for show data in bigcache] execute service")
 
-	result, err := i.bigCache.Iterator.Iterator(ctx)
+	result, err := s.bigCache.Iterator.Iterator(ctx)
 	if err != nil {
 		return nil, err
 	}

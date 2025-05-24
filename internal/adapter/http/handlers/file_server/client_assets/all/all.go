@@ -27,12 +27,12 @@ func New(
 	}
 }
 
-func (a *All) Execute(c fiber.Ctx) error {
-	a.logger.Debug("[get all client assets] execute handler")
+func (h *All) Execute(c fiber.Ctx) error {
+	h.logger.Debug("[get all client assets] execute handler")
 
-	result, err := a.clientAssetsService.All.Execute(c.Context())
+	result, err := h.clientAssetsService.All.Execute(c.Context())
 	if err != nil {
-		a.logger.Error("failed to get all client assets", "error", err)
+		h.logger.Error("failed to get all client assets", "error", err)
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(response.New[any](false, "failed to get all client assets", err.Error(), nil))
 	}

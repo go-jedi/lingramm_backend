@@ -1,50 +1,50 @@
-package getuserbalance
+package check
 
 import (
 	"context"
 	"log"
 
-	userbalance "github.com/go-jedi/lingramm_backend/internal/domain/user_balance"
-	internalcurrency "github.com/go-jedi/lingramm_backend/internal/repository/internal_currency"
+	"github.com/go-jedi/lingramm_backend/internal/domain/auth"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/user"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
+	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/jackc/pgx/v5"
 )
 
-//go:generate mockery --name=IGetUserBalance --output=mocks --case=underscore
-type IGetUserBalance interface {
-	Execute(ctx context.Context, telegramID string) (userbalance.UserBalance, error)
+//go:generate mockery --name=ICheck --output=mocks --case=underscore
+type ICheck interface {
+	Execute(ctx context.Context, dto auth.CheckDTO) (auth.CheckResponse, error)
 }
 
-type GetUserBalance struct {
-	internalCurrencyRepository *internalcurrency.Repository
-	userRepository             *userrepository.Repository
-	logger                     logger.ILogger
-	postgres                   *postgres.Postgres
-	bigCache                   *bigcachepkg.BigCache
+type Check struct {
+	userRepository *userrepository.Repository
+	logger         logger.ILogger
+	postgres       *postgres.Postgres
+	bigCache       *bigcachepkg.BigCache
+	jwt            *jwt.JWT
 }
 
 func New(
-	internalCurrencyRepository *internalcurrency.Repository,
 	userRepository *userrepository.Repository,
 	logger logger.ILogger,
 	postgres *postgres.Postgres,
 	bigCache *bigcachepkg.BigCache,
-) *GetUserBalance {
-	return &GetUserBalance{
-		internalCurrencyRepository: internalCurrencyRepository,
-		userRepository:             userRepository,
-		logger:                     logger,
-		postgres:                   postgres,
-		bigCache:                   bigCache,
+	jwt *jwt.JWT,
+) *Check {
+	return &Check{
+		userRepository: userRepository,
+		logger:         logger,
+		postgres:       postgres,
+		bigCache:       bigCache,
+		jwt:            jwt,
 	}
 }
 
-func (s *GetUserBalance) Execute(ctx context.Context, telegramID string) (userbalance.UserBalance, error) {
-	s.logger.Debug("[get user balance] execute service")
+func (s *Check) Execute(ctx context.Context, dto auth.CheckDTO) (auth.CheckResponse, error) {
+	s.logger.Debug("[check user token] execute service")
 
 	var err error
 
@@ -53,7 +53,7 @@ func (s *GetUserBalance) Execute(ctx context.Context, telegramID string) (userba
 		AccessMode: pgx.ReadWrite,
 	})
 	if err != nil {
-		return userbalance.UserBalance{}, err
+		return auth.CheckResponse{}, err
 	}
 	defer func() {
 		if err != nil {
@@ -63,26 +63,33 @@ func (s *GetUserBalance) Execute(ctx context.Context, telegramID string) (userba
 		}
 	}()
 
-	ie, err := s.checkExistsUser(ctx, tx, telegramID)
+	// check exists user from cache or database.
+	ie, err := s.checkExistsUser(ctx, tx, dto.TelegramID)
 	if err != nil {
-		return userbalance.UserBalance{}, err
+		return auth.CheckResponse{}, err
 	}
 
 	if !ie {
-		return userbalance.UserBalance{}, apperrors.ErrUserDoesNotExist
+		return auth.CheckResponse{}, apperrors.ErrUserDoesNotExist
 	}
 
-	result, err := s.internalCurrencyRepository.GetUserBalance.Execute(ctx, tx, telegramID)
+	// check verify token.
+	vr, err := s.jwt.Verify(dto.TelegramID, dto.Token)
 	if err != nil {
-		return userbalance.UserBalance{}, err
+		return auth.CheckResponse{}, err
 	}
 
+	// commit transaction.
 	err = tx.Commit(ctx)
 	if err != nil {
-		return userbalance.UserBalance{}, err
+		return auth.CheckResponse{}, err
 	}
 
-	return result, nil
+	return auth.CheckResponse{
+		TelegramID: vr.TelegramID,
+		Token:      dto.Token,
+		ExpAt:      vr.ExpAt,
+	}, nil
 }
 
 // checkExistsUser checks whether a user exists either in the cache or the database.
@@ -90,7 +97,7 @@ func (s *GetUserBalance) Execute(ctx context.Context, telegramID string) (userba
 // If not found (or if an error occurs other than "entry not found"), it queries the database using Telegram ID.
 // Returns true if the user exists, otherwise false.
 // Any unexpected error (e.g., cache failure or database error) will be returned.
-func (s *GetUserBalance) checkExistsUser(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
+func (s *Check) checkExistsUser(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
 	// Check if the user exists in the cache by Telegram ID.
 	// If found and no error occurred, return true immediately.
 	ieFromCache, err := s.bigCache.User.Exists(telegramID, s.bigCache.User.GetPrefixTelegramID())

@@ -26,26 +26,26 @@ func New(
 	queryTimeout int64,
 	logger logger.ILogger,
 ) *GetByTelegramID {
-	gbti := &GetByTelegramID{
+	r := &GetByTelegramID{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
 
-	gbti.init()
+	r.init()
 
-	return gbti
+	return r
 }
 
-func (gbti *GetByTelegramID) init() {
-	if gbti.queryTimeout == 0 {
-		gbti.queryTimeout = postgres.DefaultQueryTimeout
+func (r *GetByTelegramID) init() {
+	if r.queryTimeout == 0 {
+		r.queryTimeout = postgres.DefaultQueryTimeout
 	}
 }
 
-func (gbti *GetByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (user.User, error) {
-	gbti.logger.Debug("[get user by telegram id] execute repository")
+func (r *GetByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (user.User, error) {
+	r.logger.Debug("[get user by telegram id] execute repository")
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(gbti.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
 	q := `
@@ -64,10 +64,10 @@ func (gbti *GetByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID 
 		&u.CreatedAt, &u.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			gbti.logger.Error("request timed out while get user by telegram id", "err", err)
+			r.logger.Error("request timed out while get user by telegram id", "err", err)
 			return user.User{}, fmt.Errorf("the request timed out: %w", err)
 		}
-		gbti.logger.Error("failed to get user by telegram id", "err", err)
+		r.logger.Error("failed to get user by telegram id", "err", err)
 		return user.User{}, fmt.Errorf("could not get user by telegram id: %w", err)
 	}
 

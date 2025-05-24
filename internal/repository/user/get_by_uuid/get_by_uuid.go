@@ -26,26 +26,26 @@ func New(
 	queryTimeout int64,
 	logger logger.ILogger,
 ) *GetByUUID {
-	gbui := &GetByUUID{
+	r := &GetByUUID{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
 
-	gbui.init()
+	r.init()
 
-	return gbui
+	return r
 }
 
-func (gbui *GetByUUID) init() {
-	if gbui.queryTimeout == 0 {
-		gbui.queryTimeout = postgres.DefaultQueryTimeout
+func (r *GetByUUID) init() {
+	if r.queryTimeout == 0 {
+		r.queryTimeout = postgres.DefaultQueryTimeout
 	}
 }
 
-func (gbui *GetByUUID) Execute(ctx context.Context, tx pgx.Tx, uuid string) (user.User, error) {
-	gbui.logger.Debug("[get user by uuid] execute repository")
+func (r *GetByUUID) Execute(ctx context.Context, tx pgx.Tx, uuid string) (user.User, error) {
+	r.logger.Debug("[get user by uuid] execute repository")
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(gbui.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
 	q := `
@@ -64,10 +64,10 @@ func (gbui *GetByUUID) Execute(ctx context.Context, tx pgx.Tx, uuid string) (use
 		&u.CreatedAt, &u.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			gbui.logger.Error("request timed out while get user by uuid", "err", err)
+			r.logger.Error("request timed out while get user by uuid", "err", err)
 			return user.User{}, fmt.Errorf("the request timed out: %w", err)
 		}
-		gbui.logger.Error("failed to get user by uuid", "err", err)
+		r.logger.Error("failed to get user by uuid", "err", err)
 		return user.User{}, fmt.Errorf("could not get user by uuid: %w", err)
 	}
 

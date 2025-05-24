@@ -26,26 +26,26 @@ func New(
 	queryTimeout int64,
 	logger logger.ILogger,
 ) *GetUserBalance {
-	gub := &GetUserBalance{
+	r := &GetUserBalance{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
 
-	gub.init()
+	r.init()
 
-	return gub
+	return r
 }
 
-func (gub *GetUserBalance) init() {
-	if gub.queryTimeout == 0 {
-		gub.queryTimeout = postgres.DefaultQueryTimeout
+func (r *GetUserBalance) init() {
+	if r.queryTimeout == 0 {
+		r.queryTimeout = postgres.DefaultQueryTimeout
 	}
 }
 
-func (gub *GetUserBalance) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (userbalance.UserBalance, error) {
-	gub.logger.Debug("[get user balance] execute repository")
+func (r *GetUserBalance) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (userbalance.UserBalance, error) {
+	r.logger.Debug("[get user balance] execute repository")
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(gub.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
 	q := `
@@ -63,10 +63,10 @@ func (gub *GetUserBalance) Execute(ctx context.Context, tx pgx.Tx, telegramID st
 		&ub.CreatedAt, &ub.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			gub.logger.Error("request timed out while get user balance", "err", err)
+			r.logger.Error("request timed out while get user balance", "err", err)
 			return userbalance.UserBalance{}, fmt.Errorf("the request timed out: %w", err)
 		}
-		gub.logger.Error("failed to get user balance", "err", err)
+		r.logger.Error("failed to get user balance", "err", err)
 		return userbalance.UserBalance{}, fmt.Errorf("could not get user balance: %w", err)
 	}
 

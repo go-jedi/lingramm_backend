@@ -27,31 +27,31 @@ func New(
 	queryTimeout int64,
 	logger logger.ILogger,
 ) *Create {
-	c := &Create{
+	r := &Create{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
 
-	c.init()
+	r.init()
 
-	return c
+	return r
 }
 
-func (c *Create) init() {
-	if c.queryTimeout == 0 {
-		c.queryTimeout = postgres.DefaultQueryTimeout
+func (r *Create) init() {
+	if r.queryTimeout == 0 {
+		r.queryTimeout = postgres.DefaultQueryTimeout
 	}
 }
 
-func (c *Create) Execute(ctx context.Context, tx pgx.Tx, dto user.CreateDTO) (user.User, error) {
-	c.logger.Debug("[create a new user] execute repository")
+func (r *Create) Execute(ctx context.Context, tx pgx.Tx, dto user.CreateDTO) (user.User, error) {
+	r.logger.Debug("[create a new user] execute repository")
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
 	rawData, err := jsoniter.Marshal(dto)
 	if err != nil {
-		c.logger.Error("failed to marshal user data", "err", err)
+		r.logger.Error("failed to marshal user data", "err", err)
 		return user.User{}, err
 	}
 
@@ -68,10 +68,10 @@ func (c *Create) Execute(ctx context.Context, tx pgx.Tx, dto user.CreateDTO) (us
 		&nu.CreatedAt, &nu.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			c.logger.Error("request timed out while creating the user", "err", err)
+			r.logger.Error("request timed out while creating the user", "err", err)
 			return user.User{}, fmt.Errorf("the request timed out: %w", err)
 		}
-		c.logger.Error("failed to create user", "err", err)
+		r.logger.Error("failed to create user", "err", err)
 		return user.User{}, fmt.Errorf("could not create user: %w", err)
 	}
 

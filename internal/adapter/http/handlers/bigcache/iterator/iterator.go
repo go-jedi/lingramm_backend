@@ -22,12 +22,12 @@ func New(
 	}
 }
 
-func (i *Iterator) Execute(c fiber.Ctx) error {
-	i.logger.Debug("[iterator for show data in bigcache] execute handler")
+func (h *Iterator) Execute(c fiber.Ctx) error {
+	h.logger.Debug("[iterator for show data in bigcache] execute handler")
 
-	result, err := i.bigCacheService.Iterator.Execute(c.Context())
+	result, err := h.bigCacheService.Iterator.Execute(c.Context())
 	if err != nil {
-		i.logger.Error("failed to show data in bigcache", "error", err)
+		h.logger.Error("failed to show data in bigcache", "error", err)
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(response.New[any](false, "failed to show data in bigcache", err.Error(), nil))
 	}

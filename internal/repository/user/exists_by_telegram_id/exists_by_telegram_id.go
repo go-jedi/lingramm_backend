@@ -25,26 +25,26 @@ func New(
 	queryTimeout int64,
 	logger logger.ILogger,
 ) *ExistsByTelegramID {
-	ebt := &ExistsByTelegramID{
+	r := &ExistsByTelegramID{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
 
-	ebt.init()
+	r.init()
 
-	return ebt
+	return r
 }
 
-func (ebt *ExistsByTelegramID) init() {
-	if ebt.queryTimeout == 0 {
-		ebt.queryTimeout = postgres.DefaultQueryTimeout
+func (r *ExistsByTelegramID) init() {
+	if r.queryTimeout == 0 {
+		r.queryTimeout = postgres.DefaultQueryTimeout
 	}
 }
 
-func (ebt *ExistsByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
-	ebt.logger.Debug("[check user exists by telegram id] execute repository")
+func (r *ExistsByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
+	r.logger.Debug("[check user exists by telegram id] execute repository")
 
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(ebt.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
 	ie := false
@@ -62,10 +62,10 @@ func (ebt *ExistsByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramI
 		telegramID,
 	).Scan(&ie); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			ebt.logger.Error("request timed out while check exists user by telegram id", "err", err)
+			r.logger.Error("request timed out while check exists user by telegram id", "err", err)
 			return false, fmt.Errorf("the request timed out: %w", err)
 		}
-		ebt.logger.Error("failed to check exists user by telegram id", "err", err)
+		r.logger.Error("failed to check exists user by telegram id", "err", err)
 		return false, fmt.Errorf("could not check exists user by telegram id: %w", err)
 	}
 

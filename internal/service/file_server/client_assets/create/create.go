@@ -40,12 +40,12 @@ func New(
 	}
 }
 
-func (c *Create) Execute(ctx context.Context, file *multipart.FileHeader) (clientassets.ClientAssets, error) {
-	c.logger.Debug("[create a client assets] execute service")
+func (s *Create) Execute(ctx context.Context, file *multipart.FileHeader) (clientassets.ClientAssets, error) {
+	s.logger.Debug("[create a client assets] execute service")
 
 	var err error
 
-	tx, err := c.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
+	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
 		AccessMode: pgx.ReadWrite,
 	})
@@ -61,17 +61,17 @@ func (c *Create) Execute(ctx context.Context, file *multipart.FileHeader) (clien
 	}()
 
 	// convert png or jpg image to webp and upload.
-	imageData, err := c.fileServer.ClientAssets.UploadAndConvertToWebP(ctx, file)
+	imageData, err := s.fileServer.ClientAssets.UploadAndConvertToWebP(ctx, file)
 	if err != nil {
 		return clientassets.ClientAssets{}, err
 	}
 
 	// create client assets.
-	result, err := c.clientAssetsRepository.Create.Execute(ctx, tx, imageData)
+	result, err := s.clientAssetsRepository.Create.Execute(ctx, tx, imageData)
 	if err != nil {
 		// compensating action - delete the saved image.
 		if err := os.Remove(imageData.ServerPathFile); err != nil {
-			c.logger.Warn("failed to remove image after db error", "warn", err)
+			s.logger.Warn("failed to remove image after db error", "warn", err)
 		}
 		return clientassets.ClientAssets{}, err
 	}

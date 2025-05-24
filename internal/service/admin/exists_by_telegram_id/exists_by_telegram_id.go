@@ -37,12 +37,12 @@ func New(
 	}
 }
 
-func (ebt *ExistsByTelegramID) Execute(ctx context.Context, telegramID string) (bool, error) {
-	ebt.logger.Debug("[check admin exists by telegram id] execute service")
+func (s *ExistsByTelegramID) Execute(ctx context.Context, telegramID string) (bool, error) {
+	s.logger.Debug("[check admin exists by telegram id] execute service")
 
 	var err error
 
-	tx, err := ebt.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
+	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
 		AccessMode: pgx.ReadWrite,
 	})
@@ -57,7 +57,7 @@ func (ebt *ExistsByTelegramID) Execute(ctx context.Context, telegramID string) (
 		}
 	}()
 
-	ie, err := ebt.checkExistsAdmin(ctx, tx, telegramID)
+	ie, err := s.checkExistsAdmin(ctx, tx, telegramID)
 	if err != nil {
 		return false, err
 	}
@@ -75,17 +75,17 @@ func (ebt *ExistsByTelegramID) Execute(ctx context.Context, telegramID string) (
 // If not found (or if an error occurs other than "entry not found"), it queries the database using Telegram ID.
 // Returns true if the admin exists, otherwise false.
 // Any unexpected error (e.g., cache failure or database error) will be returned.
-func (ebt *ExistsByTelegramID) checkExistsAdmin(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
+func (s *ExistsByTelegramID) checkExistsAdmin(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
 	// Check if the admin exists in the cache by Telegram ID.
 	// If found and no error occurred, return true immediately.
-	ieFromCache, err := ebt.bigCache.Admin.Exists(telegramID, ebt.bigCache.Admin.GetPrefixTelegramID())
+	ieFromCache, err := s.bigCache.Admin.Exists(telegramID, s.bigCache.Admin.GetPrefixTelegramID())
 	if err == nil && ieFromCache {
 		return true, nil
 	}
 
 	// If the admin is not found in the cache (or an error occurred),
 	// query the database to check if the admin exists.
-	ieFromDB, err := ebt.adminRepository.ExistsByTelegramID.Execute(ctx, tx, telegramID)
+	ieFromDB, err := s.adminRepository.ExistsByTelegramID.Execute(ctx, tx, telegramID)
 	if err != nil {
 		return false, err
 	}

@@ -1,8 +1,7 @@
-package signin
+package check
 
 import (
 	"github.com/go-jedi/lingramm_backend/internal/domain/auth"
-	"github.com/go-jedi/lingramm_backend/internal/domain/user"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/auth"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/response"
@@ -10,7 +9,7 @@ import (
 	"github.com/gofiber/fiber/v3"
 )
 
-type SignIn struct {
+type Check struct {
 	authService *authservice.Service
 	logger      logger.ILogger
 	validator   validator.IValidator
@@ -20,18 +19,18 @@ func New(
 	authService *authservice.Service,
 	logger logger.ILogger,
 	validator validator.IValidator,
-) *SignIn {
-	return &SignIn{
+) *Check {
+	return &Check{
 		authService: authService,
 		logger:      logger,
 		validator:   validator,
 	}
 }
 
-func (h *SignIn) Execute(c fiber.Ctx) error {
-	h.logger.Debug("[sign in user] execute handler")
+func (h *Check) Execute(c fiber.Ctx) error {
+	h.logger.Debug("[check user token] execute handler")
 
-	var dto auth.SignInDTO
+	var dto auth.CheckDTO
 	if err := c.Bind().Body(&dto); err != nil {
 		h.logger.Error("failed to bind body", "error", err)
 		c.Status(fiber.StatusBadRequest)
@@ -44,12 +43,12 @@ func (h *SignIn) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to validate struct", err.Error(), nil))
 	}
 
-	result, err := h.authService.SignIn.Execute(c.Context(), dto)
+	result, err := h.authService.Check.Execute(c.Context(), dto)
 	if err != nil {
-		h.logger.Error("failed to sign in user", "error", err)
+		h.logger.Error("failed to check user token", "error", err)
 		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(response.New[any](false, "failed to sign in user", err.Error(), nil))
+		return c.JSON(response.New[any](false, "failed to check user token", err.Error(), nil))
 	}
 
-	return c.JSON(response.New[user.User](true, "success", "", result))
+	return c.JSON(response.New[auth.CheckResponse](true, "success", "", result))
 }
