@@ -2,6 +2,7 @@ package auth
 
 import (
 	checkhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/auth/check"
+	refreshhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/auth/refresh"
 	signinhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/auth/sign_in"
 	"github.com/go-jedi/lingramm_backend/internal/service/auth"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -10,8 +11,9 @@ import (
 )
 
 type Handler struct {
-	signIn *signinhandler.SignIn
-	check  *checkhandler.Check
+	signIn  *signinhandler.SignIn
+	check   *checkhandler.Check
+	refresh *refreshhandler.Refresh
 }
 
 func New(
@@ -21,8 +23,9 @@ func New(
 	validator validator.IValidator,
 ) *Handler {
 	h := &Handler{
-		signIn: signinhandler.New(authService, logger, validator),
-		check:  checkhandler.New(authService, logger, validator),
+		signIn:  signinhandler.New(authService, logger, validator),
+		check:   checkhandler.New(authService, logger, validator),
+		refresh: refreshhandler.New(authService, logger, validator),
 	}
 
 	h.initRoutes(app)
@@ -35,5 +38,6 @@ func (h *Handler) initRoutes(app *fiber.App) {
 	{
 		api.Post("/signin", h.signIn.Execute)
 		api.Post("/check", h.check.Execute)
+		api.Post("/refresh", h.refresh.Execute)
 	}
 }

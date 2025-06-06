@@ -59,7 +59,7 @@ func (r *GetByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID str
 	if err := tx.QueryRow(
 		ctxTimeout, q, telegramID,
 	).Scan(
-		&u.ID, &u.UUID, &u.TelegramID,
+		&u.ID, &u.TelegramID,
 		&u.Username, &u.FirstName, &u.LastName,
 		&u.CreatedAt, &u.UpdatedAt,
 	); err != nil {

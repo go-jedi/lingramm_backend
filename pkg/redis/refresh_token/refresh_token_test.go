@@ -100,6 +100,58 @@ func TestSet(t *testing.T) {
 	}
 }
 
+func TestSetWithExpiration(t *testing.T) {
+	type in struct {
+		ctx        context.Context
+		key        string
+		val        string
+		expiration time.Duration
+	}
+
+	type want struct {
+		refreshToken string
+		err          error
+	}
+
+	var (
+		ctx          = context.TODO()
+		telegramID   = gofakeit.UUID()
+		refreshToken = gofakeit.UUID()
+	)
+
+	tests := []struct {
+		name string
+		in   in
+		want want
+	}{
+		{
+			name: "ok",
+			in: in{
+				ctx:        ctx,
+				key:        telegramID,
+				val:        refreshToken,
+				expiration: time.Duration(5) * time.Second,
+			},
+			want: want{
+				refreshToken: refreshToken,
+				err:          nil,
+			},
+		},
+	}
+
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			cache := setupCache()
+
+			err := cache.SetWithExpiration(ctx, test.in.key, test.in.val, test.in.expiration)
+			assert.NoError(t, err)
+
+			got, err := cache.Get(ctx, test.in.key)
+			assert.Equal(t, test.want.refreshToken, got)
+		})
+	}
+}
+
 func TestAll(t *testing.T) {
 	type in struct {
 		ctx context.Context

@@ -58,20 +58,6 @@ func (m *Middleware) AuthMiddleware(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "unauthorized: invalid token signature", err.Error(), nil))
 	}
 
-	tokenFromCache, err := m.redis.RefreshToken.Get(c.Context(), vr.TelegramID)
-	if err != nil {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(response.New[any](false, "unauthorized: could not retrieve refresh token", err.Error(), nil))
-	}
-	if tokenFromCache == "" {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(response.New[any](false, "unauthorized: no active session found", "", nil))
-	}
-	if token != tokenFromCache {
-		c.Status(fiber.StatusUnauthorized)
-		return c.JSON(response.New[any](false, "unauthorized: token mismatch or expired", "", nil))
-	}
-
 	c.Locals(telegramIDCtx, vr.TelegramID)
 
 	return c.Next()

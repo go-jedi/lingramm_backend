@@ -4,14 +4,16 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/auth"
 	"github.com/go-jedi/lingramm_backend/internal/domain/user"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/user"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
+	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
-	"github.com/go-jedi/lingramm_backend/pkg/uuid"
+	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -24,32 +26,35 @@ type SignIn struct {
 	userRepository *userrepository.Repository
 	logger         logger.ILogger
 	postgres       *postgres.Postgres
+	redis          *redis.Redis
 	bigCache       *bigcachepkg.BigCache
-	uuid           uuid.IUUID
+	jwt            jwt.IJWT
 }
 
 func New(
 	userRepository *userrepository.Repository,
 	logger logger.ILogger,
 	postgres *postgres.Postgres,
+	redis *redis.Redis,
 	bigCache *bigcachepkg.BigCache,
-	uuid uuid.IUUID,
+	jwt jwt.IJWT,
 ) *SignIn {
 	return &SignIn{
 		userRepository: userRepository,
 		logger:         logger,
 		postgres:       postgres,
+		redis:          redis,
 		bigCache:       bigCache,
-		uuid:           uuid,
+		jwt:            jwt,
 	}
 }
 
-func (s *SignIn) Execute(ctx context.Context, dto auth.SignInDTO) (user.User, error) {
+func (s *SignIn) Execute(ctx context.Context, dto auth.SignInDTO) (auth.SignInResp, error) {
 	s.logger.Debug("[sign in user] execute service")
 
 	var (
 		err error
-		u   user.User
+		u   auth.SignInResp
 	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
@@ -57,7 +62,7 @@ func (s *SignIn) Execute(ctx context.Context, dto auth.SignInDTO) (user.User, er
 		AccessMode: pgx.ReadWrite,
 	})
 	if err != nil {
-		return user.User{}, err
+		return auth.SignInResp{}, err
 	}
 	defer func() {
 		if err != nil {
@@ -69,21 +74,21 @@ func (s *SignIn) Execute(ctx context.Context, dto auth.SignInDTO) (user.User, er
 
 	ie, err := s.checkExistsUser(ctx, tx, dto.TelegramID, dto.Username)
 	if err != nil {
-		return user.User{}, err
+		return auth.SignInResp{}, err
 	}
 
 	if ie {
-		u, err = s.findOrReturnExisting(ctx, tx, dto.TelegramID)
+		u, err = s.getUserAndGenerateTokens(ctx, tx, dto.TelegramID)
 	} else {
 		u, err = s.createUser(ctx, tx, dto)
 	}
 	if err != nil {
-		return user.User{}, err
+		return auth.SignInResp{}, err
 	}
 
 	err = tx.Commit(ctx)
 	if err != nil {
-		return user.User{}, err
+		return auth.SignInResp{}, err
 	}
 
 	return u, nil
@@ -113,40 +118,77 @@ func (s *SignIn) checkExistsUser(ctx context.Context, tx pgx.Tx, telegramID stri
 	return ieFromDB, nil
 }
 
-// createUser generates a UUID and creates a new user in the database.
+// createUser creates a new user in the database and generates JWT access, refresh tokens.
 // After creation, the user is cached using the Telegram ID as the key.
-func (s *SignIn) createUser(ctx context.Context, tx pgx.Tx, dto auth.SignInDTO) (user.User, error) {
-	// generate a unique UUID for the new user.
-	newUUID, err := s.uuid.Generate()
-	if err != nil {
-		return user.User{}, err
-	}
-
+func (s *SignIn) createUser(ctx context.Context, tx pgx.Tx, dto auth.SignInDTO) (auth.SignInResp, error) {
 	createDTO := user.CreateDTO{
-		UUID:       newUUID,
 		TelegramID: dto.TelegramID,
 		Username:   dto.Username,
 		FirstName:  dto.FirstName,
 		LastName:   dto.LastName,
 	}
 
-	// create the user in the database.
-	u, err := s.userRepository.Create.Execute(ctx, tx, createDTO)
+	// create new user in the database.
+	nu, err := s.userRepository.Create.Execute(ctx, tx, createDTO)
 	if err != nil {
-		return user.User{}, err
+		return auth.SignInResp{}, err
 	}
 
-	// save the newly created user in the cache (prefix: telegram_id:).
+	// generate access, refresh tokens.
+	tokens, err := s.jwt.Generate(nu.TelegramID)
+	if err != nil {
+		return auth.SignInResp{}, err
+	}
+
+	// set new refresh token in cache.
+	if err := s.redis.RefreshToken.SetWithExpiration(ctx, nu.TelegramID, tokens.RefreshToken, time.Until(tokens.RefreshExpAt)); err != nil {
+		return auth.SignInResp{}, err
+	}
+
+	// save the newly created user in the cache.
+	if err := s.bigCache.User.Set(nu.TelegramID, nu, s.bigCache.User.GetPrefixTelegramID()); err != nil {
+		s.logger.Warn(fmt.Sprintf("failed to cache new user: %v", err))
+	}
+
+	return auth.SignInResp{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		AccessExpAt:  tokens.AccessExpAt,
+		RefreshExpAt: tokens.RefreshExpAt,
+	}, nil
+}
+
+// getUserAndGenerateTokens get user from cache or database.
+// If the user is found to generate tokens.
+func (s *SignIn) getUserAndGenerateTokens(ctx context.Context, tx pgx.Tx, telegramID string) (auth.SignInResp, error) {
+	// get user from cache or database.
+	u, err := s.findOrReturnExisting(ctx, tx, telegramID)
+	if err != nil {
+		return auth.SignInResp{}, err
+	}
+
+	// generate access, refresh tokens.
+	tokens, err := s.jwt.Generate(u.TelegramID)
+	if err != nil {
+		return auth.SignInResp{}, err
+	}
+
+	// set new refresh token in cache.
+	if err := s.redis.RefreshToken.SetWithExpiration(ctx, u.TelegramID, tokens.RefreshToken, time.Until(tokens.RefreshExpAt)); err != nil {
+		return auth.SignInResp{}, err
+	}
+
+	// save the user in the cache.
 	if err := s.bigCache.User.Set(u.TelegramID, u, s.bigCache.User.GetPrefixTelegramID()); err != nil {
 		s.logger.Warn(fmt.Sprintf("failed to cache new user: %v", err))
 	}
 
-	// save the newly created user in the cache (prefix: uuid:).
-	if err := s.bigCache.User.Set(u.TelegramID, u, s.bigCache.User.GetPrefixUUID()); err != nil {
-		s.logger.Warn(fmt.Sprintf("failed to cache new user: %v", err))
-	}
-
-	return u, nil
+	return auth.SignInResp{
+		AccessToken:  tokens.AccessToken,
+		RefreshToken: tokens.RefreshToken,
+		AccessExpAt:  tokens.AccessExpAt,
+		RefreshExpAt: tokens.RefreshExpAt,
+	}, nil
 }
 
 // findOrReturnExisting attempts to retrieve a user from the cache by Telegram ID.

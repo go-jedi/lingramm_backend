@@ -18,6 +18,7 @@ const (
 //go:generate mockery --name=IRefreshToken --output=mocks --case=underscore
 type IRefreshToken interface {
 	Set(ctx context.Context, key string, val string) error
+	SetWithExpiration(ctx context.Context, key string, val string, expiration time.Duration) error
 	All(ctx context.Context) (map[string]string, error)
 	Get(ctx context.Context, key string) (string, error)
 	Exists(ctx context.Context, key string) (bool, error)
@@ -58,6 +59,24 @@ func (rf *RefreshToken) Set(ctx context.Context, key string, val string) error {
 		rf.getPrefixRefreshToken()+rf.getPrefixTelegramID()+key,
 		b,
 		rf.getExpiration(),
+	).Err()
+}
+
+// SetWithExpiration set stores refresh token with expiration in Redis using MessagePack serialization.
+func (rf *RefreshToken) SetWithExpiration(ctx context.Context, key string, val string, expiration time.Duration) error {
+	b, err := msgpack.Marshal(val)
+	if err != nil {
+		return err
+	}
+
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(rf.queryTimeout)*time.Second)
+	defer cancel()
+
+	return rf.client.Set(
+		ctx,
+		rf.getPrefixRefreshToken()+rf.getPrefixTelegramID()+key,
+		b,
+		expiration,
 	).Err()
 }
 

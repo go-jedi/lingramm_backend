@@ -63,7 +63,7 @@ func (r *Create) Execute(ctx context.Context, tx pgx.Tx, dto user.CreateDTO) (us
 		ctxTimeout, q,
 		rawData,
 	).Scan(
-		&nu.ID, &nu.UUID, &nu.TelegramID,
+		&nu.ID, &nu.TelegramID,
 		&nu.Username, &nu.FirstName, &nu.LastName,
 		&nu.CreatedAt, &nu.UpdatedAt,
 	); err != nil {

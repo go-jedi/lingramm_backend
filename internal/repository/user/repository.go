@@ -5,7 +5,6 @@ import (
 	"github.com/go-jedi/lingramm_backend/internal/repository/user/exists"
 	existsbytelegramid "github.com/go-jedi/lingramm_backend/internal/repository/user/exists_by_telegram_id"
 	getbytelegramid "github.com/go-jedi/lingramm_backend/internal/repository/user/get_by_telegram_id"
-	getbyuuid "github.com/go-jedi/lingramm_backend/internal/repository/user/get_by_uuid"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 )
 
@@ -14,7 +13,6 @@ type Repository struct {
 	Exists             exists.IExists
 	ExistsByTelegramID existsbytelegramid.IExistsByTelegramID
 	GetByTelegramID    getbytelegramid.IGetByTelegramID
-	GetByUUID          getbyuuid.IGetByUUID
 }
 
 func New(
@@ -26,6 +24,5 @@ func New(
 		Exists:             exists.New(queryTimeout, logger),
 		ExistsByTelegramID: existsbytelegramid.New(queryTimeout, logger),
 		GetByTelegramID:    getbytelegramid.New(queryTimeout, logger),
-		GetByUUID:          getbyuuid.New(queryTimeout, logger),
 	}
 }
