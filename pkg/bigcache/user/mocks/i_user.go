@@ -134,24 +134,6 @@ func (_m *IUser) GetPrefixTelegramID() string {
 	return r0
 }
 
-// GetPrefixUUID provides a mock function with no fields
-func (_m *IUser) GetPrefixUUID() string {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetPrefixUUID")
-	}
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	return r0
-}
-
 // Set provides a mock function with given fields: key, val, prefix
 func (_m *IUser) Set(key string, val user.User, prefix string) error {
 	ret := _m.Called(key, val, prefix)

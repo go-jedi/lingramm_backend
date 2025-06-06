@@ -30,7 +30,6 @@ func TestExecute(t *testing.T) {
 		key        = "user:telegram_id:" + telegramID
 		testUser   = user.User{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
 			Username:   gofakeit.Username(),
 			FirstName:  gofakeit.FirstName(),

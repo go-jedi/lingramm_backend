@@ -30,7 +30,6 @@ func TestExecute(t *testing.T) {
 		telegramID = gofakeit.UUID()
 		testUser   = user.User{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
 			Username:   gofakeit.Username(),
 			FirstName:  gofakeit.FirstName(),
@@ -64,32 +63,28 @@ func TestExecute(t *testing.T) {
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
-					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*time.Time"),
 					mock.AnythingOfType("*time.Time"),
 				).Run(func(args mock.Arguments) {
 					id := args.Get(0).(*int64)
 					*id = testUser.ID
 
-					uuid := args.Get(1).(*string)
-					*uuid = testUser.UUID
-
-					tgID := args.Get(2).(*string)
+					tgID := args.Get(1).(*string)
 					*tgID = testUser.TelegramID
 
-					un := args.Get(3).(*string)
+					un := args.Get(2).(*string)
 					*un = testUser.Username
 
-					fn := args.Get(4).(*string)
+					fn := args.Get(3).(*string)
 					*fn = testUser.FirstName
 
-					ln := args.Get(5).(*string)
+					ln := args.Get(4).(*string)
 					*ln = testUser.LastName
 
-					ca := args.Get(6).(*time.Time)
+					ca := args.Get(5).(*time.Time)
 					*ca = testUser.CreatedAt
 
-					ua := args.Get(7).(*time.Time)
+					ua := args.Get(6).(*time.Time)
 					*ua = testUser.UpdatedAt
 				}).Return(nil)
 			},
@@ -117,7 +112,6 @@ func TestExecute(t *testing.T) {
 
 				row.On("Scan",
 					mock.AnythingOfType("*int64"),
-					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
@@ -151,7 +145,6 @@ func TestExecute(t *testing.T) {
 
 				row.On("Scan",
 					mock.AnythingOfType("*int64"),
-					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),

@@ -13,13 +13,11 @@ import (
 const (
 	prefixUser       = "user:"
 	prefixTelegramID = "telegram_id:"
-	prefixUUID       = "uuid:"
 )
 
 //go:generate mockery --name=IUser --output=mocks --case=underscore
 type IUser interface {
 	GetPrefixTelegramID() string
-	GetPrefixUUID() string
 	Set(key string, val user.User, prefix string) error
 	All(prefix string) ([]user.User, error)
 	Get(key string, prefix string) (user.User, error)
@@ -30,7 +28,6 @@ type IUser interface {
 type User struct {
 	prefixUser       string
 	prefixTelegramID string
-	prefixUUID       string
 	bigCache         *bigcache.BigCache
 }
 
@@ -38,7 +35,6 @@ func New(bigCache *bigcache.BigCache) *User {
 	return &User{
 		prefixUser:       prefixUser,
 		prefixTelegramID: prefixTelegramID,
-		prefixUUID:       prefixUUID,
 		bigCache:         bigCache,
 	}
 }
@@ -46,11 +42,6 @@ func New(bigCache *bigcache.BigCache) *User {
 // GetPrefixTelegramID get prefix telegram_id.
 func (u *User) GetPrefixTelegramID() string {
 	return u.prefixTelegramID
-}
-
-// GetPrefixUUID get prefix uuid.
-func (u *User) GetPrefixUUID() string {
-	return u.prefixUUID
 }
 
 // Set stores a user in BigCache using MessagePack serialization.

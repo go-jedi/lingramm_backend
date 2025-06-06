@@ -10,6 +10,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/internal/domain/user"
 	loggermocks "github.com/go-jedi/lingramm_backend/pkg/logger/mocks"
 	poolsmocks "github.com/go-jedi/lingramm_backend/pkg/postgres/mocks"
+	jsoniter "github.com/json-iterator/go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -27,7 +28,6 @@ func TestExecute(t *testing.T) {
 
 	var (
 		ctx        = context.TODO()
-		uuid       = gofakeit.UUID()
 		telegramID = gofakeit.UUID()
 		username   = gofakeit.Username()
 		firstname  = gofakeit.FirstName()
@@ -35,7 +35,6 @@ func TestExecute(t *testing.T) {
 		createdAt  = time.Now()
 		updatedAt  = time.Now()
 		dto        = user.CreateDTO{
-			UUID:       uuid,
 			TelegramID: telegramID,
 			Username:   username,
 			FirstName:  firstname,
@@ -43,7 +42,6 @@ func TestExecute(t *testing.T) {
 		}
 		testUser = user.User{
 			ID:         gofakeit.Int64(),
-			UUID:       uuid,
 			TelegramID: telegramID,
 			Username:   username,
 			FirstName:  firstname,
@@ -64,17 +62,17 @@ func TestExecute(t *testing.T) {
 		{
 			name: "ok",
 			mockTxBehavior: func(tx *poolsmocks.ITx, row *poolsmocks.RowMock) {
+				rawData, _ := jsoniter.Marshal(dto)
+
 				tx.On(
 					"QueryRow",
 					mock.Anything,
 					mock.Anything,
-					dto.UUID, dto.TelegramID, dto.Username,
-					dto.FirstName, dto.LastName,
+					rawData,
 				).Return(row)
 
 				row.On("Scan",
 					mock.AnythingOfType("*int64"),
-					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
@@ -85,25 +83,22 @@ func TestExecute(t *testing.T) {
 					id := args.Get(0).(*int64)
 					*id = testUser.ID
 
-					uuid := args.Get(1).(*string)
-					*uuid = testUser.UUID
-
-					tgID := args.Get(2).(*string)
+					tgID := args.Get(1).(*string)
 					*tgID = testUser.TelegramID
 
-					un := args.Get(3).(*string)
+					un := args.Get(2).(*string)
 					*un = testUser.Username
 
-					fn := args.Get(4).(*string)
+					fn := args.Get(3).(*string)
 					*fn = testUser.FirstName
 
-					ln := args.Get(5).(*string)
+					ln := args.Get(4).(*string)
 					*ln = testUser.LastName
 
-					ca := args.Get(6).(*time.Time)
+					ca := args.Get(5).(*time.Time)
 					*ca = testUser.CreatedAt
 
-					ua := args.Get(7).(*time.Time)
+					ua := args.Get(6).(*time.Time)
 					*ua = testUser.UpdatedAt
 				}).Return(nil)
 			},
@@ -122,17 +117,17 @@ func TestExecute(t *testing.T) {
 		{
 			name: "timeout error",
 			mockTxBehavior: func(tx *poolsmocks.ITx, row *poolsmocks.RowMock) {
+				rawData, _ := jsoniter.Marshal(dto)
+
 				tx.On(
 					"QueryRow",
 					mock.Anything,
 					mock.Anything,
-					dto.UUID, dto.TelegramID, dto.Username,
-					dto.FirstName, dto.LastName,
+					rawData,
 				).Return(row)
 
 				row.On("Scan",
 					mock.AnythingOfType("*int64"),
-					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
@@ -157,17 +152,17 @@ func TestExecute(t *testing.T) {
 		{
 			name: "database error",
 			mockTxBehavior: func(tx *poolsmocks.ITx, row *poolsmocks.RowMock) {
+				rawData, _ := jsoniter.Marshal(dto)
+
 				tx.On(
 					"QueryRow",
 					mock.Anything,
 					mock.Anything,
-					dto.UUID, dto.TelegramID, dto.Username,
-					dto.FirstName, dto.LastName,
+					rawData,
 				).Return(row)
 
 				row.On("Scan",
 					mock.AnythingOfType("*int64"),
-					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),
 					mock.AnythingOfType("*string"),

@@ -37,7 +37,6 @@ func TestSet(t *testing.T) {
 		telegramID = gofakeit.UUID()
 		testUser   = user.User{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
 			Username:   gofakeit.Username(),
 			FirstName:  gofakeit.FirstName(),
@@ -77,7 +76,6 @@ func TestSet(t *testing.T) {
 			assert.Equal(t, test.want.err, err)
 
 			assert.Equal(t, test.want.user.ID, got.ID)
-			assert.Equal(t, test.want.user.UUID, got.UUID)
 			assert.Equal(t, test.want.user.TelegramID, got.TelegramID)
 			assert.Equal(t, test.want.user.Username, got.Username)
 			assert.Equal(t, test.want.user.FirstName, got.FirstName)
@@ -105,7 +103,6 @@ func TestAll(t *testing.T) {
 		telegramID = gofakeit.UUID()
 		testUser   = user.User{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
 			Username:   gofakeit.Username(),
 			FirstName:  gofakeit.FirstName(),
@@ -147,7 +144,6 @@ func TestAll(t *testing.T) {
 			assert.Len(t, got, len(test.want.user))
 
 			assert.Equal(t, test.want.user[0].ID, got[0].ID)
-			assert.Equal(t, test.want.user[0].UUID, got[0].UUID)
 			assert.Equal(t, test.want.user[0].TelegramID, got[0].TelegramID)
 			assert.Equal(t, test.want.user[0].Username, got[0].Username)
 			assert.Equal(t, test.want.user[0].FirstName, got[0].FirstName)
@@ -175,7 +171,6 @@ func TestGet(t *testing.T) {
 		telegramID = gofakeit.UUID()
 		testUser   = user.User{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
 			Username:   gofakeit.Username(),
 			FirstName:  gofakeit.FirstName(),
@@ -229,7 +224,6 @@ func TestGet(t *testing.T) {
 				assert.Equal(t, test.want.err, err)
 
 				assert.Equal(t, test.want.user.ID, got.ID)
-				assert.Equal(t, test.want.user.UUID, got.UUID)
 				assert.Equal(t, test.want.user.TelegramID, got.TelegramID)
 				assert.Equal(t, test.want.user.Username, got.Username)
 				assert.Equal(t, test.want.user.FirstName, got.FirstName)
@@ -261,7 +255,6 @@ func TestExists(t *testing.T) {
 		telegramID = gofakeit.UUID()
 		testUser   = user.User{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
 			Username:   gofakeit.Username(),
 			FirstName:  gofakeit.FirstName(),
@@ -339,7 +332,6 @@ func TestDelete(t *testing.T) {
 		telegramID = gofakeit.UUID()
 		testUser   = user.User{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
 			Username:   gofakeit.Username(),
 			FirstName:  gofakeit.FirstName(),
