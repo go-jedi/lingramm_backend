@@ -45,6 +45,23 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     needs: setup
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 63790:6379
+        options: >-
+          --requirepass admin
+          --databases 0
+          --health-cmd "redis-cli -a admin ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+    env:
+      REDIS_ADDR: 127.0.0.1:63790
+      REDIS_PASSWORD: admin
+      REDIS_PORT: 6379
+      REDIS_DATABASES: 0
     steps:
       - uses: actions/checkout@v4
 
@@ -72,6 +89,23 @@ jobs:
     name: Coverage
     runs-on: ubuntu-latest
     needs: setup
+    services:
+      redis:
+        image: redis:latest
+        ports:
+          - 63790:6379
+        options: >-
+          --requirepass admin
+          --databases 0
+          --health-cmd "redis-cli -a admin ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+    env:
+      REDIS_ADDR: 127.0.0.1:63790
+      REDIS_PASSWORD: admin
+      REDIS_PORT: 6379
+      REDIS_DATABASES: 0
     steps:
       - uses: actions/checkout@v4
 
