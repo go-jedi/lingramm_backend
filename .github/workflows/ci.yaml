@@ -52,6 +52,11 @@ jobs:
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
 
+      - name: Install libvips (required for bimg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
+
       - name: Verify go.mod consistency
         run: |
           go mod tidy
@@ -73,6 +78,11 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
+
+      - name: Install libvips (required for bimg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
 
       - name: Run tests with coverage
         run: |
