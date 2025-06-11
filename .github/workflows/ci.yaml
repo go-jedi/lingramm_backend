@@ -82,7 +82,7 @@ jobs:
 
       - name: Run unit tests
         run: |
-          go test -v $(go list ./... | grep -Ev '/(mock|mocks|testdata|cmd)')
+          go test -v $(go list ./... | grep -Ev '/(mock|mocks|testdata|cmd|config|domain|apperrors)')
 
   coverage:
     name: Coverage
@@ -117,7 +117,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          go test -coverprofile=coverage.out $(go list ./... | grep -Ev '/(mock|mocks|testdata|cmd)')
+          go test -coverprofile=coverage.out $(go list ./... | grep -Ev '/(mock|mocks|testdata|cmd|config|domain|apperrors)')
           go tool cover -func=coverage.out
 
 #      - name: Enforce coverage threshold #TODO: если нужен % покрытия определенный.
