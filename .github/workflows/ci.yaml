@@ -51,8 +51,6 @@ jobs:
         ports:
           - 63790:6379
         options: >-
-          --requirepass admin
-          --databases 0
           --health-cmd "redis-cli -a admin ping"
           --health-interval 5s
           --health-timeout 3s
@@ -95,8 +93,6 @@ jobs:
         ports:
           - 63790:6379
         options: >-
-          --requirepass admin
-          --databases 0
           --health-cmd "redis-cli -a admin ping"
           --health-interval 5s
           --health-timeout 3s
