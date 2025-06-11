@@ -6,6 +6,26 @@ on:
   pull_request:
     branches: [main]
 
+defaults:
+  run:
+    shell: bash
+
+x-redis-service: &redis
+  image: redis:latest
+  ports:
+    - 63790:6379
+  options: >-
+    --health-cmd "redis-cli -a admin ping"
+    --health-interval 5s
+    --health-timeout 3s
+    --health-retries 5
+
+x-libvips-install: &libvips-install
+  name: Install libvips (required for bimg)
+  run: |
+    sudo apt-get update
+    sudo apt-get install -y libvips-dev
+
 jobs:
   setup:
     name: Setup
@@ -27,10 +47,7 @@ jobs:
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
 
-      - name: Install libvips (required for bimg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libvips-dev
+      - <<: *libvips-install
 
       - name: Install golangci-lint
         run: |
@@ -40,21 +57,13 @@ jobs:
       - name: Run golangci-lint
         run: golangci-lint run ./...
 
-
   test:
     name: Test
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: setup
     services:
-      redis:
-        image: redis:latest
-        ports:
-          - 63790:6379
-        options: >-
-          --health-cmd "redis-cli -a admin ping"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 5
+      redis: *redis
     env:
       REDIS_ADDR: 127.0.0.1:63790
       REDIS_PASSWORD: admin
@@ -67,10 +76,7 @@ jobs:
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
 
-      - name: Install libvips (required for bimg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libvips-dev
+      - <<: *libvips-install
 
       - name: Verify go.mod consistency
         run: |
@@ -82,22 +88,16 @@ jobs:
 
       - name: Run unit tests
         run: |
-          go test -v $(go list ./... | grep -Ev '/(mock|mocks|testdata|cmd|config|domain|apperrors)')
+          EXCLUDE="/(mock|mocks|testdata|cmd|config|domain|apperrors)"
+          go test -v $(go list ./... | grep -Ev "$EXCLUDE")
 
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: setup
     services:
-      redis:
-        image: redis:latest
-        ports:
-          - 63790:6379
-        options: >-
-          --health-cmd "redis-cli -a admin ping"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 5
+      redis: *redis
     env:
       REDIS_ADDR: 127.0.0.1:63790
       REDIS_PASSWORD: admin
@@ -110,21 +110,19 @@ jobs:
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
 
-      - name: Install libvips (required for bimg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libvips-dev
+      - <<: *libvips-install
 
       - name: Run tests with coverage
         run: |
-          go test -coverprofile=coverage.out $(go list ./... | grep -Ev '/(mock|mocks|testdata|cmd|config|domain|apperrors)')
+          EXCLUDE="/(mock|mocks|testdata|cmd|config|domain|apperrors)"
+          go test -coverprofile=coverage.out $(go list ./... | grep -Ev "$EXCLUDE")
           go tool cover -func=coverage.out
 
 #      - name: Enforce coverage threshold #TODO: если нужен % покрытия определенный.
 #        run: |
 #          percent=$(go tool cover -func=coverage.out | grep total: | awk '{print substr($3, 1, length($3)-1)}')
 #          echo "Total coverage: $percent%"
-#          threshold=80.0
+#          threshold=70.0
 #          if (( $(echo "$percent < $threshold" | bc -l) )); then
 #            echo "::error::Test coverage below threshold ($threshold%)"
 #            exit 1
@@ -139,18 +137,16 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    needs: [ test, lint, coverage ]
+    timeout-minutes: 10
+    needs: [test, lint, coverage]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.24.2
+          go-version: ${{ needs.setup.outputs.go-version }}
 
-      - name: Install libvips (required for bimg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libvips-dev
+      - <<: *libvips-install
 
       - name: Build binary
         run: |
@@ -160,5 +156,5 @@ jobs:
       - name: Upload binary artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-binary
+          name: app-binary-${{ github.sha }}
           path: .bin/app
