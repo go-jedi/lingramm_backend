@@ -10,22 +10,6 @@ defaults:
   run:
     shell: bash
 
-x-redis-service: &redis
-  image: redis:latest
-  ports:
-    - 63790:6379
-  options: >-
-    --health-cmd "redis-cli -a admin ping"
-    --health-interval 5s
-    --health-timeout 3s
-    --health-retries 5
-
-x-libvips-install: &libvips-install
-  name: Install libvips (required for bimg)
-  run: |
-    sudo apt-get update
-    sudo apt-get install -y libvips-dev
-
 jobs:
   setup:
     name: Setup
@@ -47,7 +31,10 @@ jobs:
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
 
-      - <<: *libvips-install
+      - name: Install libvips (required for bimg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
 
       - name: Install golangci-lint
         run: |
@@ -63,7 +50,15 @@ jobs:
     timeout-minutes: 10
     needs: setup
     services:
-      redis: *redis
+      redis:
+        image: redis:latest
+        ports:
+          - 63790:6379
+        options: >-
+          --health-cmd "redis-cli -a admin ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
     env:
       REDIS_ADDR: 127.0.0.1:63790
       REDIS_PASSWORD: admin
@@ -76,7 +71,10 @@ jobs:
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
 
-      - <<: *libvips-install
+      - name: Install libvips (required for bimg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
 
       - name: Verify go.mod consistency
         run: |
@@ -97,7 +95,15 @@ jobs:
     timeout-minutes: 10
     needs: setup
     services:
-      redis: *redis
+      redis:
+        image: redis:latest
+        ports:
+          - 63790:6379
+        options: >-
+          --health-cmd "redis-cli -a admin ping"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
     env:
       REDIS_ADDR: 127.0.0.1:63790
       REDIS_PASSWORD: admin
@@ -110,7 +116,10 @@ jobs:
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
 
-      - <<: *libvips-install
+      - name: Install libvips (required for bimg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
 
       - name: Run tests with coverage
         run: |
@@ -146,7 +155,10 @@ jobs:
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
 
-      - <<: *libvips-install
+      - name: Install libvips (required for bimg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
 
       - name: Build binary
         run: |
