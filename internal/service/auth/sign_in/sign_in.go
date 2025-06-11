@@ -19,7 +19,7 @@ import (
 
 //go:generate mockery --name=ISignIn --output=mocks --case=underscore
 type ISignIn interface {
-	Execute(ctx context.Context, dto auth.SignInDTO) (user.User, error)
+	Execute(ctx context.Context, dto auth.SignInDTO) (auth.SignInResp, error)
 }
 
 type SignIn struct {

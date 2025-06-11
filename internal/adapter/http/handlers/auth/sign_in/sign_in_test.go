@@ -6,11 +6,9 @@ import (
 	"io"
 	"net/http/httptest"
 	"testing"
-	"time"
 
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/go-jedi/lingramm_backend/internal/domain/auth"
-	"github.com/go-jedi/lingramm_backend/internal/domain/user"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/auth"
 	servicemocks "github.com/go-jedi/lingramm_backend/internal/service/auth/sign_in/mocks"
 	loggermocks "github.com/go-jedi/lingramm_backend/pkg/logger/mocks"
@@ -33,28 +31,21 @@ func TestExecute(t *testing.T) {
 	}
 
 	var (
-		uuid       = gofakeit.UUID()
 		telegramID = gofakeit.UUID()
 		username   = gofakeit.Username()
 		firstname  = gofakeit.FirstName()
 		lastname   = gofakeit.LastName()
-		createdAt  = time.Now()
-		updatedAt  = time.Now()
 		dto        = auth.SignInDTO{
 			TelegramID: telegramID,
 			Username:   username,
 			FirstName:  firstname,
 			LastName:   lastname,
 		}
-		testUser = user.User{
-			ID:         gofakeit.Int64(),
-			UUID:       uuid,
-			TelegramID: telegramID,
-			Username:   username,
-			FirstName:  firstname,
-			LastName:   lastname,
-			CreatedAt:  createdAt,
-			UpdatedAt:  updatedAt,
+		testResult = auth.SignInResp{
+			AccessToken:  gofakeit.UUID(),
+			RefreshToken: gofakeit.UUID(),
+			AccessExpAt:  gofakeit.Date(),
+			RefreshExpAt: gofakeit.Date(),
 		}
 	)
 
@@ -69,7 +60,7 @@ func TestExecute(t *testing.T) {
 		{
 			name: "ok",
 			mockSignInBehavior: func(m *servicemocks.ISignIn) {
-				m.On("Execute", mock.Anything, dto).Return(testUser, nil)
+				m.On("Execute", mock.Anything, dto).Return(testResult, nil)
 			},
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
 				m.On("Debug", "[sign in user] execute handler")
@@ -82,7 +73,7 @@ func TestExecute(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusOK,
-				response:   response.New[user.User](true, "success", "", testUser),
+				response:   response.New[auth.SignInResp](true, "success", "", testResult),
 			},
 		},
 		{
@@ -119,7 +110,7 @@ func TestExecute(t *testing.T) {
 		{
 			name: "service error",
 			mockSignInBehavior: func(m *servicemocks.ISignIn) {
-				m.On("Execute", mock.Anything, dto).Return(user.User{}, errors.New("service error"))
+				m.On("Execute", mock.Anything, dto).Return(auth.SignInResp{}, errors.New("service error"))
 			},
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
 				m.On("Debug", "[sign in user] execute handler")
@@ -197,7 +188,7 @@ func TestExecute(t *testing.T) {
 
 			switch test.name {
 			case "ok":
-				var result response.Response[user.User]
+				var result response.Response[auth.SignInResp]
 				err := jsoniter.Unmarshal(respBody, &result)
 				assert.NoError(t, err)
 				assert.NotNil(t, result.Data)

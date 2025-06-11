@@ -33,7 +33,6 @@ func TestExecute(t *testing.T) {
 		prefix     = "user:telegram_id:"
 		testUser   = user.User{
 			ID:         1,
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
 			Username:   gofakeit.Username(),
 			FirstName:  gofakeit.FirstName(),

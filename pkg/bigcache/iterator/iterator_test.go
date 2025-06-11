@@ -54,7 +54,6 @@ func TestIterator(t *testing.T) {
 		telegramID = gofakeit.UUID()
 		testUser   = user.User{
 			ID:         gofakeit.Int64(),
-			UUID:       gofakeit.UUID(),
 			TelegramID: telegramID,
 			Username:   gofakeit.Username(),
 			FirstName:  gofakeit.FirstName(),
@@ -101,7 +100,6 @@ func TestIterator(t *testing.T) {
 			assert.True(t, ok)
 
 			assert.Equal(t, test.want.val.ID, out.ID)
-			assert.Equal(t, test.want.val.UUID, out.UUID)
 			assert.Equal(t, test.want.val.TelegramID, out.TelegramID)
 			assert.Equal(t, test.want.val.Username, out.Username)
 			assert.Equal(t, test.want.val.FirstName, out.FirstName)
