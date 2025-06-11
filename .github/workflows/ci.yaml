@@ -14,7 +14,7 @@ jobs:
       go-version: ${{ steps.set-version.outputs.go-version }}
     steps:
       - id: set-version
-        run: echo "go-version=1.22" >> "$GITHUB_OUTPUT"
+        run: echo "go-version=1.24.2" >> "$GITHUB_OUTPUT"
 
   lint:
     name: Lint
@@ -30,7 +30,7 @@ jobs:
       - name: Install golangci-lint
         run: |
           curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-            | sh -s -- -b $(go env GOPATH)/bin v1.57.2
+            | sh -s -- -b $(go env GOPATH)/bin v2.1.5
 
       - name: Run golangci-lint
         run: golangci-lint run ./...
@@ -99,7 +99,7 @@ jobs:
 
       - uses: actions/setup-go@v5
         with:
-          go-version: 1.22
+          go-version: 1.24.2
 
       - name: Build binary
         run: go build -v -o build/app ./...
