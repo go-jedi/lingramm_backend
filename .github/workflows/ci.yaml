@@ -170,3 +170,37 @@ jobs:
         with:
           name: app-binary-${{ github.sha }}
           path: .bin/app
+
+  deploy:
+    name: Deploy via Docker pull
+    runs-on: ubuntu-latest
+    needs: build
+    environment: production
+    steps:
+      - name: Setup SSH Agent
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Pull Docker image and restart container
+        run: |
+          echo "Connecting to ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}..."
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} <<EOF
+            set -e
+            echo "Pulling image: ${{ secrets.DOCKER_IMAGE }}"
+            docker pull ${{ secrets.DOCKER_IMAGE }}
+          
+            echo "Stopping container: ${{ secrets.CONTAINER_NAME }}"
+            docker stop ${{ secrets.CONTAINER_NAME }} || true
+          
+            echo "Removing container: ${{ secrets.CONTAINER_NAME }}"
+            docker rm ${{ secrets.CONTAINER_NAME }} || true
+          
+            echo "Running new container: ${{ secrets.CONTAINER_NAME }}"
+            docker run -d \
+              --name ${{ secrets.CONTAINER_NAME }} \
+              -p 50050:50050 \
+              ${{ secrets.DOCKER_IMAGE }}
+          
+            echo "✅ Deployment complete."
+          EOF

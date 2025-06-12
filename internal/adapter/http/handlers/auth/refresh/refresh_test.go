@@ -1,4 +1,4 @@
-package check
+package refresh
 
 import (
 	"bytes"
@@ -11,7 +11,7 @@ import (
 	"github.com/brianvoe/gofakeit/v7"
 	"github.com/go-jedi/lingramm_backend/internal/domain/auth"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/auth"
-	servicemocks "github.com/go-jedi/lingramm_backend/internal/service/auth/check/mocks"
+	servicemocks "github.com/go-jedi/lingramm_backend/internal/service/auth/refresh/mocks"
 	loggermocks "github.com/go-jedi/lingramm_backend/pkg/logger/mocks"
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	validatormocks "github.com/go-jedi/lingramm_backend/pkg/validator/mocks"
@@ -32,22 +32,21 @@ func TestExecute(t *testing.T) {
 	}
 
 	var (
-		telegramID = gofakeit.UUID()
-		token      = gofakeit.UUID()
-		dto        = auth.CheckDTO{
-			TelegramID: telegramID,
-			Token:      token,
+		dto = auth.RefreshDTO{
+			TelegramID:   gofakeit.UUID(),
+			RefreshToken: gofakeit.UUID(),
 		}
-		testResponse = auth.CheckResponse{
-			TelegramID: telegramID,
-			Token:      token,
-			ExpAt:      gofakeit.Date(),
+		testResponse = auth.RefreshResponse{
+			AccessToken:  gofakeit.UUID(),
+			RefreshToken: gofakeit.UUID(),
+			AccessExpAt:  gofakeit.Date(),
+			RefreshExpAt: gofakeit.Date(),
 		}
 	)
 
 	tests := []struct {
 		name                  string
-		mockCheckBehavior     func(m *servicemocks.ICheck)
+		mockRefreshBehavior   func(m *servicemocks.IRefresh)
 		mockLoggerBehavior    func(m *loggermocks.ILogger)
 		mockValidatorBehavior func(m *validatormocks.IValidator)
 		in                    in
@@ -55,11 +54,11 @@ func TestExecute(t *testing.T) {
 	}{
 		{
 			name: "ok",
-			mockCheckBehavior: func(m *servicemocks.ICheck) {
+			mockRefreshBehavior: func(m *servicemocks.IRefresh) {
 				m.On("Execute", mock.Anything, dto).Return(testResponse, nil)
 			},
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
-				m.On("Debug", "[check user token] execute handler")
+				m.On("Debug", "[refresh user token] execute handler")
 			},
 			mockValidatorBehavior: func(m *validatormocks.IValidator) {
 				m.On("Struct", dto).Return(nil)
@@ -75,7 +74,7 @@ func TestExecute(t *testing.T) {
 		{
 			name: "bind error",
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
-				m.On("Debug", "[check user token] execute handler")
+				m.On("Debug", "[refresh user token] execute handler")
 				m.On("Error", "failed to bind body", "error", mock.Anything)
 			},
 			in: in{
@@ -89,7 +88,7 @@ func TestExecute(t *testing.T) {
 		{
 			name: "validation error",
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
-				m.On("Debug", "[check user token] execute handler")
+				m.On("Debug", "[refresh user token] execute handler")
 				m.On("Error", "failed to validate struct", "error", mock.Anything)
 			},
 			mockValidatorBehavior: func(m *validatormocks.IValidator) {
@@ -105,12 +104,12 @@ func TestExecute(t *testing.T) {
 		},
 		{
 			name: "service error",
-			mockCheckBehavior: func(m *servicemocks.ICheck) {
-				m.On("Execute", mock.Anything, dto).Return(auth.CheckResponse{}, errors.New("service error"))
+			mockRefreshBehavior: func(m *servicemocks.IRefresh) {
+				m.On("Execute", mock.Anything, dto).Return(auth.RefreshResponse{}, errors.New("service error"))
 			},
 			mockLoggerBehavior: func(m *loggermocks.ILogger) {
-				m.On("Debug", "[check user token] execute handler")
-				m.On("Error", "failed to check user token", "error", mock.Anything)
+				m.On("Debug", "[refresh user token] execute handler")
+				m.On("Error", "failed to refresh tokens", "error", mock.Anything)
 			},
 			mockValidatorBehavior: func(m *validatormocks.IValidator) {
 				m.On("Struct", dto).Return(nil)
@@ -120,19 +119,19 @@ func TestExecute(t *testing.T) {
 			},
 			want: want{
 				statusCode: fiber.StatusInternalServerError,
-				response:   response.New[any](false, "failed to check user token", "service error", nil),
+				response:   response.New[any](false, "failed to refresh tokens", "service error", nil),
 			},
 		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {
-			mockCheck := servicemocks.NewICheck(t)
+			mockRefresh := servicemocks.NewIRefresh(t)
 			mockLogger := loggermocks.NewILogger(t)
 			mockValidator := validatormocks.NewIValidator(t)
 
-			if test.mockCheckBehavior != nil {
-				test.mockCheckBehavior(mockCheck)
+			if test.mockRefreshBehavior != nil {
+				test.mockRefreshBehavior(mockRefresh)
 			}
 			if test.mockLoggerBehavior != nil {
 				test.mockLoggerBehavior(mockLogger)
@@ -144,12 +143,12 @@ func TestExecute(t *testing.T) {
 			app := fiber.New()
 
 			as := &authservice.Service{
-				Check: mockCheck,
+				Refresh: mockRefresh,
 			}
 
-			check := New(as, mockLogger, mockValidator)
+			refresh := New(as, mockLogger, mockValidator)
 
-			app.Post("/v1/auth/check", check.Execute)
+			app.Post("/v1/auth/refresh", refresh.Execute)
 
 			var rawData []byte
 			var err error
@@ -164,7 +163,7 @@ func TestExecute(t *testing.T) {
 
 			req := httptest.NewRequest(
 				fiber.MethodPost,
-				"/v1/auth/check",
+				"/v1/auth/refresh",
 				bytes.NewBuffer(rawData),
 			)
 			req.Header.Set("Content-Type", "application/json")
@@ -184,7 +183,7 @@ func TestExecute(t *testing.T) {
 
 			switch test.name {
 			case "ok":
-				var result response.Response[auth.CheckResponse]
+				var result response.Response[auth.RefreshResponse]
 				err := jsoniter.Unmarshal(respBody, &result)
 				assert.NoError(t, err)
 				assert.NotNil(t, result.Data)
@@ -195,7 +194,7 @@ func TestExecute(t *testing.T) {
 				assert.Nil(t, result.Data)
 			}
 
-			mockCheck.AssertExpectations(t)
+			mockRefresh.AssertExpectations(t)
 			mockLogger.AssertExpectations(t)
 			mockValidator.AssertExpectations(t)
 		})
