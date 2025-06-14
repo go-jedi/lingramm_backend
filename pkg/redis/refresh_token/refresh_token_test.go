@@ -2,6 +2,7 @@ package refreshtoken
 
 import (
 	"context"
+	"os"
 	"testing"
 	"time"
 
@@ -12,9 +13,19 @@ import (
 )
 
 func setupCache() *RefreshToken {
+	addr := os.Getenv("REDIS_ADDR")
+	if addr == "" {
+		addr = "127.0.0.1:63790"
+	}
+
+	password := os.Getenv("REDIS_PASSWORD")
+	if password == "" {
+		password = "admin"
+	}
+
 	cfg := config.RedisConfig{
-		Addr:            "127.0.0.1:63790",
-		Password:        "auth",
+		Addr:            addr,
+		Password:        password,
 		DB:              0,
 		DialTimeout:     5,
 		ReadTimeout:     3,
