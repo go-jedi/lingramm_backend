@@ -1,20 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lingvogramm-backend
+  name: lingramm-backend
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lingvogramm-backend
+      app: lingramm-backend
   template:
     metadata:
       labels:
-        app: lingvogramm-backend
+        app: lingramm-backend
     spec:
+      imagePullSecrets:
+        - name: regcred
       containers:
-        - name: lingvogramm-backend
-          image: gojedi/lingvogramm_backend:latest
+        - name: lingramm-backend
+          image: gojedi/lingramm_backend:latest
           resources:
             limits:
               memory: "128Mi"

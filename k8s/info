@@ -1,0 +1,9 @@
+Запустить проект:
+1) Завести сикрет для подключения к docker hub:
+kubectl create secret docker-registry auth_docker_hub \
+  --docker-server=https://index.docker.io/v1/ \
+  --docker-username=gojedi \
+  --docker-password=dckr_pat_MObJ7FMJ7dliFqnQtVjLq7pNmUk \
+  --docker-email=golangjedi@gmail.com
+
+2) kubectl apply -f deployment.yaml -f service.yaml
