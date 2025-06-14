@@ -82,6 +82,25 @@ jobs:
           export PATH="$(go env GOPATH)/bin:$PATH"
           gosec ./...
 
+  critic:
+    name: Security Scan (gocritic)
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ needs.setup.outputs.go-version }}
+
+      - name: Install gocritic
+        run: go install github.com/go-critic/go-critic/cmd/gocritic@latest
+
+      - name: Run gocritic
+        run: |
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          gocritic check ./...
+
   test:
     name: Test
     runs-on: ubuntu-latest
@@ -185,7 +204,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [lint, validate, security, test, coverage]
+    needs: [lint, validate, security, critic, test, coverage]
     steps:
       - uses: actions/checkout@v4
 
