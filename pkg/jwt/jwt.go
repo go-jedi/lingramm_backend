@@ -230,7 +230,7 @@ func (j *JWT) generateSecretKey(secretPath string) error {
 	}
 
 	if ie {
-		fb, err := os.ReadFile(secretPath)
+		fb, err := os.ReadFile(secretPath) // #nosec G304
 		if err != nil {
 			return err
 		}

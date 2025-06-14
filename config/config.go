@@ -128,7 +128,7 @@ func LoadConfig() string {
 
 // ParseConfig parse config file.
 func ParseConfig(configFile string) (config Config, err error) {
-	f, err := os.Open(configFile)
+	f, err := os.Open(configFile) // #nosec G304
 	if err != nil {
 		return config, err
 	}
