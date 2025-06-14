@@ -86,7 +86,6 @@ func TestExecute(t *testing.T) {
 			AccessMode: pgx.ReadWrite,
 		}
 		queryTimeout = int64(2)
-		//errCache     = errors.New("cache set failed")
 	)
 
 	tests := []struct {
