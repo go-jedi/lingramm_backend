@@ -3,6 +3,9 @@ LOCAL_BIN:=$(CURDIR)/bin
 run:
 	go run cmd/app/main.go --config testdata/config.yaml
 
+build:
+	go build -ldflags="-s -w" -trimpath -buildvcs=false -o .bin/app cmd/app/main.go
+
 install-deps:
 	GOBIN=$(LOCAL_BIN) go install github.com/air-verse/air@latest
 
