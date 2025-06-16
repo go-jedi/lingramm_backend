@@ -124,7 +124,7 @@ jobs:
     name: Test
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: setup
+    needs: [lint, validate, security, critic, govulncheck]
     services:
       redis:
         image: redis:latest
@@ -169,7 +169,7 @@ jobs:
     name: Coverage
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: setup
+    needs: [lint, validate, security, critic, govulncheck]
     services:
       redis:
         image: redis:latest
@@ -223,7 +223,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [lint, validate, security, critic, govulncheck, test, coverage]
+    needs: [test, coverage]
     steps:
       - uses: actions/checkout@v4
 
