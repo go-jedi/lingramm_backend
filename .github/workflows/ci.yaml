@@ -112,6 +112,11 @@ jobs:
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
 
+      - name: Install libvips (required for bimg)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libvips-dev
+
       - name: Install govulncheck
         run: go install golang.org/x/vuln/cmd/govulncheck@latest
 
