@@ -18,7 +18,7 @@ jobs:
       go-version: ${{ steps.set-version.outputs.go-version }}
     steps:
       - id: set-version
-        run: echo "go-version=1.24.2" >> "$GITHUB_OUTPUT"
+        run: echo "go-version=1.24.4" >> "$GITHUB_OUTPUT"
 
   lint:
     name: Lint
@@ -100,6 +100,25 @@ jobs:
         run: |
           export PATH="$(go env GOPATH)/bin:$PATH"
           gocritic check ./...
+
+  govulncheck:
+    name: Security Scan (govulncheck)
+    runs-on: ubuntu-latest
+    needs: setup
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ needs.setup.outputs.go-version }}
+
+      - name: Install govulncheck
+        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+
+      - name: Run gocritic
+        run: |
+          export PATH="$(go env GOPATH)/bin:$PATH"
+          govulncheck ./...
 
   test:
     name: Test
@@ -204,7 +223,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [lint, validate, security, critic, test, coverage]
+    needs: [lint, validate, security, critic, govulncheck, test, coverage]
     steps:
       - uses: actions/checkout@v4
 

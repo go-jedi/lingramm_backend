@@ -1,6 +1,6 @@
 module github.com/go-jedi/lingramm_backend
 
-go 1.24.2
+go 1.24.4
 
 require (
 	github.com/allegro/bigcache v1.2.1
