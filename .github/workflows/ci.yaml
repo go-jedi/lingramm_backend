@@ -261,6 +261,8 @@ jobs:
     if: github.ref_name == 'main' && github.event_name == 'push'
     permissions:
       contents: read
+    env:
+      IMAGE_NAME: lingramm_backend
     steps:
       - uses: actions/checkout@v4
 
@@ -294,6 +296,8 @@ jobs:
     if: github.ref_name == 'main' && github.event_name == 'push'
     permissions:
       contents: read
+    env:
+      IMAGE_NAME: lingramm_backend
     steps:
       - uses: actions/checkout@v4
 
