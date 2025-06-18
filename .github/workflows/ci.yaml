@@ -272,10 +272,9 @@ jobs:
           url: ${{ secrets.VAULT_URL }}
           method: token
           token: ${{ secrets.VAULT_TOKEN }}
-          mount_point: secret
           secrets: |
-            lingramm_backend/docker DOCKERHUB_USERNAME | DOCKERHUB_USERNAME
-            lingramm_backend/docker DOCKERHUB_PASSWORD | DOCKERHUB_PASSWORD
+            secret/data/lingramm_backend/docker data.DOCKERHUB_USERNAME | DOCKERHUB_USERNAME
+            secret/data/lingramm_backend/docker data.DOCKERHUB_PASSWORD | DOCKERHUB_PASSWORD
 
       - uses: actions/setup-go@v5
         with:
