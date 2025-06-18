@@ -273,8 +273,8 @@ jobs:
           method: github
           githubToken: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            secret/data/lingramm_backend/docker dockerhub_username | DOCKERHUB_USERNAME
-            secret/data/lingramm_backend/docker dockerhub_password | DOCKERHUB_PASSWORD
+            secret/lingramm_backend/docker dockerhub_username | DOCKERHUB_USERNAME
+            secret/lingramm_backend/docker dockerhub_password | DOCKERHUB_PASSWORD
 
       - uses: actions/setup-go@v5
         with:
@@ -318,10 +318,10 @@ jobs:
           method: github
           githubToken: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            secret/data/lingramm_backend/harbor harbor_username | HARBOR_USERNAME
-            secret/data/lingramm_backend/harbor harbor_password | HARBOR_PASSWORD
-            secret/data/lingramm_backend/harbor harbor_project | HARBOR_PROJECT
-            secret/data/lingramm_backend/harbor harbor_registry | HARBOR_REGISTRY
+            secret/lingramm_backend/harbor harbor_username | HARBOR_USERNAME
+            secret/lingramm_backend/harbor harbor_password | HARBOR_PASSWORD
+            secret/lingramm_backend/harbor harbor_project | HARBOR_PROJECT
+            secret/lingramm_backend/harbor harbor_registry | HARBOR_REGISTRY
 
       - uses: actions/setup-go@v5
         with:
