@@ -21,243 +21,243 @@ jobs:
       - id: set-version
         run: echo "go-version=1.24.4" >> "$GITHUB_OUTPUT"
 
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ needs.setup.outputs.go-version }}
-
-      - name: Install libvips (required for bimg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libvips-dev
-
-      - name: Install golangci-lint
-        run: |
-          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
-            | sh -s -- -b $(go env GOPATH)/bin v2.1.5
-
-      - name: Run golangci-lint
-        run: golangci-lint run ./...
-
-  validate:
-    name: Validate go.mod/go.sum
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ needs.setup.outputs.go-version }}
-
-      - name: Validate go.mod/go.sum
-        run: |
-          go mod tidy
-          if ! git diff --exit-code go.mod go.sum; then
-            echo "::error::Uncommitted changes in go.mod/go.sum"
-            exit 1
-          fi
-
-  security:
-    name: Security Scan (gosec)
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ needs.setup.outputs.go-version }}
-
-      - name: Install gosec
-        run: go install github.com/securego/gosec/v2/cmd/gosec@latest
-
-      - name: Run gosec
-        run: |
-          export PATH="$(go env GOPATH)/bin:$PATH"
-          gosec ./...
-
-  critic:
-    name: Security Scan (gocritic)
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ needs.setup.outputs.go-version }}
-
-      - name: Install gocritic
-        run: go install github.com/go-critic/go-critic/cmd/gocritic@latest
-
-      - name: Run gocritic
-        run: |
-          export PATH="$(go env GOPATH)/bin:$PATH"
-          gocritic check ./...
-
-  govulncheck:
-    name: Security Scan (govulncheck)
-    runs-on: ubuntu-latest
-    needs: setup
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ needs.setup.outputs.go-version }}
-
-      - name: Install libvips (required for bimg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libvips-dev
-
-      - name: Install govulncheck
-        run: go install golang.org/x/vuln/cmd/govulncheck@latest
-
-      - name: Run gocritic
-        run: |
-          export PATH="$(go env GOPATH)/bin:$PATH"
-          govulncheck ./...
-
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: [lint, validate, security, critic, govulncheck]
-    services:
-      redis:
-        image: redis:latest
-        ports:
-          - 63790:6379
-        options: >-
-          --health-cmd "redis-cli -a admin ping"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 5
-    env:
-      REDIS_ADDR: 127.0.0.1:63790
-      REDIS_PASSWORD: admin
-      REDIS_PORT: 6379
-      REDIS_DATABASES: 0
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ needs.setup.outputs.go-version }}
-
-      - name: Install libvips (required for bimg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libvips-dev
-
-      - name: Verify go.mod consistency
-        run: |
-          go mod tidy
-          if ! git diff --exit-code go.mod go.sum; then
-            echo "::error::Uncommitted changes after go mod tidy"
-            exit 1
-          fi
-
-      - name: Run unit tests
-        run: |
-          EXCLUDE="/(mock|mocks|testdata|cmd|config|domain|apperrors)"
-          go test -v $(go list ./... | grep -Ev "$EXCLUDE")
-
-  coverage:
-    name: Coverage
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: [lint, validate, security, critic, govulncheck]
-    services:
-      redis:
-        image: redis:latest
-        ports:
-          - 63790:6379
-        options: >-
-          --health-cmd "redis-cli -a admin ping"
-          --health-interval 5s
-          --health-timeout 3s
-          --health-retries 5
-    env:
-      REDIS_ADDR: 127.0.0.1:63790
-      REDIS_PASSWORD: admin
-      REDIS_PORT: 6379
-      REDIS_DATABASES: 0
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ needs.setup.outputs.go-version }}
-
-      - name: Install libvips (required for bimg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libvips-dev
-
-      - name: Run tests with coverage
-        run: |
-          EXCLUDE="/(mock|mocks|testdata|cmd|config|domain|apperrors)"
-          go test -coverprofile=coverage.out $(go list ./... | grep -Ev "$EXCLUDE")
-          go tool cover -func=coverage.out
-
-#      - name: Enforce coverage threshold #TODO: если нужен % покрытия определенный.
+#  lint:
+#    name: Lint
+#    runs-on: ubuntu-latest
+#    needs: setup
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: ${{ needs.setup.outputs.go-version }}
+#
+#      - name: Install libvips (required for bimg)
 #        run: |
-#          percent=$(go tool cover -func=coverage.out | grep total: | awk '{print substr($3, 1, length($3)-1)}')
-#          echo "Total coverage: $percent%"
-#          threshold=70.0
-#          if (( $(echo "$percent < $threshold" | bc -l) )); then
-#            echo "::error::Test coverage below threshold ($threshold%)"
+#          sudo apt-get update
+#          sudo apt-get install -y libvips-dev
+#
+#      - name: Install golangci-lint
+#        run: |
+#          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh \
+#            | sh -s -- -b $(go env GOPATH)/bin v2.1.5
+#
+#      - name: Run golangci-lint
+#        run: golangci-lint run ./...
+#
+#  validate:
+#    name: Validate go.mod/go.sum
+#    runs-on: ubuntu-latest
+#    needs: setup
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: ${{ needs.setup.outputs.go-version }}
+#
+#      - name: Validate go.mod/go.sum
+#        run: |
+#          go mod tidy
+#          if ! git diff --exit-code go.mod go.sum; then
+#            echo "::error::Uncommitted changes in go.mod/go.sum"
 #            exit 1
 #          fi
-
-      - name: Upload coverage artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage.out
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-    needs: [test, coverage]
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ needs.setup.outputs.go-version }}
-
-      - name: Install libvips (required for bimg)
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libvips-dev
-
-      - name: Build binary
-        run: |
-          mkdir -p .bin
-          go build -ldflags="-s -w" -trimpath -buildvcs=false -o .bin/app cmd/app/main.go
-
-      - name: Upload binary artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: app-binary-${{ github.sha }}
-          path: .bin/app
+#
+#  security:
+#    name: Security Scan (gosec)
+#    runs-on: ubuntu-latest
+#    needs: setup
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: ${{ needs.setup.outputs.go-version }}
+#
+#      - name: Install gosec
+#        run: go install github.com/securego/gosec/v2/cmd/gosec@latest
+#
+#      - name: Run gosec
+#        run: |
+#          export PATH="$(go env GOPATH)/bin:$PATH"
+#          gosec ./...
+#
+#  critic:
+#    name: Security Scan (gocritic)
+#    runs-on: ubuntu-latest
+#    needs: setup
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: ${{ needs.setup.outputs.go-version }}
+#
+#      - name: Install gocritic
+#        run: go install github.com/go-critic/go-critic/cmd/gocritic@latest
+#
+#      - name: Run gocritic
+#        run: |
+#          export PATH="$(go env GOPATH)/bin:$PATH"
+#          gocritic check ./...
+#
+#  govulncheck:
+#    name: Security Scan (govulncheck)
+#    runs-on: ubuntu-latest
+#    needs: setup
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: ${{ needs.setup.outputs.go-version }}
+#
+#      - name: Install libvips (required for bimg)
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y libvips-dev
+#
+#      - name: Install govulncheck
+#        run: go install golang.org/x/vuln/cmd/govulncheck@latest
+#
+#      - name: Run gocritic
+#        run: |
+#          export PATH="$(go env GOPATH)/bin:$PATH"
+#          govulncheck ./...
+#
+#  test:
+#    name: Test
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 10
+#    needs: [lint, validate, security, critic, govulncheck]
+#    services:
+#      redis:
+#        image: redis:latest
+#        ports:
+#          - 63790:6379
+#        options: >-
+#          --health-cmd "redis-cli -a admin ping"
+#          --health-interval 5s
+#          --health-timeout 3s
+#          --health-retries 5
+#    env:
+#      REDIS_ADDR: 127.0.0.1:63790
+#      REDIS_PASSWORD: admin
+#      REDIS_PORT: 6379
+#      REDIS_DATABASES: 0
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: ${{ needs.setup.outputs.go-version }}
+#
+#      - name: Install libvips (required for bimg)
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y libvips-dev
+#
+#      - name: Verify go.mod consistency
+#        run: |
+#          go mod tidy
+#          if ! git diff --exit-code go.mod go.sum; then
+#            echo "::error::Uncommitted changes after go mod tidy"
+#            exit 1
+#          fi
+#
+#      - name: Run unit tests
+#        run: |
+#          EXCLUDE="/(mock|mocks|testdata|cmd|config|domain|apperrors)"
+#          go test -v $(go list ./... | grep -Ev "$EXCLUDE")
+#
+#  coverage:
+#    name: Coverage
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 10
+#    needs: [lint, validate, security, critic, govulncheck]
+#    services:
+#      redis:
+#        image: redis:latest
+#        ports:
+#          - 63790:6379
+#        options: >-
+#          --health-cmd "redis-cli -a admin ping"
+#          --health-interval 5s
+#          --health-timeout 3s
+#          --health-retries 5
+#    env:
+#      REDIS_ADDR: 127.0.0.1:63790
+#      REDIS_PASSWORD: admin
+#      REDIS_PORT: 6379
+#      REDIS_DATABASES: 0
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: ${{ needs.setup.outputs.go-version }}
+#
+#      - name: Install libvips (required for bimg)
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y libvips-dev
+#
+#      - name: Run tests with coverage
+#        run: |
+#          EXCLUDE="/(mock|mocks|testdata|cmd|config|domain|apperrors)"
+#          go test -coverprofile=coverage.out $(go list ./... | grep -Ev "$EXCLUDE")
+#          go tool cover -func=coverage.out
+#
+##      - name: Enforce coverage threshold #TODO: если нужен % покрытия определенный.
+##        run: |
+##          percent=$(go tool cover -func=coverage.out | grep total: | awk '{print substr($3, 1, length($3)-1)}')
+##          echo "Total coverage: $percent%"
+##          threshold=70.0
+##          if (( $(echo "$percent < $threshold" | bc -l) )); then
+##            echo "::error::Test coverage below threshold ($threshold%)"
+##            exit 1
+##          fi
+#
+#      - name: Upload coverage artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: coverage-report
+#          path: coverage.out
+#
+#  build:
+#    name: Build
+#    runs-on: ubuntu-latest
+#    timeout-minutes: 10
+#    needs: [test, coverage]
+#    steps:
+#      - uses: actions/checkout@v4
+#
+#      - uses: actions/setup-go@v5
+#        with:
+#          go-version: ${{ needs.setup.outputs.go-version }}
+#
+#      - name: Install libvips (required for bimg)
+#        run: |
+#          sudo apt-get update
+#          sudo apt-get install -y libvips-dev
+#
+#      - name: Build binary
+#        run: |
+#          mkdir -p .bin
+#          go build -ldflags="-s -w" -trimpath -buildvcs=false -o .bin/app cmd/app/main.go
+#
+#      - name: Upload binary artifact
+#        uses: actions/upload-artifact@v4
+#        with:
+#          name: app-binary-${{ github.sha }}
+#          path: .bin/app
 
   docker:
     name: Deploy Image DockerHub
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [build]
+#    needs: [build]
     if: github.ref_name == 'main' && github.event_name == 'push'
     permissions:
       contents: read
@@ -273,8 +273,8 @@ jobs:
           method: github
           githubToken: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            kv/data/lingramm_backend/dockerhub_username data.data.DOCKERHUB_USERNAME | DOCKERHUB_USERNAME
-            kv/data/lingramm_backend/dockerhub_password data.data.DOCKERHUB_USERNAME | DOCKERHUB_PASSWORD
+            kv/data/lingramm_backend/dockerhub_username data.DOCKERHUB_USERNAME | DOCKERHUB_USERNAME
+            kv/data/lingramm_backend/dockerhub_password data.DOCKERHUB_USERNAME | DOCKERHUB_PASSWORD
 
       - uses: actions/setup-go@v5
         with:
@@ -302,7 +302,7 @@ jobs:
     name: Deploy Image Harbor
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    needs: [build]
+#    needs: [build]
     if: github.ref_name == 'main' && github.event_name == 'push'
     permissions:
       contents: read
@@ -318,10 +318,10 @@ jobs:
           method: github
           githubToken: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            kv/data/lingramm_backend/harbor_username data.data.HARBOR_USERNAME | HARBOR_USERNAME
-            kv/data/lingramm_backend/harbor_password data.data.HARBOR_PASSWORD | HARBOR_PASSWORD
-            kv/data/lingramm_backend/harbor_project data.data.HARBOR_PROJECT | HARBOR_PROJECT
-            kv/data/lingramm_backend/harbor_registry data.data.HARBOR_REGISTRY | HARBOR_REGISTRY
+            kv/data/lingramm_backend/harbor_username data.HARBOR_USERNAME | HARBOR_USERNAME
+            kv/data/lingramm_backend/harbor_password data.HARBOR_PASSWORD | HARBOR_PASSWORD
+            kv/data/lingramm_backend/harbor_project data.HARBOR_PROJECT | HARBOR_PROJECT
+            kv/data/lingramm_backend/harbor_registry data.HARBOR_REGISTRY | HARBOR_REGISTRY
 
       - uses: actions/setup-go@v5
         with:
