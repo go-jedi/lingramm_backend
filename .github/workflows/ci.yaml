@@ -268,7 +268,7 @@ jobs:
 
       - name: Fetch secrets from Vault via curl (KV v2)
         run: |
-          echo "Запрашиваем секреты из Vault..."
+          echo "Get secrets from Vault..."
 
           response=$(curl -s -H "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
             ${{ secrets.VAULT_URL }}/v1/secret/data/lingramm_backend/docker)
@@ -311,18 +311,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Read secrets from Vault
-        uses: hashicorp/vault-action@v2.4.0
-        with:
-          url: ${{ secrets.VAULT_URL }}
-          method: token
-          token: ${{ secrets.VAULT_TOKEN }}
-          secrets: |
-            secret/data/lingramm_backend/harbor/harbor_username HARBOR_USERNAME | HARBOR_USERNAME
-            secret/data/lingramm_backend/harbor/harbor_password HARBOR_PASSWORD | HARBOR_PASSWORD
-            secret/data/lingramm_backend/harbor/harbor_project HARBOR_PROJECT | HARBOR_PROJECT
-            secret/data/lingramm_backend/harbor/harbor_registry HARBOR_REGISTRY | HARBOR_REGISTRY
+      - name: Fetch secrets from Vault via curl (KV v2)
+        run: |
+          echo "Get secrets from Vault..."
 
+          response=$(curl -s -H "X-Vault-Token: ${{ secrets.VAULT_TOKEN }}" \
+            ${{ secrets.VAULT_URL }}/v1/secret/data/lingramm_backend/harbor)
+
+          echo "HARBOR_REGISTRY=$(echo "$response" | jq -r '.data.data.HARBOR_REGISTRY')" >> $GITHUB_ENV
+          echo "HARBOR_USERNAME=$(echo "$response" | jq -r '.data.data.HARBOR_USERNAME')" >> $GITHUB_ENV
+          echo "HARBOR_PASSWORD=$(echo "$response" | jq -r '.data.data.HARBOR_PASSWORD')" >> $GITHUB_ENV
+          echo "HARBOR_PROJECT=$(echo "$response" | jq -r '.data.data.HARBOR_PROJECT')" >> $GITHUB_ENV
+          
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
