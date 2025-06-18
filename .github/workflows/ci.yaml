@@ -270,11 +270,11 @@ jobs:
         uses: hashicorp/vault-action@v2.4.0
         with:
           url: ${{ secrets.VAULT_URL }}
-          method: github
+          method: token
           githubToken: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            secret/lingramm_backend/docker dockerhub_username | DOCKERHUB_USERNAME
-            secret/lingramm_backend/docker dockerhub_password | DOCKERHUB_PASSWORD
+            secret/lingramm_backend/docker/dockerhub_username DOCKERHUB_USERNAME | DOCKERHUB_USERNAME
+            secret/lingramm_backend/docker/dockerhub_password DOCKERHUB_PASSWORD | DOCKERHUB_PASSWORD
 
       - uses: actions/setup-go@v5
         with:
@@ -315,13 +315,13 @@ jobs:
         uses: hashicorp/vault-action@v2.4.0
         with:
           url: ${{ secrets.VAULT_URL }}
-          method: github
+          method: token
           githubToken: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            secret/lingramm_backend/harbor harbor_username | HARBOR_USERNAME
-            secret/lingramm_backend/harbor harbor_password | HARBOR_PASSWORD
-            secret/lingramm_backend/harbor harbor_project | HARBOR_PROJECT
-            secret/lingramm_backend/harbor harbor_registry | HARBOR_REGISTRY
+            secret/lingramm_backend/harbor/harbor_username HARBOR_USERNAME | HARBOR_USERNAME
+            secret/lingramm_backend/harbor/harbor_password HARBOR_PASSWORD | HARBOR_PASSWORD
+            secret/lingramm_backend/harbor/harbor_project HARBOR_PROJECT | HARBOR_PROJECT
+            secret/lingramm_backend/harbor/harbor_registry HARBOR_REGISTRY | HARBOR_REGISTRY
 
       - uses: actions/setup-go@v5
         with:
