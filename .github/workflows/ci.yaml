@@ -273,8 +273,8 @@ jobs:
           method: github
           githubToken: ${{ secrets.VAULT_TOKEN }}
           secrets: |
-            kv/data/lingramm_backend/dockerhub_username data.DOCKERHUB_USERNAME | DOCKERHUB_USERNAME
-            kv/data/lingramm_backend/dockerhub_password data.DOCKERHUB_USERNAME | DOCKERHUB_PASSWORD
+            /v1/kv/data/lingramm_backend/dockerhub_username data.DOCKERHUB_USERNAME | DOCKERHUB_USERNAME
+            /v1/kv/data/lingramm_backend/dockerhub_password data.DOCKERHUB_USERNAME | DOCKERHUB_PASSWORD
 
       - uses: actions/setup-go@v5
         with:
