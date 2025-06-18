@@ -266,6 +266,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Read secrets from Vault
+        uses: hashicorp/vault-action@v2.4.0
+        with:
+          url: ${{ secrets.VAULT_URL }}
+          method: github
+          githubToken: ${{ secrets.VAULT_TOKEN }}
+          secrets: |
+            kv/data/lingramm_backend/dockerhub_username DOCKERHUB_USERNAME | DOCKERHUB_USERNAME
+            kv/data/lingramm_backend/dockerhub_password DOCKERHUB_PASSWORD | DOCKERHUB_PASSWORD
+
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
@@ -278,15 +288,15 @@ jobs:
       - name: Log in to DockerHub
         uses: docker/login-action@v3
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          username: ${{ env.DOCKERHUB_USERNAME }}
+          password: ${{ env.DOCKERHUB_PASSWORD }}
 
       - name: Build and push Docker image to DockerHub
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:${{ github.sha }} .
-          docker tag ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:${{ github.sha }} ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:${{ github.sha }}
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest
+          docker build -t ${{ env.DOCKERHUB_USERNAME }}/$IMAGE_NAME:${{ github.sha }} .
+          docker tag ${{ env.DOCKERHUB_USERNAME }}/$IMAGE_NAME:${{ github.sha }} ${{ env.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest
+          docker push ${{ env.DOCKERHUB_USERNAME }}/$IMAGE_NAME:${{ github.sha }}
+          docker push ${{ env.DOCKERHUB_USERNAME }}/$IMAGE_NAME:latest
 
   harbor:
     name: Deploy Image Harbor
@@ -301,6 +311,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Read secrets from Vault
+        uses: hashicorp/vault-action@v2.4.0
+        with:
+          url: ${{ secrets.VAULT_URL }}
+          method: github
+          githubToken: ${{ secrets.VAULT_TOKEN }}
+          secrets: |
+            kv/data/lingramm_backend/harbor_username HARBOR_USERNAME | HARBOR_USERNAME
+            kv/data/lingramm_backend/harbor_password HARBOR_PASSWORD | HARBOR_PASSWORD
+            kv/data/lingramm_backend/harbor_project HARBOR_PROJECT | HARBOR_PROJECT
+            kv/data/lingramm_backend/harbor_registry HARBOR_REGISTRY | HARBOR_REGISTRY
+
       - uses: actions/setup-go@v5
         with:
           go-version: ${{ needs.setup.outputs.go-version }}
@@ -313,13 +335,13 @@ jobs:
       - name: Log in to Harbor
         uses: docker/login-action@v3
         with:
-          registry: ${{ secrets.HARBOR_REGISTRY }}
-          username: ${{ secrets.HARBOR_USERNAME }}
-          password: ${{ secrets.HARBOR_PASSWORD }}
+          registry: ${{ env.HARBOR_REGISTRY }}
+          username: ${{ env.HARBOR_USERNAME }}
+          password: ${{ env.HARBOR_PASSWORD }}
 
       - name: Build and push Docker image to Harbor
         run: |
-          HARBOR_IMAGE=${{ secrets.HARBOR_REGISTRY }}/${{ secrets.HARBOR_PROJECT }}/$IMAGE_NAME
+          HARBOR_IMAGE=${{ env.HARBOR_REGISTRY }}/${{ env.HARBOR_PROJECT }}/$IMAGE_NAME
           docker build -t $HARBOR_IMAGE:${{ github.sha }} .
           docker tag $HARBOR_IMAGE:${{ github.sha }} $HARBOR_IMAGE:latest
           docker push $HARBOR_IMAGE:${{ github.sha }}
