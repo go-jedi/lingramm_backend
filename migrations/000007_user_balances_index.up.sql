@@ -1,0 +1,1 @@
+CREATE INDEX idx_user_balances_telegram_id ON user_balances(telegram_id);

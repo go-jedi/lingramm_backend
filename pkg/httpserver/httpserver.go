@@ -24,6 +24,13 @@ const (
 	idleTimeout     = 120
 )
 
+// IHTTPServer defines the interface for the http server.
+//
+//go:generate mockery --name=IHTTPServer --output=mocks --case=underscore
+type IHTTPServer interface {
+	Start() error
+}
+
 type HTTPServer struct {
 	App *fiber.App
 
@@ -89,7 +96,7 @@ func (hs *HTTPServer) initCORS(cfg config.CorsConfig) {
 // Start http server.
 func (hs *HTTPServer) Start() error {
 	listenConfig := fiber.ListenConfig{
-		OnShutdownError:   hs.OnShutdownError,
+		OnShutdownError:   hs.onShutdownError,
 		OnShutdownSuccess: hs.onShutdownSuccess,
 		EnablePrefork:     hs.enablePrefork,
 		EnablePrintRoutes: hs.enablePrintRoutes,
@@ -160,7 +167,7 @@ func (hs *HTTPServer) gracefulStop() error {
 	return nil
 }
 
-func (hs *HTTPServer) OnShutdownError(err error) {
+func (hs *HTTPServer) onShutdownError(err error) {
 	log.Printf("shutdown error: %v\n", err)
 }
 

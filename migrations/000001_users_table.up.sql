@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS users (
+CREATE TABLE IF NOT EXISTS users ( -- Пользователи.
     id BIGSERIAL PRIMARY KEY, -- Уникальный идентификатор.
     telegram_id TEXT NOT NULL UNIQUE, -- Telegram id пользователя.
     username VARCHAR(255) UNIQUE, -- Username пользователя.

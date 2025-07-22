@@ -1,0 +1,20 @@
+package bigcache
+
+import (
+	"github.com/go-jedi/lingramm_backend/internal/service/v1/bigcache/iterator"
+	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+)
+
+type Service struct {
+	Iterator iterator.IIterator
+}
+
+func New(
+	logger logger.ILogger,
+	bigCache *bigcachepkg.BigCache,
+) *Service {
+	return &Service{
+		Iterator: iterator.New(logger, bigCache),
+	}
+}

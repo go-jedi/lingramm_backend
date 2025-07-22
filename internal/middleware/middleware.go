@@ -5,7 +5,7 @@ import (
 
 	adminguard "github.com/go-jedi/lingramm_backend/internal/middleware/admin_guard"
 	"github.com/go-jedi/lingramm_backend/internal/middleware/auth"
-	adminservice "github.com/go-jedi/lingramm_backend/internal/service/admin"
+	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/redis"
 )

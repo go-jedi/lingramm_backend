@@ -4,7 +4,7 @@ import (
 	"errors"
 	"strings"
 
-	adminservice "github.com/go-jedi/lingramm_backend/internal/service/admin"
+	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"

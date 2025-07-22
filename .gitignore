@@ -5,3 +5,4 @@ tmp
 .env
 .secret
 testdata/jwt/.secret
+info.txt

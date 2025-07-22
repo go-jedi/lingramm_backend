@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS user_profiles(
+CREATE TABLE IF NOT EXISTS user_profiles( -- Профиль пользователя
     id SERIAL PRIMARY KEY, -- Уникальный идентификатор.
     telegram_id TEXT NOT NULL UNIQUE, -- Telegram id пользователя.
     experience_points BIGINT NOT NULL DEFAULT 0, -- Шкала опыта.

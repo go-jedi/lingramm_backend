@@ -1,9 +1,9 @@
 package dependencies
 
 import (
-	clientassetshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/file_server/client_assets"
-	clientassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/file_server/client_assets"
-	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/file_server/client_assets"
+	clientassetshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets"
+	clientassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/client_assets"
+	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
 )
 
 func (d *Dependencies) ClientAssetsRepository() *clientassetsrepository.Repository {
