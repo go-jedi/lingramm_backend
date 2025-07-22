@@ -23,7 +23,7 @@ postgres:
   sslmode: disable
   pool_max_conns: 10
   migrations_dir: file://migrations
-  query_timeout: 2000000000 # 2 second
+  query_timeout: 2 # 2 second
 
 big_cache:
   shards: 512

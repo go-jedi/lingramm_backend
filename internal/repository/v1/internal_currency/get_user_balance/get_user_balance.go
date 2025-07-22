@@ -1,0 +1,74 @@
+package getuserbalance
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"time"
+
+	"github.com/go-jedi/lingramm_backend/internal/domain/internal_currency/user_balance"
+	"github.com/go-jedi/lingramm_backend/pkg/logger"
+	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/jackc/pgx/v5"
+)
+
+//go:generate mockery --name=IGetUserBalance --output=mocks --case=underscore
+type IGetUserBalance interface {
+	Execute(ctx context.Context, tx pgx.Tx, telegramID string) (userbalance.UserBalance, error)
+}
+
+type GetUserBalance struct {
+	queryTimeout int64
+	logger       logger.ILogger
+}
+
+func New(
+	queryTimeout int64,
+	logger logger.ILogger,
+) *GetUserBalance {
+	r := &GetUserBalance{
+		queryTimeout: queryTimeout,
+		logger:       logger,
+	}
+
+	r.init()
+
+	return r
+}
+
+func (r *GetUserBalance) init() {
+	if r.queryTimeout == 0 {
+		r.queryTimeout = postgres.DefaultQueryTimeout
+	}
+}
+
+func (r *GetUserBalance) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (userbalance.UserBalance, error) {
+	r.logger.Debug("[get user balance] execute repository")
+
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
+	defer cancel()
+
+	q := `
+		SELECT * 
+		FROM user_balances
+		WHERE telegram_id = $1;
+	`
+
+	var ub userbalance.UserBalance
+
+	if err := tx.QueryRow(
+		ctxTimeout, q, telegramID,
+	).Scan(
+		&ub.ID, &ub.TelegramID, &ub.Balance,
+		&ub.CreatedAt, &ub.UpdatedAt,
+	); err != nil {
+		if errors.Is(err, context.DeadlineExceeded) {
+			r.logger.Error("request timed out while get user balance", "err", err)
+			return userbalance.UserBalance{}, fmt.Errorf("the request timed out: %w", err)
+		}
+		r.logger.Error("failed to get user balance", "err", err)
+		return userbalance.UserBalance{}, fmt.Errorf("could not get user balance: %w", err)
+	}
+
+	return ub, nil
+}
