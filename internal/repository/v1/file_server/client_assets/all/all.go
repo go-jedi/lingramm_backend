@@ -71,9 +71,11 @@ func (r *All) Execute(ctx context.Context, tx pgx.Tx) ([]clientassets.ClientAsse
 		var clientAsset clientassets.ClientAssets
 
 		if err := rows.Scan(
-			&clientAsset.ID, &clientAsset.NameFile, &clientAsset.ServerPathFile,
-			&clientAsset.ClientPathFile, &clientAsset.Extension, &clientAsset.Quality,
-			&clientAsset.OldNameFile, &clientAsset.OldExtension, &clientAsset.CreatedAt, &clientAsset.UpdatedAt,
+			&clientAsset.ID, &clientAsset.NameFile,
+			&clientAsset.ServerPathFile, &clientAsset.ClientPathFile,
+			&clientAsset.Extension, &clientAsset.Quality,
+			&clientAsset.OldNameFile, &clientAsset.OldExtension,
+			&clientAsset.CreatedAt, &clientAsset.UpdatedAt,
 		); err != nil {
 			r.logger.Error("failed to scan row to get all client assets", "err", err)
 			return nil, fmt.Errorf("failed to scan row to get all client assets: %w", err)

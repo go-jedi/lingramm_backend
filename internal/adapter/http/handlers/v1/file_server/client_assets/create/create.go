@@ -47,7 +47,7 @@ func (h *Create) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "unsupported file type", fmt.Errorf("%w: %s", apperrors.ErrUnsupportedFormat, contentType).Error(), nil))
 	}
 
-	result, err := h.clientAssetsService.Create.Execute(c.Context(), fileHeader)
+	result, err := h.clientAssetsService.Create.Execute(c, fileHeader)
 	if err != nil {
 		h.logger.Error("failed to create a client assets", "error", err)
 		c.Status(fiber.StatusInternalServerError)

@@ -27,11 +27,11 @@ type IRefreshToken interface {
 }
 
 type RefreshToken struct {
+	queryTimeout       int64
+	expiration         int64
 	client             *redis.Client
 	prefixRefreshToken string
 	prefixTelegramID   string
-	queryTimeout       int64
-	expiration         int64
 }
 
 func New(cfg config.RedisConfig, client *redis.Client) *RefreshToken {

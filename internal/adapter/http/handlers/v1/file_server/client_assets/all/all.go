@@ -30,7 +30,7 @@ func New(
 func (h *All) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get all client assets] execute handler")
 
-	result, err := h.clientAssetsService.All.Execute(c.Context())
+	result, err := h.clientAssetsService.All.Execute(c)
 	if err != nil {
 		h.logger.Error("failed to get all client assets", "error", err)
 		c.Status(fiber.StatusInternalServerError)

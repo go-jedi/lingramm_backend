@@ -49,17 +49,16 @@ type ITx interface {
 }
 
 type Postgres struct {
-	Pool         IPool
-	QueryTimeout int64
-
+	QueryTimeout  int64
+	poolMaxConns  int
+	port          int
+	Pool          IPool
 	logger        *logger.Logger
 	host          string
 	user          string
 	password      string
 	dbName        string
-	port          int
 	sslMode       string
-	poolMaxConns  int
 	migrationsDir string
 }
 

@@ -27,7 +27,7 @@ func New(
 	jwt *jwt.JWT,
 ) *Service {
 	return &Service{
-		// SignIn:  signin.New(userRepository, logger, postgres, bigCache, uuid),
+		SignIn:  signin.New(userRepository, logger, postgres, redis, bigCache, jwt),
 		Check:   check.New(userRepository, logger, postgres, bigCache, jwt),
 		Refresh: refresh.New(userRepository, logger, postgres, redis, bigCache, jwt),
 	}

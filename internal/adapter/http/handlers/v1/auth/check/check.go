@@ -37,13 +37,13 @@ func (h *Check) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to bind body", err.Error(), nil))
 	}
 
-	if err := h.validator.Struct(dto); err != nil {
+	if err := h.validator.StructCtx(c, dto); err != nil {
 		h.logger.Error("failed to validate struct", "error", err)
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(response.New[any](false, "failed to validate struct", err.Error(), nil))
 	}
 
-	result, err := h.authService.Check.Execute(c.Context(), dto)
+	result, err := h.authService.Check.Execute(c, dto)
 	if err != nil {
 		h.logger.Error("failed to check user token", "error", err)
 		c.Status(fiber.StatusInternalServerError)

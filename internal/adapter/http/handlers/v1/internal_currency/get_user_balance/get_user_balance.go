@@ -34,7 +34,7 @@ func (h *GetUserBalance) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to get param telegramID", apperrors.ErrParamIsRequired.Error(), nil))
 	}
 
-	result, err := h.internalCurrencyService.GetUserBalance.Execute(c.Context(), telegramID)
+	result, err := h.internalCurrencyService.GetUserBalance.Execute(c, telegramID)
 	if err != nil {
 		h.logger.Error("failed to get user balance", "error", err)
 		c.Status(fiber.StatusInternalServerError)

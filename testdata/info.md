@@ -3,7 +3,6 @@
 #### create:
 - `migrate create -ext sql -dir migrations -seq users_table`
 - `migrate create -ext sql -dir migrations -seq user_create_function`
-- `migrate create -ext sql -dir migrations -seq user_profiles_table`
 - `migrate create -ext sql -dir migrations -seq levels_table`
 - `migrate create -ext sql -dir migrations -seq client_assets_table`
 - `migrate create -ext sql -dir migrations -seq user_balances_table`
@@ -14,10 +13,12 @@
 - `migrate create -ext sql -dir migrations -seq currency_rates_table`
 - `migrate create -ext sql -dir migrations -seq users_blacklist_table`
 - `migrate create -ext sql -dir migrations -seq admins_table`
-- `migrate create -ext sql -dir migrations -seq languages_table`
 - `migrate create -ext sql -dir migrations -seq achievements_assets_table`
 - `migrate create -ext sql -dir migrations -seq achievements_table`
+- `migrate create -ext sql -dir migrations -seq achievement_conditions_table`
 - `migrate create -ext sql -dir migrations -seq user_achievements_table`
+- `migrate create -ext sql -dir migrations -seq user_stats_table`
+- `migrate create -ext sql -dir migrations -seq languages_table`
 
 #### execute:
 - `migrate -database postgresql://admin:test@localhost:54320/lingvogramm_db?sslmode=disable -path migrations up`
@@ -51,3 +52,68 @@
 
 #### remove all local branch without main:
 - `git branch | grep -v "main" | xargs git branch -D`
+
+
+
+## Про cookie в fiber v3:
+Вот подробное объяснение каждого поля структуры `Cookie` в **Golang Fiber v3**:
+
+---
+
+### 🔐 Основные поля:
+
+| Поле              | Тип         | Описание                                                                                          |
+| ----------------- | ----------- | ------------------------------------------------------------------------------------------------- |
+| **`Name`**        | `string`    | Название куки. Например, `"session_id"` или `"user_token"`.                                       |
+| **`Value`**       | `string`    | Значение куки. Часто — зашифрованный ID сессии или токен.                                         |
+| **`Expires`**     | `time.Time` | Время окончания действия куки. После этой даты браузер удалит её.                                 |
+| **`MaxAge`**      | `int`       | Время жизни куки в **секундах**. Альтернатива `Expires`. Если `MaxAge <= 0`, кука не сохраняется. |
+| **`SessionOnly`** | `bool`      | Указывает, должна ли кука жить только в рамках сессии (закрытие вкладки = удаление).              |
+
+---
+
+### 📍 Область действия:
+
+| Поле         | Тип      | Описание                                                                                                                               |
+| ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| **`Path`**   | `string` | Путь, на который кука распространяется. Например, `/admin` означает, что кука будет доступна только для URL, начинающихся на `/admin`. |
+| **`Domain`** | `string` | Домен, для которого доступна кука. Например, `.example.com` позволит использовать куку на всех поддоменах.                             |
+
+---
+
+### 🛡️ Безопасность:
+
+| Поле           | Тип      | Описание                                                                                                                                                                                                                               |
+| -------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`Secure`**   | `bool`   | Если `true`, кука будет передаваться **только по HTTPS**.                                                                                                                                                                              |
+| **`HTTPOnly`** | `bool`   | Если `true`, кука **не доступна из JavaScript** (например, через `document.cookie`). Защита от XSS.                                                                                                                                    |
+| **`SameSite`** | `string` | Защита от CSRF. Возможные значения: <br> 🔹 `"Strict"` — кука передаётся только при прямом заходе;<br> 🔹 `"Lax"` — кука передаётся при переходах по ссылкам;<br> 🔹 `"None"` — разрешает кросс-доменные куки (требует `Secure=true`). |
+
+---
+
+### 🧪 Продвинутые поля:
+
+| Поле              | Тип    | Описание                                                                                                                                                                                             |
+| ----------------- | ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`Partitioned`** | `bool` | Разделённое хранилище куки для разных топ-уровневых сайтов. Введено в Chrome как эксперимент — полезно в `iframe` и при изоляции third-party cookies. <br>Необходим `SameSite=None` и `Secure=true`. |
+
+---
+
+### 📝 Пример установки полной куки:
+
+```go
+c.Cookie(&fiber.Cookie{
+    Name:        "token",
+    Value:       "abc123",
+    Expires:     time.Now().Add(24 * time.Hour),
+    Path:        "/",
+    Domain:      "example.com",
+    MaxAge:      86400, // 24 часа
+    Secure:      true,
+    HTTPOnly:    true,
+    SameSite:    "Lax",
+    SessionOnly: false,
+})
+```
+
+Если тебе нужно на практике сравнение `Expires` и `MaxAge`, или отличие `SessionOnly` и `Expires`, — могу объяснить через примеры.

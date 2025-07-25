@@ -24,10 +24,10 @@ type SignInDTO struct {
 // @param access_exp_at string true "Expiry time of the access token".
 // @param refresh_exp_at string true "Expiry time of the refresh token".
 type SignInResp struct {
-	AccessToken  string    `json:"access_token"`
-	RefreshToken string    `json:"refresh_token"`
 	AccessExpAt  time.Time `json:"access_exp_at"`
 	RefreshExpAt time.Time `json:"refresh_exp_at"`
+	AccessToken  string    `json:"access_token"`
+	RefreshToken string    `json:"refresh_token"`
 }
 
 //
@@ -70,8 +70,8 @@ type RefreshDTO struct {
 // @param access_exp_at string true "Expiry time of the access token".
 // @param refresh_exp_at string true "Expiry time of the refresh token".
 type RefreshResponse struct {
-	AccessToken  string    `json:"access_token"`
-	RefreshToken string    `json:"refresh_token"`
 	AccessExpAt  time.Time `json:"access_exp_at"`
 	RefreshExpAt time.Time `json:"refresh_exp_at"`
+	AccessToken  string    `json:"access_token"`
+	RefreshToken string    `json:"refresh_token"`
 }

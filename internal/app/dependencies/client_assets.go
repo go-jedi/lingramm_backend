@@ -8,7 +8,10 @@ import (
 
 func (d *Dependencies) ClientAssetsRepository() *clientassetsrepository.Repository {
 	if d.clientAssetsRepository == nil {
-		d.clientAssetsRepository = clientassetsrepository.New(d.postgres.QueryTimeout, d.logger)
+		d.clientAssetsRepository = clientassetsrepository.New(
+			d.postgres.QueryTimeout,
+			d.logger,
+		)
 	}
 
 	return d.clientAssetsRepository
@@ -34,6 +37,7 @@ func (d *Dependencies) ClientAssetsHandler() *clientassetshandler.Handler {
 			d.app,
 			d.logger,
 			d.validator,
+			d.middleware,
 		)
 	}
 

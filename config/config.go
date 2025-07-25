@@ -9,33 +9,33 @@ import (
 )
 
 type LoggerConfig struct {
-	IsJSON     bool   `yaml:"is_json"`
-	AddSource  bool   `yaml:"add_source"`
 	Level      string `yaml:"level"`
-	SetFile    bool   `yaml:"set_file"`
 	FileName   string `yaml:"file_name"`
 	MaxSize    int    `yaml:"max_size"`
 	MaxBackups int    `yaml:"max_backups"`
 	MaxAge     int    `yaml:"max_age"`
+	IsJSON     bool   `yaml:"is_json"`
+	AddSource  bool   `yaml:"add_source"`
+	SetFile    bool   `yaml:"set_file"`
 }
 
 type JWTConfig struct {
-	SecretPath    string `yaml:"secret_path"`
 	SecretHashLen int    `yaml:"secret_hash_len"`
 	AccessExpAt   int    `yaml:"access_exp_at"`
 	RefreshExpAt  int    `yaml:"refresh_exp_at"`
+	SecretPath    string `yaml:"secret_path"`
 }
 
 type PostgresConfig struct {
+	QueryTimeout  int64  `yaml:"query_timeout"`
+	Port          int    `yaml:"port"`
+	PoolMaxConns  int    `yaml:"pool_max_conns"`
 	Host          string `yaml:"host"`
 	User          string `yaml:"user"`
 	Password      string `yaml:"password"`
 	DBName        string `yaml:"dbname"`
-	Port          int    `yaml:"port"`
 	SSLMode       string `yaml:"sslmode"`
-	PoolMaxConns  int    `yaml:"pool_max_conns"`
 	MigrationsDir string `yaml:"migrations_dir"`
-	QueryTimeout  int64  `yaml:"query_timeout"`
 }
 
 type BigCacheConfig struct {
@@ -74,18 +74,31 @@ type ClientAssets struct {
 	Path               string `yaml:"path"`
 	URL                string `yaml:"url"`
 	Dir                string `yaml:"dir"`
-	Browse             bool   `yaml:"browse"`
-	Compress           bool   `yaml:"compress"`
+	IsNextIgnoreFormat string `yaml:"is_next_ignore_format"`
 	MaxFileSize        int64  `yaml:"max_file_size"`
 	ImageQuality       int    `yaml:"image_quality"`
+	Browse             bool   `yaml:"browse"`
+	Compress           bool   `yaml:"compress"`
 	IsNext             bool   `yaml:"is_next"`
+}
+
+type AchievementAssets struct {
+	Path               string `yaml:"path"`
+	URL                string `yaml:"url"`
+	Dir                string `yaml:"dir"`
 	IsNextIgnoreFormat string `yaml:"is_next_ignore_format"`
+	MaxFileSize        int64  `yaml:"max_file_size"`
+	ImageQuality       int    `yaml:"image_quality"`
+	Browse             bool   `yaml:"browse"`
+	Compress           bool   `yaml:"compress"`
+	IsNext             bool   `yaml:"is_next"`
 }
 
 type FileServerConfig struct {
-	ClientAssets ClientAssets `yaml:"client_assets"`
-	DirPerm      uint32       `yaml:"dir_perm"`
-	FilePerm     uint32       `yaml:"file_perm"`
+	ClientAssets      ClientAssets      `yaml:"client_assets"`
+	AchievementAssets AchievementAssets `yaml:"achievement_assets"`
+	DirPerm           uint32            `yaml:"dir_perm"`
+	FilePerm          uint32            `yaml:"file_perm"`
 }
 
 type CorsConfig struct {
@@ -98,12 +111,34 @@ type CorsConfig struct {
 	AllowPrivateNetwork bool     `yaml:"allow_private_network"`
 }
 
+type MiddlewareConfig struct {
+	ContentLengthLimiter struct {
+		MaxBodySize int `yaml:"max_body_size"`
+	} `yaml:"content_length_limiter"`
+}
+
+type CookieConfig struct {
+	Refresh struct {
+		MaxAge      int    `yaml:"max_age"`
+		Name        string `yaml:"name"`
+		Path        string `yaml:"path"`
+		Domain      string `yaml:"domain"`
+		SameSite    string `yaml:"same_site"`
+		Secure      bool   `yaml:"secure"`
+		HTTPOnly    bool   `yaml:"http_only"`
+		Partitioned bool   `yaml:"partitioned"`
+		SessionOnly bool   `yaml:"session_only"`
+	} `yaml:"refresh"`
+}
+
 type HTTPServerConfig struct {
-	Host              string     `yaml:"host"`
-	Port              int        `yaml:"port"`
-	EnablePrefork     bool       `yaml:"enable_prefork"`
-	EnablePrintRoutes bool       `yaml:"enable_print_routes"`
-	Cors              CorsConfig `yaml:"cors"`
+	Host                  string     `yaml:"host"`
+	Cors                  CorsConfig `yaml:"cors"`
+	ShutdownTimeout       int64      `yaml:"shutdown_timeout"`
+	Port                  int        `yaml:"port"`
+	DisableStartupMessage bool       `yaml:"disable_startup_message"`
+	EnablePrefork         bool       `yaml:"enable_prefork"`
+	EnablePrintRoutes     bool       `yaml:"enable_print_routes"`
 }
 
 type Config struct {
@@ -113,6 +148,8 @@ type Config struct {
 	BigCache   BigCacheConfig   `yaml:"big_cache"`
 	Redis      RedisConfig      `yaml:"redis"`
 	FileServer FileServerConfig `yaml:"file_server"`
+	Middleware MiddlewareConfig `yaml:"middleware"`
+	Cookie     CookieConfig     `yaml:"cookie"`
 	HTTPServer HTTPServerConfig `yaml:"httpserver"`
 }
 

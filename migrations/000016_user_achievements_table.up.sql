@@ -1,4 +1,4 @@
-CREATE TABLE user_achievements ( -- Хранит информацию о достижениях, полученных пользователями.
+CREATE TABLE user_achievements ( -- Хранит информацию о достижениях, полученных пользователями. Фиксирует какое достижение получил пользователь.
     id SERIAL PRIMARY KEY, -- Уникальный идентификатор.
     telegram_id TEXT NOT NULL, -- Telegram id пользователя.
     achievement_id INTEGER NOT NULL, -- Идентификатор достижения.
