@@ -9,10 +9,10 @@ import (
 // UserBalance represents a user balance in the system.
 type UserBalance struct {
 	ID         int64           `json:"id"`
-	TelegramID string          `json:"telegram_id"`
 	Balance    decimal.Decimal `json:"balance"`
 	CreatedAt  time.Time       `json:"created_at"`
 	UpdatedAt  time.Time       `json:"updated_at"`
+	TelegramID string          `json:"telegram_id"`
 }
 
 //
@@ -21,8 +21,8 @@ type UserBalance struct {
 
 type AddUserBalanceDTO struct {
 	EventID     int64           `json:"event_id"`
-	TelegramID  string          `json:"telegram_id"`
 	Amount      decimal.Decimal `json:"amount"`
+	TelegramID  string          `json:"telegram_id"`
 	Description string          `json:"description"`
 }
 
@@ -32,8 +32,8 @@ type AddUserBalanceDTO struct {
 
 type ReduceUserBalanceDTO struct {
 	EventID     int64           `json:"event_id"`
-	TelegramID  string          `json:"telegram_id"`
 	Amount      decimal.Decimal `json:"amount"`
+	TelegramID  string          `json:"telegram_id"`
 	Description string          `json:"description"`
 }
 
@@ -43,7 +43,7 @@ type ReduceUserBalanceDTO struct {
 
 type UpdateUserBalanceDTO struct {
 	EventID     int64           `json:"event_id"`
-	TelegramID  string          `json:"telegram_id"`
 	Amount      decimal.Decimal `json:"amount"`
+	TelegramID  string          `json:"telegram_id"`
 	Description string          `json:"description"`
 }

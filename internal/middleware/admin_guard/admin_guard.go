@@ -22,6 +22,11 @@ var (
 	ErrAccessDenied               = errors.New("access denied: you do not have permission to perform this action")
 )
 
+//go:generate mockery --name=IMiddleware --output=mocks --case=underscore
+type IMiddleware interface {
+	AdminGuardMiddleware(c fiber.Ctx) error
+}
+
 type Middleware struct {
 	adminService *adminservice.Service
 	jwt          *jwt.JWT
@@ -50,7 +55,7 @@ func (m *Middleware) AdminGuardMiddleware(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to parse token", err.Error(), nil))
 	}
 
-	ie, err := m.adminService.ExistsByTelegramID.Execute(c.Context(), vr.TelegramID)
+	ie, err := m.adminService.ExistsByTelegramID.Execute(c, vr.TelegramID)
 	if err != nil {
 		c.Status(fiber.StatusInternalServerError)
 		return c.JSON(response.New[any](false, "internal server error", err.Error(), nil))

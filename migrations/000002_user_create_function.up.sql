@@ -19,13 +19,13 @@ BEGIN
     ) ON CONFLICT (telegram_id) DO NOTHING
     RETURNING * INTO _u;
 
-    INSERT INTO user_profiles(
+    INSERT INTO user_balances(
         telegram_id
     ) VALUES(
         _src->>'telegram_id'
     );
 
-    INSERT INTO user_balances(
+    INSERT INTO user_stats(
         telegram_id
     ) VALUES(
         _src->>'telegram_id'

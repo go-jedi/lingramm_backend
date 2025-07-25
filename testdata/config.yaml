@@ -58,16 +58,42 @@ file_server:
     path: /images/client*
     url: /images/client
     dir: testdata/file_server/images/client
-    max_file_size: 10485760 # 10 MB
+    max_file_size: 5242880 # 5 MB
+    image_quality: 30
+    browse: true
+    compress: true
+  achievement_assets:
+    path: /images/achievement*
+    url: /images/achievement
+    dir: testdata/file_server/images/achievement
+    max_file_size: 5242880 # 5 MB
     image_quality: 30
     browse: true
     compress: true
   dir_perm: 0755
   file_perm: 0644
 
+middleware:
+  content_length_limiter:
+    max_body_size: 5242880
+
+cookie:
+  refresh:
+    name: refresh
+    path: /
+    domain: 127.0.0.1
+    same_site: lax
+    max_age: 2592000 # 30 days
+    secure: false
+    http_only: true
+    partitioned: false
+    session_only: false
+
 httpserver:
   host: 127.0.0.1
   port: 50050
+  shutdown_timeout: 10 # second
+  disable_startup_message: false
   enable_prefork: false
   enable_print_routes: true
   cors:

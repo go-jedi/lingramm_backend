@@ -8,7 +8,10 @@ import (
 
 func (d *Dependencies) InternalCurrencyRepository() *internalcurrencyrepository.Repository {
 	if d.internalCurrencyRepository == nil {
-		d.internalCurrencyRepository = internalcurrencyrepository.New(d.postgres.QueryTimeout, d.logger)
+		d.internalCurrencyRepository = internalcurrencyrepository.New(
+			d.postgres.QueryTimeout,
+			d.logger,
+		)
 	}
 
 	return d.internalCurrencyRepository
@@ -35,6 +38,7 @@ func (d *Dependencies) InternalCurrencyHandler() *internalcurrencyhandler.Handle
 			d.app,
 			d.logger,
 			d.validator,
+			d.middleware,
 		)
 	}
 

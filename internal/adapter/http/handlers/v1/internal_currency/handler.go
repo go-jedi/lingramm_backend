@@ -2,6 +2,7 @@ package internalcurrency
 
 import (
 	"github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/internal_currency/get_user_balance"
+	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	"github.com/go-jedi/lingramm_backend/internal/service/v1/internal_currency"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
@@ -17,18 +18,19 @@ func New(
 	app *fiber.App,
 	logger logger.ILogger,
 	_ validator.IValidator,
+	middleware *middleware.Middleware,
 ) *Handler {
 	h := &Handler{
 		getUserBalance: getuserbalance.New(internalCurrencyService, logger),
 	}
 
-	h.initRoutes(app)
+	h.initRoutes(app, middleware)
 
 	return h
 }
 
-func (h *Handler) initRoutes(app *fiber.App) {
-	api := app.Group("/v1/internal_currency")
+func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) {
+	api := app.Group("/v1/internal_currency", middleware.Auth.AuthMiddleware)
 	{
 		api.Get("/user/balance/:telegramID", h.getUserBalance.Execute)
 	}

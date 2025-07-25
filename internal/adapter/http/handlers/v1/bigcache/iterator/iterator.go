@@ -25,7 +25,7 @@ func New(
 func (h *Iterator) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[iterator for show data in bigcache] execute handler")
 
-	result, err := h.bigCacheService.Iterator.Execute(c.Context())
+	result, err := h.bigCacheService.Iterator.Execute(c)
 	if err != nil {
 		h.logger.Error("failed to show data in bigcache", "error", err)
 		c.Status(fiber.StatusInternalServerError)

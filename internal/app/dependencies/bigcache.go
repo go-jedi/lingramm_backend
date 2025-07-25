@@ -7,7 +7,10 @@ import (
 
 func (d *Dependencies) BigCacheService() *bigcacheservice.Service {
 	if d.bigCacheService == nil {
-		d.bigCacheService = bigcacheservice.New(d.logger, d.bigCache)
+		d.bigCacheService = bigcacheservice.New(
+			d.logger,
+			d.bigCache,
+		)
 	}
 
 	return d.bigCacheService
@@ -19,6 +22,7 @@ func (d *Dependencies) BigCacheHandler() *bigcachehandler.Handler {
 			d.BigCacheService(),
 			d.app,
 			d.logger,
+			d.middleware,
 		)
 	}
 

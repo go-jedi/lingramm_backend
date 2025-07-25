@@ -33,7 +33,7 @@ func (h *ExistsByTelegramID) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to get param telegramID", apperrors.ErrParamIsRequired.Error(), nil))
 	}
 
-	result, err := h.adminService.ExistsByTelegramID.Execute(c.Context(), telegramID)
+	result, err := h.adminService.ExistsByTelegramID.Execute(c, telegramID)
 	if err != nil {
 		h.logger.Error("failed to exists admin by telegram id", "error", err)
 		c.Status(fiber.StatusInternalServerError)

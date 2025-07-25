@@ -161,14 +161,25 @@ func (a *App) initFileServer(_ context.Context) error {
 		Browse:   a.cfg.FileServer.ClientAssets.Browse,
 		Compress: a.cfg.FileServer.ClientAssets.Compress,
 	}
+	achievementAssetsStaticCfg := static.Config{
+		FS:       os.DirFS(a.cfg.FileServer.AchievementAssets.Dir),
+		Browse:   a.cfg.FileServer.AchievementAssets.Browse,
+		Compress: a.cfg.FileServer.AchievementAssets.Compress,
+	}
+
 	if a.cfg.FileServer.ClientAssets.IsNext {
 		clientAssetsStaticCfg.Next = func(c fiber.Ctx) bool { // need don't show any format.
 			return strings.HasSuffix(c.Path(), a.cfg.FileServer.ClientAssets.IsNextIgnoreFormat)
 		}
 	}
+	if a.cfg.FileServer.AchievementAssets.IsNext {
+		achievementAssetsStaticCfg.Next = func(c fiber.Ctx) bool { // need don't show any format.
+			return strings.HasSuffix(c.Path(), a.cfg.FileServer.AchievementAssets.IsNextIgnoreFormat)
+		}
+	}
 
-	// initialize static for client assets.
-	a.hs.App.Get(a.cfg.FileServer.ClientAssets.Path, static.New("", clientAssetsStaticCfg))
+	a.hs.App.Get(a.cfg.FileServer.ClientAssets.Path, static.New("", clientAssetsStaticCfg))           // initialize static for client assets.
+	a.hs.App.Get(a.cfg.FileServer.AchievementAssets.Path, static.New("", achievementAssetsStaticCfg)) // initialize static for achievement assets.
 
 	return nil
 }
@@ -176,6 +187,7 @@ func (a *App) initFileServer(_ context.Context) error {
 // initDependencies initialize dependencies.
 func (a *App) initDependencies(_ context.Context) error {
 	a.dependencies = dependencies.New(
+		a.cfg,
 		a.hs.App,
 		a.logger,
 		a.validator,

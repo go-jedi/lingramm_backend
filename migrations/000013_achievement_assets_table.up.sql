@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS achievements_assets(
+CREATE TABLE IF NOT EXISTS achievement_assets( -- Хранит файлы (изображения), связанные с достижениями.
     id SERIAL PRIMARY KEY, -- Уникальный идентификатор.
     name_file TEXT NOT NULL, -- Имя файла.
     server_path_file TEXT NOT NULL, -- Путь до файла для сервера.

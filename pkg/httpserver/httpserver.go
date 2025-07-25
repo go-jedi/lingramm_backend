@@ -17,11 +17,12 @@ import (
 )
 
 const (
-	defaultHost     = "127.0.0.1"
-	defaultPort     = 50050
-	readTimeoutSec  = 40
-	writeTimeoutSec = 40
-	idleTimeout     = 120
+	defaultHost            = "127.0.0.1"
+	defaultPort            = 50050
+	defaultShutdownTimeout = 10
+	readTimeoutSec         = 40
+	writeTimeoutSec        = 40
+	idleTimeout            = 120
 )
 
 // IHTTPServer defines the interface for the http server.
@@ -32,21 +33,27 @@ type IHTTPServer interface {
 }
 
 type HTTPServer struct {
-	App *fiber.App
-
-	host              string
-	port              int
-	enablePrefork     bool
-	enablePrintRoutes bool
+	App                   *fiber.App
+	host                  string
+	shutdownTimeout       int64
+	port                  int
+	disableStartupMessage bool
+	enablePrefork         bool
+	enablePrintRoutes     bool
 }
 
-func (hs *HTTPServer) init() error {
-	if hs.host == "" {
-		hs.host = defaultHost
+func New(cfg config.HTTPServerConfig) (*HTTPServer, error) {
+	hs := &HTTPServer{
+		host:                  cfg.Host,
+		shutdownTimeout:       cfg.ShutdownTimeout,
+		port:                  cfg.Port,
+		disableStartupMessage: cfg.DisableStartupMessage,
+		enablePrefork:         cfg.EnablePrefork,
+		enablePrintRoutes:     cfg.EnablePrintRoutes,
 	}
 
-	if hs.port == 0 {
-		hs.port = defaultPort
+	if err := hs.init(); err != nil {
+		return nil, err
 	}
 
 	hs.App = fiber.New(fiber.Config{
@@ -58,26 +65,25 @@ func (hs *HTTPServer) init() error {
 		ProxyHeader:  fiber.HeaderXForwardedFor,
 	})
 
-	return nil
-}
-
-func New(cfg config.HTTPServerConfig) (*HTTPServer, error) {
-	hs := &HTTPServer{
-		host:              cfg.Host,
-		port:              cfg.Port,
-		enablePrefork:     cfg.EnablePrefork,
-		enablePrintRoutes: cfg.EnablePrintRoutes,
-	}
-
-	if err := hs.init(); err != nil {
-		return nil, err
-	}
-
 	hs.App.Use(logger.New())
 	hs.initCORS(cfg.Cors)
 	hs.ping()
 
 	return hs, nil
+}
+
+func (hs *HTTPServer) init() error {
+	if hs.host == "" {
+		hs.host = defaultHost
+	}
+	if hs.shutdownTimeout == 0 {
+		hs.shutdownTimeout = defaultShutdownTimeout
+	}
+	if hs.port == 0 {
+		hs.port = defaultPort
+	}
+
+	return nil
 }
 
 // initCORS initialize cors.
@@ -96,10 +102,10 @@ func (hs *HTTPServer) initCORS(cfg config.CorsConfig) {
 // Start http server.
 func (hs *HTTPServer) Start() error {
 	listenConfig := fiber.ListenConfig{
-		OnShutdownError:   hs.onShutdownError,
-		OnShutdownSuccess: hs.onShutdownSuccess,
-		EnablePrefork:     hs.enablePrefork,
-		EnablePrintRoutes: hs.enablePrintRoutes,
+		ShutdownTimeout:       time.Duration(hs.shutdownTimeout) * time.Second,
+		DisableStartupMessage: hs.disableStartupMessage,
+		EnablePrefork:         hs.enablePrefork,
+		EnablePrintRoutes:     hs.enablePrintRoutes,
 	}
 
 	errChan := make(chan error, 1)
@@ -158,19 +164,11 @@ func (hs *HTTPServer) gracefulStop() error {
 	defer cancel()
 
 	if err := hs.App.ShutdownWithContext(ctx); err != nil {
-		log.Printf("server forced to shutdown: %v", err)
+		log.Printf("error during shutdown: %v", err)
 		return err
 	}
 
-	log.Println("server exiting")
+	log.Println("server shutting down gracefully")
 
 	return nil
-}
-
-func (hs *HTTPServer) onShutdownError(err error) {
-	log.Printf("shutdown error: %v\n", err)
-}
-
-func (hs *HTTPServer) onShutdownSuccess() {
-	log.Println("shutdown successful")
 }

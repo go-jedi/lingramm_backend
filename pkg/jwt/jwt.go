@@ -39,10 +39,10 @@ type tokenClaims struct {
 }
 
 type JWT struct {
-	// uuid need for generate crypto hash
-	uuid uuid.IUUID
 	// secret key need for token signing
 	secret []byte
+	// uuid need for generate crypto hash
+	uuid uuid.IUUID
 	// secretHashLen need to generate hash
 	secretHashLen int
 	// accessExpAt expiration time in minutes

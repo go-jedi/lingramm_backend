@@ -8,7 +8,10 @@ import (
 
 func (d *Dependencies) AdminRepository() *adminrepository.Repository {
 	if d.adminRepository == nil {
-		d.adminRepository = adminrepository.New(d.postgres.QueryTimeout, d.logger)
+		d.adminRepository = adminrepository.New(
+			d.postgres.QueryTimeout,
+			d.logger,
+		)
 	}
 
 	return d.adminRepository
@@ -33,6 +36,7 @@ func (d *Dependencies) AdminHandler() *adminhandler.Handler {
 			d.AdminService(),
 			d.app,
 			d.logger,
+			d.middleware,
 		)
 	}
 

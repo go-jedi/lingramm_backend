@@ -25,8 +25,10 @@ func (d *Dependencies) AuthHandler() *authhandler.Handler {
 		d.authHandler = authhandler.New(
 			d.AuthService(),
 			d.app,
+			d.cfg.Cookie,
 			d.logger,
 			d.validator,
+			d.middleware,
 		)
 	}
 

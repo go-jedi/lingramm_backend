@@ -1,16 +1,21 @@
 package dependencies
 
 import (
+	"github.com/go-jedi/lingramm_backend/config"
+	achievementhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement"
 	adminhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/admin"
 	authhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/auth"
 	bigcachehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/bigcache"
 	clientassetshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets"
 	internalcurrencyhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/internal_currency"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
+	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
 	adminrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/admin"
+	achievementassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/achievement_assets"
 	clientassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/client_assets"
 	internalcurrencyrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/internal_currency"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
+	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/v1/auth"
 	bigcacheservice "github.com/go-jedi/lingramm_backend/internal/service/v1/bigcache"
@@ -28,6 +33,7 @@ import (
 )
 
 type Dependencies struct {
+	cfg        config.Config
 	app        *fiber.App
 	logger     *logger.Logger
 	validator  *validator.Validator
@@ -39,34 +45,43 @@ type Dependencies struct {
 	bigCache   *bigcachepkg.BigCache
 	fileServer *fileserver.FileServer
 
-	// auth
+	// auth.
 	authService *authservice.Service
 	authHandler *authhandler.Handler
 
-	// user
+	// user.
 	userRepository *userrepository.Repository
 
-	// client_assets
+	// client assets.
 	clientAssetsRepository *clientassetsrepository.Repository
 	clientAssetsService    *clientassetsservice.Service
 	clientAssetsHandler    *clientassetshandler.Handler
 
-	// bigcache
+	// bigcache.
 	bigCacheService *bigcacheservice.Service
 	bigCacheHandler *bigcachehandler.Handler
 
-	// internal currency
+	// internal currency.
 	internalCurrencyRepository *internalcurrencyrepository.Repository
 	internalCurrencyService    *internalcurrencyservice.Service
 	internalCurrencyHandler    *internalcurrencyhandler.Handler
 
-	// admin
+	// achievement assets.
+	achievementAssetsRepository *achievementassetsrepository.Repository
+
+	// achievement.
+	achievementRepository *achievementrepository.Repository
+	achievementService    *achievementservice.Service
+	achievementHandler    *achievementhandler.Handler
+
+	// admin.
 	adminRepository *adminrepository.Repository
 	adminService    *adminservice.Service
 	adminHandler    *adminhandler.Handler
 }
 
 func New(
+	cfg config.Config,
 	app *fiber.App,
 	logger *logger.Logger,
 	validator *validator.Validator,
@@ -78,6 +93,7 @@ func New(
 	fileServer *fileserver.FileServer,
 ) *Dependencies {
 	d := &Dependencies{
+		cfg:        cfg,
 		app:        app,
 		logger:     logger,
 		validator:  validator,
@@ -98,6 +114,7 @@ func New(
 // initMiddleware initialize middlewares.
 func (d *Dependencies) initMiddleware() {
 	d.middleware = middleware.New(
+		d.cfg.Middleware,
 		d.AdminService(),
 		d.jwt,
 		d.redis,
@@ -110,5 +127,6 @@ func (d *Dependencies) initHandler() {
 	_ = d.ClientAssetsHandler()
 	_ = d.BigCacheHandler()
 	_ = d.InternalCurrencyHandler()
+	_ = d.AchievementHandler()
 	_ = d.AdminHandler()
 }

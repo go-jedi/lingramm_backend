@@ -34,19 +34,18 @@ type IClientAssets interface {
 }
 
 type ClientAssets struct {
-	url          string      // Url for connect to image from client
-	dir          string      // Base directory for file storage
 	maxFileSize  int64       // Maximum allowed file size
-	imageQuality int         // Quality for image conversion
-	dirPerm      os.FileMode // Permission mode for directories
-	filePerm     os.FileMode // Permission mode for files
-
-	uuid *uuid.UUID
+	uuid         *uuid.UUID  // Unique identifier
+	url          string      // URL for client access
+	dir          string      // File storage directory
+	imageQuality int         // Image quality after conversion
+	dirPerm      os.FileMode // Directory permission mode (uint32)
+	filePerm     os.FileMode // File permission mode (uint32)
 }
 
 // New creates a new ClientAssets instance with the given configuration.
 func New(cfg config.FileServerConfig, uuid *uuid.UUID) *ClientAssets {
-	fi := &ClientAssets{
+	ca := &ClientAssets{
 		url:          cfg.ClientAssets.URL,
 		dir:          cfg.ClientAssets.Dir,
 		maxFileSize:  cfg.ClientAssets.MaxFileSize,
@@ -56,9 +55,9 @@ func New(cfg config.FileServerConfig, uuid *uuid.UUID) *ClientAssets {
 		uuid:         uuid,
 	}
 
-	fi.init()
+	ca.init()
 
-	return fi
+	return ca
 }
 
 // init sets default values for any unconfigured ClientAssets properties.
@@ -233,17 +232,16 @@ func (ca *ClientAssets) UploadAndConvertToWebP(ctx context.Context, fileHeader *
 	}
 
 	newFilePath := filepath.Join(sanitizedDir, newName+webpExt)
-
 	if err := os.WriteFile(newFilePath, webp, ca.filePerm); err != nil {
 		return clientassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to save converted image: %w", err)
 	}
 
 	return clientassets.UploadAndConvertToWebpResponse{
+		Quality:        ca.imageQuality,
 		NameFile:       newName + webpExt,
 		ServerPathFile: filepath.Join(sanitizedDir, newName+webpExt),
 		ClientPathFile: filepath.Join(ca.url, newName+webpExt),
 		Extension:      webpExt,
-		Quality:        ca.imageQuality,
 		OldNameFile:    fileHeader.Filename,
 		OldExtension:   ca.getFileExt(fileHeader.Filename),
 	}, nil

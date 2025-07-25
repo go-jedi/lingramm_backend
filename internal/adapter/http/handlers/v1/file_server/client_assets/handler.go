@@ -3,6 +3,7 @@ package clientassets
 import (
 	"github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets/all"
 	"github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets/create"
+	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
@@ -19,19 +20,24 @@ func New(
 	app *fiber.App,
 	logger logger.ILogger,
 	validator validator.IValidator,
+	middleware *middleware.Middleware,
 ) *Handler {
 	h := &Handler{
 		create: create.New(clientAssetsService, logger, validator),
 		all:    all.New(clientAssetsService, logger, validator),
 	}
 
-	h.initRoutes(app)
+	h.initRoutes(app, middleware)
 
 	return h
 }
 
-func (h *Handler) initRoutes(app *fiber.App) {
-	api := app.Group("/v1/fs/client_assets")
+func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) {
+	api := app.Group(
+		"/v1/fs/client_assets",
+		middleware.Auth.AuthMiddleware,
+		middleware.AdminGuard.AdminGuardMiddleware,
+	)
 	{
 		api.Post("", h.create.Execute)
 		api.Get("/all", h.all.Execute)
