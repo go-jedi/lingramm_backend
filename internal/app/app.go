@@ -185,8 +185,9 @@ func (a *App) initFileServer(_ context.Context) error {
 }
 
 // initDependencies initialize dependencies.
-func (a *App) initDependencies(_ context.Context) error {
+func (a *App) initDependencies(ctx context.Context) error {
 	a.dependencies = dependencies.New(
+		ctx,
 		a.cfg,
 		a.hs.App,
 		a.logger,

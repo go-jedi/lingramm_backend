@@ -54,6 +54,11 @@ type RefreshTokenConfig struct {
 	Expiration   int64 `yaml:"expiration"`
 }
 
+type UnDeleteFileConfig struct {
+	QueryTimeout int64 `yaml:"query_timeout"`
+	Expiration   int64 `yaml:"expiration"`
+}
+
 type RedisConfig struct {
 	Addr            string             `yaml:"addr"`
 	Password        string             `yaml:"password"`
@@ -68,6 +73,7 @@ type RedisConfig struct {
 	MinRetryBackoff int                `yaml:"min_retry_backoff"`
 	MaxRetryBackoff int                `yaml:"max_retry_backoff"`
 	RefreshToken    RefreshTokenConfig `yaml:"refresh_token"`
+	UnDeleteFile    UnDeleteFileConfig `yaml:"un_delete_file"`
 }
 
 type ClientAssets struct {
@@ -111,6 +117,13 @@ type CorsConfig struct {
 	AllowPrivateNetwork bool     `yaml:"allow_private_network"`
 }
 
+type CronConfig struct {
+	UnDeleteFileCleaner struct {
+		SleepDuration int `yaml:"sleep_duration"`
+		Timeout       int `yaml:"timeout"`
+	} `yaml:"un_delete_file_cleaner"`
+}
+
 type MiddlewareConfig struct {
 	ContentLengthLimiter struct {
 		MaxBodySize int `yaml:"max_body_size"`
@@ -148,6 +161,7 @@ type Config struct {
 	BigCache   BigCacheConfig   `yaml:"big_cache"`
 	Redis      RedisConfig      `yaml:"redis"`
 	FileServer FileServerConfig `yaml:"file_server"`
+	Cron       CronConfig       `yaml:"cron"`
 	Middleware MiddlewareConfig `yaml:"middleware"`
 	Cookie     CookieConfig     `yaml:"cookie"`
 	HTTPServer HTTPServerConfig `yaml:"httpserver"`

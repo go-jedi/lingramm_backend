@@ -24,6 +24,7 @@ func (d *Dependencies) AchievementService() *achievementservice.Service {
 			d.AchievementAssetsRepository(),
 			d.logger,
 			d.postgres,
+			d.redis,
 			d.fileServer,
 		)
 	}

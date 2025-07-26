@@ -10,6 +10,7 @@ import (
 	fileserver "github.com/go-jedi/lingramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/redis"
 )
 
 type Service struct {
@@ -24,12 +25,13 @@ func New(
 	achievementAssetsRepository *achievementassetsrepository.Repository,
 	logger logger.ILogger,
 	postgres *postgres.Postgres,
+	redis *redis.Redis,
 	fileServer *fileserver.FileServer,
 ) *Service {
 	return &Service{
 		All:                         alldetail.New(achievementRepository, logger, postgres),
 		Create:                      create.New(achievementRepository, achievementAssetsRepository, logger, postgres, fileServer),
-		DeleteDetailByAchievementID: deletedetailbyachievementid.New(achievementRepository, achievementAssetsRepository, logger, postgres),
+		DeleteDetailByAchievementID: deletedetailbyachievementid.New(achievementRepository, achievementAssetsRepository, logger, postgres, redis),
 		GetDetailByAchievementID:    getdetailbyachievementid.New(achievementRepository, logger, postgres),
 	}
 }

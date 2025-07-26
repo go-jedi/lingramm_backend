@@ -48,8 +48,10 @@ redis:
   max_retries: 3
   min_retry_backoff: 8 # millisecond
   max_retry_backoff: 512 # millisecond
-  dur_cache_update: 60 # minutes
   refresh_token:
+    query_timeout: 2 # second
+    expiration: 7 # days
+  un_delete_file:
     query_timeout: 2 # second
     expiration: 7 # days
 
@@ -72,6 +74,11 @@ file_server:
     compress: true
   dir_perm: 0755
   file_perm: 0644
+
+cron:
+  un_delete_file_cleaner:
+    sleep_duration: 1 # minutes
+    timeout: 15 # second
 
 middleware:
   content_length_limiter:
