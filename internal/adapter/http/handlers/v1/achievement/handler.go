@@ -3,6 +3,7 @@ package achievement
 import (
 	alldetail "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement/all_detail"
 	"github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement/create"
+	deletedetailbyachievementid "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement/delete_detail_by_achievement_id"
 	getdetailbyachievementid "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement/get_detail_by_achievement_id"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
@@ -12,9 +13,10 @@ import (
 )
 
 type Handler struct {
-	allDetail                *alldetail.AllDetail
-	create                   *create.Create
-	getDetailByAchievementID *getdetailbyachievementid.GetDetailByAchievementID
+	allDetail                   *alldetail.AllDetail
+	create                      *create.Create
+	deleteDetailByAchievementID *deletedetailbyachievementid.DeleteDetailByAchievementID
+	getDetailByAchievementID    *getdetailbyachievementid.GetDetailByAchievementID
 }
 
 func New(
@@ -25,9 +27,10 @@ func New(
 	middleware *middleware.Middleware,
 ) *Handler {
 	h := &Handler{
-		allDetail:                alldetail.New(achievementService, logger),
-		create:                   create.New(achievementService, logger, validator),
-		getDetailByAchievementID: getdetailbyachievementid.New(achievementService, logger),
+		allDetail:                   alldetail.New(achievementService, logger),
+		create:                      create.New(achievementService, logger, validator),
+		deleteDetailByAchievementID: deletedetailbyachievementid.New(achievementService, logger),
+		getDetailByAchievementID:    getdetailbyachievementid.New(achievementService, logger),
 	}
 
 	h.initRoutes(app, middleware)
@@ -49,5 +52,6 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 		)
 		api.Get("/all", h.allDetail.Execute)
 		api.Get("/id/:achievementID", h.getDetailByAchievementID.Execute)
+		api.Delete("/id/:achievementID", h.deleteDetailByAchievementID.Execute)
 	}
 }

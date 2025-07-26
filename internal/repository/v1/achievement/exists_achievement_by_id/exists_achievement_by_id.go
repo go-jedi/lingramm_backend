@@ -1,4 +1,4 @@
-package existsachievementbycode
+package existsachievementbyid
 
 import (
 	"context"
@@ -11,12 +11,12 @@ import (
 	"github.com/jackc/pgx/v5"
 )
 
-//go:generate mockery --name=IExistsAchievementByCode --output=mocks --case=underscore
-type IExistsAchievementByCode interface {
-	Execute(ctx context.Context, tx pgx.Tx, code string) (bool, error)
+//go:generate mockery --name=IExistsAchievementByID --output=mocks --case=underscore
+type IExistsAchievementByID interface {
+	Execute(ctx context.Context, tx pgx.Tx, id int64) (bool, error)
 }
 
-type ExistsAchievementByCode struct {
+type ExistsAchievementByID struct {
 	queryTimeout int64
 	logger       logger.ILogger
 }
@@ -24,8 +24,8 @@ type ExistsAchievementByCode struct {
 func New(
 	queryTimeout int64,
 	logger logger.ILogger,
-) *ExistsAchievementByCode {
-	r := &ExistsAchievementByCode{
+) *ExistsAchievementByID {
+	r := &ExistsAchievementByID{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
@@ -35,14 +35,14 @@ func New(
 	return r
 }
 
-func (r *ExistsAchievementByCode) init() {
+func (r *ExistsAchievementByID) init() {
 	if r.queryTimeout == 0 {
 		r.queryTimeout = postgres.DefaultQueryTimeout
 	}
 }
 
-func (r *ExistsAchievementByCode) Execute(ctx context.Context, tx pgx.Tx, code string) (bool, error) {
-	r.logger.Debug("[check achievement exists by code] execute repository")
+func (r *ExistsAchievementByID) Execute(ctx context.Context, tx pgx.Tx, id int64) (bool, error) {
+	r.logger.Debug("[check achievement exists by id] execute repository")
 
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
@@ -51,7 +51,7 @@ func (r *ExistsAchievementByCode) Execute(ctx context.Context, tx pgx.Tx, code s
 		SELECT EXISTS(
 			SELECT 1
 			FROM achievements
-			WHERE code = $1
+			WHERE id = $1
 		);
 	`
 
@@ -59,14 +59,14 @@ func (r *ExistsAchievementByCode) Execute(ctx context.Context, tx pgx.Tx, code s
 
 	if err := tx.QueryRow(
 		ctxTimeout, q,
-		code,
+		id,
 	).Scan(&ie); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			r.logger.Error("request timed out while check achievement exists by code", "err", err)
+			r.logger.Error("request timed out while check achievement exists by id", "err", err)
 			return false, fmt.Errorf("the request timed out: %w", err)
 		}
-		r.logger.Error("failed to check achievement exists by code", "err", err)
-		return false, fmt.Errorf("could not check achievement exists by code: %w", err)
+		r.logger.Error("failed to check achievement exists by id", "err", err)
+		return false, fmt.Errorf("could not check achievement exists by id: %w", err)
 	}
 
 	return ie, nil

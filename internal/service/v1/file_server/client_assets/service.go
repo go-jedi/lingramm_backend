@@ -10,8 +10,8 @@ import (
 )
 
 type Service struct {
-	Create create.ICreate
 	All    all.IAll
+	Create create.ICreate
 }
 
 func New(
@@ -21,7 +21,7 @@ func New(
 	fileServer *fileserver.FileServer,
 ) *Service {
 	return &Service{
-		Create: create.New(clientAssetsRepository, logger, postgres, fileServer),
 		All:    all.New(clientAssetsRepository, logger, postgres),
+		Create: create.New(clientAssetsRepository, logger, postgres, fileServer),
 	}
 }

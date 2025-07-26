@@ -47,8 +47,6 @@ func (r *Exists) Execute(ctx context.Context, tx pgx.Tx, telegramID string, user
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
-	ie := false
-
 	q := `
 		SELECT EXISTS(
 			SELECT 1
@@ -57,6 +55,8 @@ func (r *Exists) Execute(ctx context.Context, tx pgx.Tx, telegramID string, user
 			OR username = $2
 		);
 	`
+
+	ie := false
 
 	if err := tx.QueryRow(
 		ctxTimeout, q,
