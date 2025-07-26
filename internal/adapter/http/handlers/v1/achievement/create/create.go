@@ -89,5 +89,5 @@ func (h *Create) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to create a achievement", err.Error(), nil))
 	}
 
-	return c.JSON(response.New[achievement.CreateResponse](true, "success", "", result))
+	return c.JSON(response.New[achievement.Detail](true, "success", "", result))
 }

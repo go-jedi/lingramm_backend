@@ -18,7 +18,7 @@ import (
 
 //go:generate mockery --name=ICreate --output=mocks --case=underscore
 type ICreate interface {
-	Execute(ctx context.Context, dto achievement.CreateDTO) (achievement.CreateResponse, error)
+	Execute(ctx context.Context, dto achievement.CreateDTO) (achievement.Detail, error)
 }
 
 type Create struct {
@@ -45,7 +45,7 @@ func New(
 	}
 }
 
-func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achievement.CreateResponse, error) {
+func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achievement.Detail, error) {
 	s.logger.Debug("[create a achievement] execute service")
 
 	var (
@@ -58,7 +58,7 @@ func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achiev
 		AccessMode: pgx.ReadWrite,
 	})
 	if err != nil {
-		return achievement.CreateResponse{}, err
+		return achievement.Detail{}, err
 	}
 	defer func() {
 		if err != nil {
@@ -72,53 +72,53 @@ func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achiev
 	// check achievement exists by code
 	existsAchievementByCode, err := s.achievementRepository.ExistsAchievementByCode.Execute(ctx, tx, dto.Code)
 	if err != nil {
-		return achievement.CreateResponse{}, err
+		return achievement.Detail{}, err
 	}
 
 	if existsAchievementByCode {
-		return achievement.CreateResponse{}, apperrors.ErrAchievementAlreadyExists
+		return achievement.Detail{}, apperrors.ErrAchievementAlreadyExists
 	}
 
 	// check achievement condition exists by condition type.
 	existsAchievementConditionByConditionType, err := s.achievementRepository.ExistsAchievementConditionByConditionType.Execute(ctx, tx, dto.ConditionType)
 	if err != nil {
-		return achievement.CreateResponse{}, err
+		return achievement.Detail{}, err
 	}
 
 	if existsAchievementConditionByConditionType {
-		return achievement.CreateResponse{}, apperrors.ErrAchievementConditionAlreadyExists
+		return achievement.Detail{}, apperrors.ErrAchievementConditionAlreadyExists
 	}
 
 	// convert png or jpg image to webp and upload.
 	imageData, err = s.fileServer.AchievementAssets.UploadAndConvertToWebP(ctx, dto.FileHeader)
 	if err != nil {
-		return achievement.CreateResponse{}, err
+		return achievement.Detail{}, err
 	}
 
 	// create achievement asset.
 	resultAchievementAsset, err := s.createAchievementAsset(ctx, tx, imageData)
 	if err != nil {
-		return achievement.CreateResponse{}, err
+		return achievement.Detail{}, err
 	}
 
 	// create achievement.
 	resultAchievement, err := s.createAchievement(ctx, tx, dto, resultAchievementAsset.ID)
 	if err != nil {
-		return achievement.CreateResponse{}, err
+		return achievement.Detail{}, err
 	}
 
 	// create achievement condition.
 	resultAchievementCondition, err := s.createAchievementCondition(ctx, tx, dto, resultAchievement.ID)
 	if err != nil {
-		return achievement.CreateResponse{}, err
+		return achievement.Detail{}, err
 	}
 
 	err = tx.Commit(ctx)
 	if err != nil {
-		return achievement.CreateResponse{}, err
+		return achievement.Detail{}, err
 	}
 
-	return achievement.CreateResponse{
+	return achievement.Detail{
 		Achievement:       resultAchievement,
 		Condition:         resultAchievementCondition,
 		AchievementAssets: resultAchievementAsset,
