@@ -54,26 +54,26 @@ type RefreshTokenConfig struct {
 	Expiration   int64 `yaml:"expiration"`
 }
 
-type UnDeleteFileConfig struct {
+type UnDeleteFileAchievementConfig struct {
 	QueryTimeout int64 `yaml:"query_timeout"`
 	Expiration   int64 `yaml:"expiration"`
 }
 
 type RedisConfig struct {
-	Addr            string             `yaml:"addr"`
-	Password        string             `yaml:"password"`
-	DB              int                `yaml:"db"`
-	DialTimeout     int                `yaml:"dial_timeout"`
-	ReadTimeout     int                `yaml:"read_timeout"`
-	WriteTimeout    int                `yaml:"write_timeout"`
-	PoolSize        int                `yaml:"pool_size"`
-	MinIdleConns    int                `yaml:"min_idle_conns"`
-	PoolTimeout     int                `yaml:"pool_timeout"`
-	MaxRetries      int                `yaml:"max_retries"`
-	MinRetryBackoff int                `yaml:"min_retry_backoff"`
-	MaxRetryBackoff int                `yaml:"max_retry_backoff"`
-	RefreshToken    RefreshTokenConfig `yaml:"refresh_token"`
-	UnDeleteFile    UnDeleteFileConfig `yaml:"un_delete_file"`
+	Addr                    string                        `yaml:"addr"`
+	Password                string                        `yaml:"password"`
+	DB                      int                           `yaml:"db"`
+	DialTimeout             int                           `yaml:"dial_timeout"`
+	ReadTimeout             int                           `yaml:"read_timeout"`
+	WriteTimeout            int                           `yaml:"write_timeout"`
+	PoolSize                int                           `yaml:"pool_size"`
+	MinIdleConns            int                           `yaml:"min_idle_conns"`
+	PoolTimeout             int                           `yaml:"pool_timeout"`
+	MaxRetries              int                           `yaml:"max_retries"`
+	MinRetryBackoff         int                           `yaml:"min_retry_backoff"`
+	MaxRetryBackoff         int                           `yaml:"max_retry_backoff"`
+	RefreshToken            RefreshTokenConfig            `yaml:"refresh_token"`
+	UnDeleteFileAchievement UnDeleteFileAchievementConfig `yaml:"un_delete_file_achievement"`
 }
 
 type ClientAssets struct {
@@ -118,10 +118,10 @@ type CorsConfig struct {
 }
 
 type CronConfig struct {
-	UnDeleteFileCleaner struct {
+	UnDeleteFileAchievementCleaner struct {
 		SleepDuration int `yaml:"sleep_duration"`
 		Timeout       int `yaml:"timeout"`
-	} `yaml:"un_delete_file_cleaner"`
+	} `yaml:"un_delete_file_achievement_cleaner"`
 }
 
 type MiddlewareConfig struct {

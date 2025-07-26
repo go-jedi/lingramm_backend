@@ -51,7 +51,7 @@ redis:
   refresh_token:
     query_timeout: 2 # second
     expiration: 7 # days
-  un_delete_file:
+  un_delete_file_achievement:
     query_timeout: 2 # second
     expiration: 7 # days
 
@@ -80,7 +80,7 @@ file_server:
   file_perm: 0644
 
 cron:
-  un_delete_file_cleaner:
+  un_delete_file_achievement_cleaner:
     sleep_duration: 720 # minutes
     timeout: 15 # second
 

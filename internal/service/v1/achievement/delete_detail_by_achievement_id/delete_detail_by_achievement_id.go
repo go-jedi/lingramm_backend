@@ -115,7 +115,7 @@ func (s *DeleteDetailByAchievementID) deleteAchievementFile(ctx context.Context,
 	if err := os.Remove(path); err != nil {
 		s.logger.Warn("failed to remove asset file", "path", path, "error", err)
 
-		if err := s.redis.UnDeleteFile.Set(ctx, strconv.FormatInt(achievementAssetsID, base), path); err != nil {
+		if err := s.redis.UnDeleteFileAchievement.Set(ctx, strconv.FormatInt(achievementAssetsID, base), path); err != nil {
 			s.logger.Warn("failed to set un delete file", "path", path, "error", err)
 		}
 	} else {

@@ -1,4 +1,4 @@
-package undelfilecleaner
+package undeletefileachievementcleaner
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 
 var ErrLoadPathsFromRedis = errors.New("failed to load file paths from redis")
 
-type UnDeleteFileCleaner struct {
+type UnDeleteFileAchievementCleaner struct {
 	logger        *logger.Logger
 	redis         *redis.Redis
 	sleepDuration int
@@ -27,12 +27,12 @@ func New(
 	cfg config.CronConfig,
 	logger *logger.Logger,
 	redis *redis.Redis,
-) *UnDeleteFileCleaner {
-	c := &UnDeleteFileCleaner{
+) *UnDeleteFileAchievementCleaner {
+	c := &UnDeleteFileAchievementCleaner{
 		logger:        logger,
 		redis:         redis,
-		sleepDuration: cfg.UnDeleteFileCleaner.SleepDuration,
-		timeout:       cfg.UnDeleteFileCleaner.Timeout,
+		sleepDuration: cfg.UnDeleteFileAchievementCleaner.SleepDuration,
+		timeout:       cfg.UnDeleteFileAchievementCleaner.Timeout,
 	}
 
 	go c.Start(ctx)
@@ -40,7 +40,7 @@ func New(
 	return c
 }
 
-func (c *UnDeleteFileCleaner) Start(ctx context.Context) {
+func (c *UnDeleteFileAchievementCleaner) Start(ctx context.Context) {
 	ticker := time.NewTicker(time.Duration(c.sleepDuration) * time.Minute)
 	defer ticker.Stop()
 
@@ -64,8 +64,8 @@ func (c *UnDeleteFileCleaner) Start(ctx context.Context) {
 	}
 }
 
-func (c *UnDeleteFileCleaner) cleanFiles(ctx context.Context) error {
-	paths, err := c.redis.UnDeleteFile.All(ctx)
+func (c *UnDeleteFileAchievementCleaner) cleanFiles(ctx context.Context) error {
+	paths, err := c.redis.UnDeleteFileAchievement.All(ctx)
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrLoadPathsFromRedis, err)
 	}
@@ -94,7 +94,7 @@ func (c *UnDeleteFileCleaner) cleanFiles(ctx context.Context) error {
 	}
 
 	if len(keysToDelete) > 0 {
-		if err := c.redis.UnDeleteFile.DeleteKeys(ctx, keysToDelete); err != nil {
+		if err := c.redis.UnDeleteFileAchievement.DeleteKeys(ctx, keysToDelete); err != nil {
 			c.logger.Error("failed to delete keys from redis", "error", err)
 		}
 	}

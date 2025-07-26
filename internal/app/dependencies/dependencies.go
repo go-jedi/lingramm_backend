@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/go-jedi/lingramm_backend/config"
-	undelfilecleaner "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/un_delete_file_cleaner"
+	undeletefileachievementcleaner "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/un_delete_file_achievement_cleaner"
 	achievementhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement"
 	adminhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/admin"
 	authhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/auth"
@@ -83,7 +83,7 @@ type Dependencies struct {
 	adminHandler    *adminhandler.Handler
 
 	// cron.
-	unDeleteFileCleaner *undelfilecleaner.UnDeleteFileCleaner
+	unDeleteFileAchievementCleaner *undeletefileachievementcleaner.UnDeleteFileAchievementCleaner
 }
 
 func New(
@@ -141,5 +141,5 @@ func (d *Dependencies) initHandler() {
 
 // initCron initialize cron.
 func (d *Dependencies) initCron(ctx context.Context) {
-	_ = d.UnDeleteFileCleaner(ctx)
+	_ = d.UnDeleteFileAchievementCleaner(ctx)
 }
