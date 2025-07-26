@@ -1,6 +1,7 @@
 package achievement
 
 import (
+	alldetail "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement/all_detail"
 	"github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement/create"
 	getdetailbyachievementid "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement/get_detail_by_achievement_id"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
@@ -11,6 +12,7 @@ import (
 )
 
 type Handler struct {
+	allDetail                *alldetail.AllDetail
 	create                   *create.Create
 	getDetailByAchievementID *getdetailbyachievementid.GetDetailByAchievementID
 }
@@ -23,6 +25,7 @@ func New(
 	middleware *middleware.Middleware,
 ) *Handler {
 	h := &Handler{
+		allDetail:                alldetail.New(achievementService, logger),
 		create:                   create.New(achievementService, logger, validator),
 		getDetailByAchievementID: getdetailbyachievementid.New(achievementService, logger),
 	}
@@ -44,6 +47,7 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 			middleware.ContentLengthLimiter.ContentLengthLimiterMiddleware,
 			h.create.Execute,
 		)
+		api.Get("/all", h.allDetail.Execute)
 		api.Get("/id/:achievementID", h.getDetailByAchievementID.Execute)
 	}
 }

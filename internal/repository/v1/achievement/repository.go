@@ -1,6 +1,7 @@
 package achievement
 
 import (
+	alldetail "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement/all_detail"
 	createachievement "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement/create_achievement"
 	createachievementcondition "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement/create_achievement_condition"
 	existsachievementbycode "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement/exists_achievement_by_code"
@@ -10,6 +11,7 @@ import (
 )
 
 type Repository struct {
+	AllDetail                                 alldetail.IAllDetail
 	CreateAchievement                         createachievement.ICreateAchievement
 	CreateAchievementCondition                createachievementcondition.ICreateAchievementCondition
 	ExistsAchievementByCode                   existsachievementbycode.IExistsAchievementByCode
@@ -22,6 +24,7 @@ func New(
 	logger logger.ILogger,
 ) *Repository {
 	return &Repository{
+		AllDetail:                                 alldetail.New(queryTimeout, logger),
 		CreateAchievement:                         createachievement.New(queryTimeout, logger),
 		CreateAchievementCondition:                createachievementcondition.New(queryTimeout, logger),
 		ExistsAchievementByCode:                   existsachievementbycode.New(queryTimeout, logger),
