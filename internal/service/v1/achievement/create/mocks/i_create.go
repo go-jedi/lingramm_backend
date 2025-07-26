@@ -16,22 +16,22 @@ type ICreate struct {
 }
 
 // Execute provides a mock function with given fields: ctx, dto
-func (_m *ICreate) Execute(ctx context.Context, dto achievement.CreateDTO) (achievement.CreateResponse, error) {
+func (_m *ICreate) Execute(ctx context.Context, dto achievement.CreateDTO) (achievement.Detail, error) {
 	ret := _m.Called(ctx, dto)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Execute")
 	}
 
-	var r0 achievement.CreateResponse
+	var r0 achievement.Detail
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, achievement.CreateDTO) (achievement.CreateResponse, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, achievement.CreateDTO) (achievement.Detail, error)); ok {
 		return rf(ctx, dto)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, achievement.CreateDTO) achievement.CreateResponse); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, achievement.CreateDTO) achievement.Detail); ok {
 		r0 = rf(ctx, dto)
 	} else {
-		r0 = ret.Get(0).(achievement.CreateResponse)
+		r0 = ret.Get(0).(achievement.Detail)
 	}
 
 	if rf, ok := ret.Get(1).(func(context.Context, achievement.CreateDTO) error); ok {

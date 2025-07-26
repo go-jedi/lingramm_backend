@@ -29,6 +29,13 @@ type Condition struct {
 	Operator      string    `json:"operator"`
 }
 
+// Detail represents achievement detail in the system.
+type Detail struct {
+	Achievement       Achievement                         `json:"achievement"`
+	Condition         Condition                           `json:"condition"`
+	AchievementAssets achievementassets.AchievementAssets `json:"achievement_assets"`
+}
+
 //
 // CREATE
 //
@@ -41,12 +48,6 @@ type CreateDTO struct {
 	Name          string  `json:"name" validate:"required,min=1"`
 	ConditionType string  `json:"condition_type" validate:"required,min=1"`
 	Operator      string  `json:"operator" validate:"required,min=1"`
-}
-
-type CreateResponse struct {
-	Achievement       Achievement                         `json:"achievement"`
-	Condition         Condition                           `json:"condition"`
-	AchievementAssets achievementassets.AchievementAssets `json:"achievement_assets"`
 }
 
 //
