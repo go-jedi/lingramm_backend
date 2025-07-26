@@ -5,7 +5,7 @@ CREATE TABLE user_achievements ( -- Хранит информацию о дос�
     unlocked_at TIMESTAMP DEFAULT NOW(), -- Время, когда достижение было разблокировано пользователем.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата обновления записи.
-    FOREIGN KEY (telegram_id) REFERENCES users(telegram_id) ON DELETE CASCADE,
+    FOREIGN KEY (telegram_id) REFERENCES users(telegram_id),
     FOREIGN KEY (achievement_id) REFERENCES achievements(id),
     CONSTRAINT unique_user_achievement UNIQUE(telegram_id, achievement_id) -- Запрещает повторное добавление одного и того же достижения для одного пользователя.
 );

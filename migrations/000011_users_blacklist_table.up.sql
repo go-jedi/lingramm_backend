@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS users_blacklist(
     banned_by_telegram_id TEXT NOT NULL, -- Кто забанил пользователя.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата обновления записи.
-    FOREIGN KEY (telegram_id) REFERENCES users(telegram_id) ON DELETE CASCADE
+    FOREIGN KEY (telegram_id) REFERENCES users(telegram_id)
 );

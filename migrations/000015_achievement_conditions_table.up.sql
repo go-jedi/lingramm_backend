@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS achievement_conditions ( -- Хранит услови
     value INTEGER NOT NULL, -- Значение, с которым сравнивается прогресс пользователя.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата обновления записи.
-    FOREIGN KEY (achievement_id) REFERENCES achievements(id) ON DELETE CASCADE
+    FOREIGN KEY (achievement_id) REFERENCES achievements(id)
 );

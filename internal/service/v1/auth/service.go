@@ -13,9 +13,9 @@ import (
 )
 
 type Service struct {
-	SignIn  signin.ISignIn
 	Check   check.ICheck
 	Refresh refresh.IRefresh
+	SignIn  signin.ISignIn
 }
 
 func New(
@@ -27,8 +27,8 @@ func New(
 	jwt *jwt.JWT,
 ) *Service {
 	return &Service{
-		SignIn:  signin.New(userRepository, logger, postgres, redis, bigCache, jwt),
 		Check:   check.New(userRepository, logger, postgres, bigCache, jwt),
 		Refresh: refresh.New(userRepository, logger, postgres, redis, bigCache, jwt),
+		SignIn:  signin.New(userRepository, logger, postgres, redis, bigCache, jwt),
 	}
 }

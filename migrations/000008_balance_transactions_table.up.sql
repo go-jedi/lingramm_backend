@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS balance_transactions( -- История операц�
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата обновления записи.
     FOREIGN KEY (event_id) REFERENCES balance_transaction_events(id) ON DELETE SET NULL,
-    FOREIGN KEY (telegram_id) REFERENCES users(telegram_id) ON DELETE CASCADE
+    FOREIGN KEY (telegram_id) REFERENCES users(telegram_id)
 );

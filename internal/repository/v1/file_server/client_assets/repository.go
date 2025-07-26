@@ -7,8 +7,8 @@ import (
 )
 
 type Repository struct {
-	Create create.ICreate
 	All    all.IAll
+	Create create.ICreate
 }
 
 func New(
@@ -16,7 +16,7 @@ func New(
 	logger logger.ILogger,
 ) *Repository {
 	return &Repository{
-		Create: create.New(queryTimeout, logger),
 		All:    all.New(queryTimeout, logger),
+		Create: create.New(queryTimeout, logger),
 	}
 }

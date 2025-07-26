@@ -11,8 +11,8 @@ import (
 )
 
 type Handler struct {
-	create *create.Create
 	all    *all.All
+	create *create.Create
 }
 
 func New(
@@ -23,8 +23,8 @@ func New(
 	middleware *middleware.Middleware,
 ) *Handler {
 	h := &Handler{
-		create: create.New(clientAssetsService, logger, validator),
 		all:    all.New(clientAssetsService, logger, validator),
+		create: create.New(clientAssetsService, logger, validator),
 	}
 
 	h.initRoutes(app, middleware)

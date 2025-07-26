@@ -13,9 +13,9 @@ import (
 )
 
 type Handler struct {
-	signIn  *signinhandler.SignIn
 	check   *checkhandler.Check
 	refresh *refreshhandler.Refresh
+	signIn  *signinhandler.SignIn
 }
 
 func New(
@@ -27,9 +27,9 @@ func New(
 	middleware *middleware.Middleware,
 ) *Handler {
 	h := &Handler{
-		signIn:  signinhandler.New(authService, cookie, logger, validator),
 		check:   checkhandler.New(authService, logger, validator),
 		refresh: refreshhandler.New(authService, logger, validator),
+		signIn:  signinhandler.New(authService, cookie, logger, validator),
 	}
 
 	h.initRoutes(app, middleware)
