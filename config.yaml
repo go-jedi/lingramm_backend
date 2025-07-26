@@ -48,6 +48,12 @@ redis:
   max_retries: 3
   min_retry_backoff: 8 # millisecond
   max_retry_backoff: 512 # millisecond
+  refresh_token:
+    query_timeout: 2 # second
+    expiration: 7 # days
+  un_delete_file:
+    query_timeout: 2 # second
+    expiration: 7 # days
 
 file_server:
   client_assets:
@@ -72,6 +78,11 @@ file_server:
     is_next_ignore_format: .webp
   dir_perm: 0755
   file_perm: 0644
+
+cron:
+  un_delete_file_cleaner:
+    sleep_duration: 720 # minutes
+    timeout: 15 # second
 
 middleware:
   content_length_limiter:

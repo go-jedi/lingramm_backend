@@ -1,7 +1,10 @@
 package dependencies
 
 import (
+	"context"
+
 	"github.com/go-jedi/lingramm_backend/config"
+	undelfilecleaner "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/un_delete_file_cleaner"
 	achievementhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement"
 	adminhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/admin"
 	authhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/auth"
@@ -78,9 +81,13 @@ type Dependencies struct {
 	adminRepository *adminrepository.Repository
 	adminService    *adminservice.Service
 	adminHandler    *adminhandler.Handler
+
+	// cron.
+	unDeleteFileCleaner *undelfilecleaner.UnDeleteFileCleaner
 }
 
 func New(
+	ctx context.Context,
 	cfg config.Config,
 	app *fiber.App,
 	logger *logger.Logger,
@@ -107,6 +114,7 @@ func New(
 
 	d.initMiddleware()
 	d.initHandler()
+	d.initCron(ctx)
 
 	return d
 }
@@ -129,4 +137,9 @@ func (d *Dependencies) initHandler() {
 	_ = d.InternalCurrencyHandler()
 	_ = d.AchievementHandler()
 	_ = d.AdminHandler()
+}
+
+// initCron initialize cron.
+func (d *Dependencies) initCron(ctx context.Context) {
+	_ = d.UnDeleteFileCleaner(ctx)
 }

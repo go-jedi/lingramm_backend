@@ -45,55 +45,55 @@ func New(cfg config.RedisConfig, client *redis.Client) *RefreshToken {
 }
 
 // Set stores refresh token in Redis using MessagePack serialization.
-func (rf *RefreshToken) Set(ctx context.Context, key string, val string) error {
+func (c *RefreshToken) Set(ctx context.Context, key string, val string) error {
 	b, err := msgpack.Marshal(val)
 	if err != nil {
 		return err
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(rf.queryTimeout)*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	return rf.client.Set(
+	return c.client.Set(
 		ctx,
-		rf.getPrefixRefreshToken()+rf.getPrefixTelegramID()+key,
+		c.getPrefixRefreshToken()+c.getPrefixTelegramID()+key,
 		b,
-		rf.getExpiration(),
+		c.getExpiration(),
 	).Err()
 }
 
 // SetWithExpiration set stores refresh token with expiration in Redis using MessagePack serialization.
-func (rf *RefreshToken) SetWithExpiration(ctx context.Context, key string, val string, expiration time.Duration) error {
+func (c *RefreshToken) SetWithExpiration(ctx context.Context, key string, val string, expiration time.Duration) error {
 	b, err := msgpack.Marshal(val)
 	if err != nil {
 		return err
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(rf.queryTimeout)*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	return rf.client.Set(
+	return c.client.Set(
 		ctx,
-		rf.getPrefixRefreshToken()+rf.getPrefixTelegramID()+key,
+		c.getPrefixRefreshToken()+c.getPrefixTelegramID()+key,
 		b,
 		expiration,
 	).Err()
 }
 
 // All retrieves all refresh token entries from the cache.
-func (rf *RefreshToken) All(ctx context.Context) (map[string]string, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(rf.queryTimeout)*time.Second)
+func (c *RefreshToken) All(ctx context.Context) (map[string]string, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
 	const count = 200
 	var (
 		cursor uint64
 		result = make(map[string]string)
-		match  = rf.getPrefixRefreshToken() + rf.getPrefixTelegramID() + "*"
+		match  = c.getPrefixRefreshToken() + c.getPrefixTelegramID() + "*"
 	)
 
 	for {
-		keys, nextCursor, err := rf.client.Scan(ctx, cursor, match, count).Result()
+		keys, nextCursor, err := c.client.Scan(ctx, cursor, match, count).Result()
 		if err != nil {
 			return nil, err
 		}
@@ -106,13 +106,13 @@ func (rf *RefreshToken) All(ctx context.Context) (map[string]string, error) {
 			continue
 		}
 
-		values, err := rf.client.MGet(ctx, keys...).Result()
+		values, err := c.client.MGet(ctx, keys...).Result()
 		if err != nil {
 			return nil, err
 		}
 
 		for i := range values {
-			rawData := rf.convertToBytes(values[i])
+			rawData := c.convertToBytes(values[i])
 			if rawData == nil {
 				continue
 			}
@@ -135,13 +135,13 @@ func (rf *RefreshToken) All(ctx context.Context) (map[string]string, error) {
 }
 
 // Get retrieves refresh token from Redis and deserializes it using MessagePack.
-func (rf *RefreshToken) Get(ctx context.Context, key string) (string, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(rf.queryTimeout)*time.Second)
+func (c *RefreshToken) Get(ctx context.Context, key string) (string, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	b, err := rf.client.Get(
+	b, err := c.client.Get(
 		ctx,
-		rf.getPrefixRefreshToken()+rf.getPrefixTelegramID()+key,
+		c.getPrefixRefreshToken()+c.getPrefixTelegramID()+key,
 	).Bytes()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
@@ -159,11 +159,11 @@ func (rf *RefreshToken) Get(ctx context.Context, key string) (string, error) {
 }
 
 // Exists checks whether a refresh token exists in Redis by key.
-func (rf *RefreshToken) Exists(ctx context.Context, key string) (bool, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(rf.queryTimeout)*time.Second)
+func (c *RefreshToken) Exists(ctx context.Context, key string) (bool, error) {
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	count, err := rf.client.Exists(ctx, rf.getPrefixRefreshToken()+rf.getPrefixTelegramID()+key).Result()
+	count, err := c.client.Exists(ctx, c.getPrefixRefreshToken()+c.getPrefixTelegramID()+key).Result()
 	if err != nil {
 		return false, err
 	}
@@ -172,43 +172,38 @@ func (rf *RefreshToken) Exists(ctx context.Context, key string) (bool, error) {
 }
 
 // Delete removes refresh token from the cache by key.
-func (rf *RefreshToken) Delete(ctx context.Context, key string) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(rf.queryTimeout)*time.Second)
+func (c *RefreshToken) Delete(ctx context.Context, key string) error {
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	return rf.client.Del(ctx, rf.getPrefixRefreshToken()+rf.getPrefixTelegramID()+key).Err()
+	return c.client.Del(ctx, key).Err()
 }
 
 // DeleteKeys removes refresh tokens from the cache by keys.
-func (rf *RefreshToken) DeleteKeys(ctx context.Context, keys []string) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(rf.queryTimeout)*time.Second)
+func (c *RefreshToken) DeleteKeys(ctx context.Context, keys []string) error {
+	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	fullKeys := make([]string, 0, len(keys))
-	for i := range keys {
-		fullKeys = append(fullKeys, rf.getPrefixRefreshToken()+rf.getPrefixTelegramID()+keys[i])
-	}
-
-	return rf.client.Del(ctx, fullKeys...).Err()
+	return c.client.Del(ctx, keys...).Err()
 }
 
 // getPrefixRefreshToken get prefix refresh token.
-func (rf *RefreshToken) getPrefixRefreshToken() string {
-	return rf.prefixRefreshToken
+func (c *RefreshToken) getPrefixRefreshToken() string {
+	return c.prefixRefreshToken
 }
 
 // getPrefixTelegramID get prefix telegram id.
-func (rf *RefreshToken) getPrefixTelegramID() string {
-	return rf.prefixTelegramID
+func (c *RefreshToken) getPrefixTelegramID() string {
+	return c.prefixTelegramID
 }
 
 // getExpiration get expiration date for row in cache.
-func (rf *RefreshToken) getExpiration() time.Duration {
-	return time.Duration(rf.expiration) * 24 * time.Hour
+func (c *RefreshToken) getExpiration() time.Duration {
+	return time.Duration(c.expiration) * 24 * time.Hour
 }
 
 // convertToBytes safely converts interface{} to []byte.
-func (rf *RefreshToken) convertToBytes(val interface{}) []byte {
+func (c *RefreshToken) convertToBytes(val interface{}) []byte {
 	switch v := val.(type) {
 	case []byte:
 		return v

@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+	"strconv"
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/achievement"
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
@@ -11,6 +12,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -24,6 +26,7 @@ type DeleteDetailByAchievementID struct {
 	achievementAssetsRepository *achievementassetsrepository.Repository
 	logger                      logger.ILogger
 	postgres                    *postgres.Postgres
+	redis                       *redis.Redis
 }
 
 func New(
@@ -31,12 +34,14 @@ func New(
 	achievementAssetsRepository *achievementassetsrepository.Repository,
 	logger logger.ILogger,
 	postgres *postgres.Postgres,
+	redis *redis.Redis,
 ) *DeleteDetailByAchievementID {
 	return &DeleteDetailByAchievementID{
 		achievementRepository:       achievementRepository,
 		achievementAssetsRepository: achievementAssetsRepository,
 		logger:                      logger,
 		postgres:                    postgres,
+		redis:                       redis,
 	}
 }
 
@@ -89,7 +94,7 @@ func (s *DeleteDetailByAchievementID) Execute(ctx context.Context, achievementID
 	}
 
 	// remove file.
-	s.deleteAchievementFile(resultAchievementAsset.ServerPathFile)
+	s.deleteAchievementFile(ctx, resultAchievementAsset.ID, resultAchievementAsset.ServerPathFile)
 
 	err = tx.Commit(ctx)
 	if err != nil {
@@ -104,9 +109,15 @@ func (s *DeleteDetailByAchievementID) Execute(ctx context.Context, achievementID
 }
 
 // deleteAchievementFile delete file.
-func (s *DeleteDetailByAchievementID) deleteAchievementFile(path string) {
+func (s *DeleteDetailByAchievementID) deleteAchievementFile(ctx context.Context, achievementAssetsID int64, path string) {
+	const base = 10
+
 	if err := os.Remove(path); err != nil {
 		s.logger.Warn("failed to remove asset file", "path", path, "error", err)
+
+		if err := s.redis.UnDeleteFile.Set(ctx, strconv.FormatInt(achievementAssetsID, base), path); err != nil {
+			s.logger.Warn("failed to set un delete file", "path", path, "error", err)
+		}
 	} else {
 		s.logger.Debug("asset file removed", "path", path)
 	}
