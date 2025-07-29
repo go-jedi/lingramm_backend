@@ -23,6 +23,7 @@ func (d *Dependencies) ClientAssetsService() *clientassetsservice.Service {
 			d.ClientAssetsRepository(),
 			d.logger,
 			d.postgres,
+			d.redis,
 			d.fileServer,
 		)
 	}

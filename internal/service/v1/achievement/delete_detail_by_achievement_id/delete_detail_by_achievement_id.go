@@ -87,6 +87,16 @@ func (s *DeleteDetailByAchievementID) Execute(ctx context.Context, achievementID
 		return achievement.Detail{}, err
 	}
 
+	// check achievement assets exists by id.
+	existsAchievementAssetsByID, err := s.achievementAssetsRepository.ExistsByID.Execute(ctx, tx, resultAchievement.AchievementAssetsID)
+	if err != nil {
+		return achievement.Detail{}, err
+	}
+
+	if !existsAchievementAssetsByID { // if achievement assets does not exist.
+		return achievement.Detail{}, apperrors.ErrAchievementAssetsDoesNotExist
+	}
+
 	// delete achievement assets by id.
 	resultAchievementAsset, err := s.achievementAssetsRepository.DeleteByID.Execute(ctx, tx, resultAchievement.AchievementAssetsID)
 	if err != nil {
@@ -116,7 +126,7 @@ func (s *DeleteDetailByAchievementID) deleteAchievementFile(ctx context.Context,
 		s.logger.Warn("failed to remove asset file", "path", path, "error", err)
 
 		if err := s.redis.UnDeleteFileAchievement.Set(ctx, strconv.FormatInt(achievementAssetsID, base), path); err != nil {
-			s.logger.Warn("failed to set un delete file", "path", path, "error", err)
+			s.logger.Warn("failed to set un delete asset file", "path", path, "error", err)
 		}
 	} else {
 		s.logger.Debug("asset file removed", "path", path)
