@@ -1,8 +1,8 @@
 logger:
   is_json: true
   add_source: false
-  level: debug
-  set_file: false
+  level: error
+  set_file: true
   file_name: logs/app.log
   max_size: 10
   max_backups: 3
@@ -51,9 +51,12 @@ redis:
   refresh_token:
     query_timeout: 2 # second
     expiration: 7 # days
+  un_delete_file_client:
+    query_timeout: 2 # second
+    expiration: 0 # days
   un_delete_file_achievement:
     query_timeout: 2 # second
-    expiration: 7 # days
+    expiration: 0 # days
 
 file_server:
   client_assets:
@@ -82,6 +85,9 @@ file_server:
 cron:
   un_delete_file_achievement_cleaner:
     sleep_duration: 720 # minutes
+    timeout: 15 # second
+  un_delete_file_client_cleaner:
+    sleep_duration: 1440 # minutes
     timeout: 15 # second
 
 middleware:

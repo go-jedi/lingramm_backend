@@ -3,6 +3,7 @@ package clientassets
 import (
 	"github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets/all"
 	"github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets/create"
+	deletebyid "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets/delete_by_id"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -11,8 +12,9 @@ import (
 )
 
 type Handler struct {
-	all    *all.All
-	create *create.Create
+	all        *all.All
+	create     *create.Create
+	deleteByID *deletebyid.DeleteByID
 }
 
 func New(
@@ -23,8 +25,9 @@ func New(
 	middleware *middleware.Middleware,
 ) *Handler {
 	h := &Handler{
-		all:    all.New(clientAssetsService, logger, validator),
-		create: create.New(clientAssetsService, logger, validator),
+		all:        all.New(clientAssetsService, logger, validator),
+		create:     create.New(clientAssetsService, logger, validator),
+		deleteByID: deletebyid.New(clientAssetsService, logger),
 	}
 
 	h.initRoutes(app, middleware)
@@ -36,10 +39,10 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 	api := app.Group(
 		"/v1/fs/client_assets",
 		middleware.Auth.AuthMiddleware,
-		middleware.AdminGuard.AdminGuardMiddleware,
 	)
 	{
 		api.Post("", h.create.Execute)
 		api.Get("/all", h.all.Execute)
+		api.Delete("/id/:id", h.deleteByID.Execute)
 	}
 }

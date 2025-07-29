@@ -1,4 +1,4 @@
-package undeletefileachievementcleaner
+package undeletefileclientcleaner
 
 import (
 	"context"
@@ -15,7 +15,7 @@ import (
 
 var ErrLoadPathsFromRedis = errors.New("failed to load file paths from redis")
 
-type UnDeleteFileAchievementCleaner struct {
+type UnDeleteFileClientCleaner struct {
 	logger        *logger.Logger
 	redis         *redis.Redis
 	sleepDuration int
@@ -27,12 +27,12 @@ func New(
 	cfg config.CronConfig,
 	logger *logger.Logger,
 	redis *redis.Redis,
-) *UnDeleteFileAchievementCleaner {
-	c := &UnDeleteFileAchievementCleaner{
+) *UnDeleteFileClientCleaner {
+	c := &UnDeleteFileClientCleaner{
 		logger:        logger,
 		redis:         redis,
-		sleepDuration: cfg.UnDeleteFileAchievementCleaner.SleepDuration,
-		timeout:       cfg.UnDeleteFileAchievementCleaner.Timeout,
+		sleepDuration: cfg.UnDeleteFileClientCleaner.SleepDuration,
+		timeout:       cfg.UnDeleteFileClientCleaner.Timeout,
 	}
 
 	go c.start(ctx)
@@ -40,23 +40,23 @@ func New(
 	return c
 }
 
-func (c *UnDeleteFileAchievementCleaner) start(ctx context.Context) {
+func (c *UnDeleteFileClientCleaner) start(ctx context.Context) {
 	ticker := time.NewTicker(time.Duration(c.sleepDuration) * time.Minute)
 	defer ticker.Stop()
 
 	for {
 		select {
 		case <-ctx.Done():
-			c.logger.Info("cron un delete achievement file cleaner stopped", slog.String("reason", ctx.Err().Error()))
+			c.logger.Info("cron un delete client file cleaner stopped", slog.String("reason", ctx.Err().Error()))
 			return
 
 		case <-ticker.C:
-			c.logger.Debug("[un delete achievement file cleaner] tick")
+			c.logger.Debug("[un delete client file cleaner] tick")
 
 			ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.timeout)*time.Second)
 
 			if err := c.cleanFiles(ctxTimeout); err != nil {
-				c.logger.Error("error cleaning achievement files", "err", err)
+				c.logger.Error("error cleaning client files", "err", err)
 			}
 
 			cancel()
@@ -64,14 +64,14 @@ func (c *UnDeleteFileAchievementCleaner) start(ctx context.Context) {
 	}
 }
 
-func (c *UnDeleteFileAchievementCleaner) cleanFiles(ctx context.Context) error {
-	paths, err := c.redis.UnDeleteFileAchievement.All(ctx)
+func (c *UnDeleteFileClientCleaner) cleanFiles(ctx context.Context) error {
+	paths, err := c.redis.UnDeleteFileClient.All(ctx)
 	if err != nil {
 		return fmt.Errorf("%w: %v", ErrLoadPathsFromRedis, err)
 	}
 
 	if len(paths) == 0 {
-		c.logger.Debug("no achievement files to delete")
+		c.logger.Debug("no client files to delete")
 		return nil
 	}
 
@@ -84,17 +84,17 @@ func (c *UnDeleteFileAchievementCleaner) cleanFiles(ctx context.Context) error {
 		}
 
 		if err := os.Remove(p); err != nil {
-			c.logger.Warn("failed to remove achievement file", "path", p, "error", err)
+			c.logger.Warn("failed to remove client file", "path", p, "error", err)
 			continue
 		}
 
-		c.logger.Debug("achievement file removed by cron", "path", p)
+		c.logger.Debug("client file removed by cron", "path", p)
 
 		keysToDelete = append(keysToDelete, k)
 	}
 
 	if len(keysToDelete) > 0 {
-		if err := c.redis.UnDeleteFileAchievement.DeleteKeys(ctx, keysToDelete); err != nil {
+		if err := c.redis.UnDeleteFileClient.DeleteKeys(ctx, keysToDelete); err != nil {
 			c.logger.Error("failed to delete keys from redis", "error", err)
 		}
 	}

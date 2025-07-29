@@ -54,6 +54,11 @@ type RefreshTokenConfig struct {
 	Expiration   int64 `yaml:"expiration"`
 }
 
+type UnDeleteFileClientConfig struct {
+	QueryTimeout int64 `yaml:"query_timeout"`
+	Expiration   int64 `yaml:"expiration"`
+}
+
 type UnDeleteFileAchievementConfig struct {
 	QueryTimeout int64 `yaml:"query_timeout"`
 	Expiration   int64 `yaml:"expiration"`
@@ -73,6 +78,7 @@ type RedisConfig struct {
 	MinRetryBackoff         int                           `yaml:"min_retry_backoff"`
 	MaxRetryBackoff         int                           `yaml:"max_retry_backoff"`
 	RefreshToken            RefreshTokenConfig            `yaml:"refresh_token"`
+	UnDeleteFileClient      UnDeleteFileClientConfig      `yaml:"un_delete_file_client"`
 	UnDeleteFileAchievement UnDeleteFileAchievementConfig `yaml:"un_delete_file_achievement"`
 }
 
@@ -122,6 +128,10 @@ type CronConfig struct {
 		SleepDuration int `yaml:"sleep_duration"`
 		Timeout       int `yaml:"timeout"`
 	} `yaml:"un_delete_file_achievement_cleaner"`
+	UnDeleteFileClientCleaner struct {
+		SleepDuration int `yaml:"sleep_duration"`
+		Timeout       int `yaml:"timeout"`
+	} `yaml:"un_delete_file_client_cleaner"`
 }
 
 type MiddlewareConfig struct {
