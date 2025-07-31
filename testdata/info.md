@@ -18,6 +18,8 @@
 - `migrate create -ext sql -dir migrations -seq achievement_conditions_table`
 - `migrate create -ext sql -dir migrations -seq user_achievements_table`
 - `migrate create -ext sql -dir migrations -seq user_stats_table`
+- `migrate create -ext sql -dir migrations -seq text_contents_table`
+- `migrate create -ext sql -dir migrations -seq text_translations_table`
 - `migrate create -ext sql -dir migrations -seq languages_table`
 
 #### execute:

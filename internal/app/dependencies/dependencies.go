@@ -12,12 +12,14 @@ import (
 	bigcachehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/bigcache"
 	clientassetshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets"
 	internalcurrencyhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/internal_currency"
+	localizedtexthandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/localized_text"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
 	adminrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/admin"
 	achievementassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/achievement_assets"
 	clientassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/client_assets"
 	internalcurrencyrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/internal_currency"
+	localizedtextepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/localized_text"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
@@ -25,6 +27,7 @@ import (
 	bigcacheservice "github.com/go-jedi/lingramm_backend/internal/service/v1/bigcache"
 	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
 	internalcurrencyservice "github.com/go-jedi/lingramm_backend/internal/service/v1/internal_currency"
+	localizedtextservice "github.com/go-jedi/lingramm_backend/internal/service/v1/localized_text"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
@@ -77,6 +80,11 @@ type Dependencies struct {
 	achievementRepository *achievementrepository.Repository
 	achievementService    *achievementservice.Service
 	achievementHandler    *achievementhandler.Handler
+
+	// localized text.
+	localizedTextRepository *localizedtextepository.Repository
+	localizedTextService    *localizedtextservice.Service
+	localizedTextHandler    *localizedtexthandler.Handler
 
 	// admin.
 	adminRepository *adminrepository.Repository
@@ -138,6 +146,7 @@ func (d *Dependencies) initHandler() {
 	_ = d.BigCacheHandler()
 	_ = d.InternalCurrencyHandler()
 	_ = d.AchievementHandler()
+	_ = d.LocalizedTextHandler()
 	_ = d.AdminHandler()
 }
 

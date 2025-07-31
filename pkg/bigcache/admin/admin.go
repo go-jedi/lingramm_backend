@@ -94,7 +94,7 @@ func (a *Admin) Get(key string, prefix string) (admin.Admin, error) {
 	}
 
 	if err := msgpack.Unmarshal(data, &result); err != nil {
-		return result, err
+		return admin.Admin{}, err
 	}
 
 	return result, nil
