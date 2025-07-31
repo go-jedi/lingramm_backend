@@ -78,7 +78,7 @@ func (s *ExistsByTelegramID) Execute(ctx context.Context, telegramID string) (bo
 func (s *ExistsByTelegramID) checkExistsAdmin(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
 	// Check if the admin exists in the cache by Telegram ID.
 	// If found and no error occurred, return true immediately.
-	ieFromCache, err := s.bigCache.Admin.Exists(telegramID, s.bigCache.Admin.GetPrefixTelegramID())
+	ieFromCache, err := s.bigCache.Admin.Exists(telegramID)
 	if err == nil && ieFromCache {
 		return true, nil
 	}

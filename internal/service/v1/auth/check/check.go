@@ -100,7 +100,7 @@ func (s *Check) Execute(ctx context.Context, dto auth.CheckDTO) (auth.CheckRespo
 func (s *Check) checkExistsUser(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
 	// Check if the user exists in the cache by Telegram ID.
 	// If found and no error occurred, return true immediately.
-	ieFromCache, err := s.bigCache.User.Exists(telegramID, s.bigCache.User.GetPrefixTelegramID())
+	ieFromCache, err := s.bigCache.User.Exists(telegramID)
 	if err == nil && ieFromCache {
 		return true, nil
 	}

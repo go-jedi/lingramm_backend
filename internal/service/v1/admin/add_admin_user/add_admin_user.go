@@ -90,7 +90,7 @@ func (s *AddAdminUser) Execute(ctx context.Context, telegramID string) (admin.Ad
 func (s *AddAdminUser) checkExistsAdmin(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
 	// Check if the admin exists in the cache by Telegram ID.
 	// If found and no error occurred, return true immediately.
-	ieFromCache, err := s.bigCache.Admin.Exists(telegramID, s.bigCache.Admin.GetPrefixTelegramID())
+	ieFromCache, err := s.bigCache.Admin.Exists(telegramID)
 	if err == nil && ieFromCache {
 		return true, nil
 	}
@@ -116,7 +116,7 @@ func (s *AddAdminUser) createAdmin(ctx context.Context, tx pgx.Tx, telegramID st
 	}
 
 	// save the newly created admin in the cache (prefix: telegram_id:).
-	if err := s.bigCache.Admin.Set(na.TelegramID, na, s.bigCache.Admin.GetPrefixTelegramID()); err != nil {
+	if err := s.bigCache.Admin.Set(na.TelegramID, na); err != nil {
 		s.logger.Warn(fmt.Sprintf("failed to cache new admin: %v", err))
 	}
 

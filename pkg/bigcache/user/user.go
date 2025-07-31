@@ -17,12 +17,11 @@ const (
 
 //go:generate mockery --name=IUser --output=mocks --case=underscore
 type IUser interface {
-	GetPrefixTelegramID() string
-	Set(key string, val user.User, prefix string) error
-	All(prefix string) ([]user.User, error)
-	Get(key string, prefix string) (user.User, error)
-	Exists(key string, prefix string) (bool, error)
-	Delete(key string, prefix string) error
+	Set(key string, val user.User) error
+	All() ([]user.User, error)
+	Get(key string) (user.User, error)
+	Exists(key string) (bool, error)
+	Delete(key string) error
 }
 
 type User struct {
@@ -39,26 +38,21 @@ func New(bigCache *bigcache.BigCache) *User {
 	}
 }
 
-// GetPrefixTelegramID get prefix telegram_id.
-func (u *User) GetPrefixTelegramID() string {
-	return u.prefixTelegramID
-}
-
 // Set stores a user in BigCache using MessagePack serialization.
-func (u *User) Set(key string, val user.User, prefix string) error {
+func (c *User) Set(key string, val user.User) error {
 	b, err := msgpack.Marshal(val)
 	if err != nil {
 		return err
 	}
 
-	return u.bigCache.Set(u.prefixUser+prefix+key, b)
+	return c.bigCache.Set(c.getPrefixUser()+c.getPrefixTelegramID()+key, b)
 }
 
 // All retrieves all user entries from the cache that match the prefix.
-func (u *User) All(prefix string) ([]user.User, error) {
-	var results []user.User
+func (c *User) All() ([]user.User, error) {
+	var result []user.User
 
-	iter := u.bigCache.Iterator()
+	iter := c.bigCache.Iterator()
 	for iter.SetNext() {
 		entry, err := iter.Value()
 		if err != nil {
@@ -68,7 +62,7 @@ func (u *User) All(prefix string) ([]user.User, error) {
 
 		key := entry.Key()
 
-		if !strings.HasPrefix(key, u.prefixUser+prefix) {
+		if !strings.HasPrefix(key, c.getPrefixUser()+c.getPrefixTelegramID()) {
 			continue
 		}
 
@@ -78,31 +72,31 @@ func (u *User) All(prefix string) ([]user.User, error) {
 			continue
 		}
 
-		results = append(results, usr)
+		result = append(result, usr)
 	}
 
-	return results, nil
+	return result, nil
 }
 
 // Get retrieves a user from BigCache and deserializes it using MessagePack.
-func (u *User) Get(key string, prefix string) (user.User, error) {
+func (c *User) Get(key string) (user.User, error) {
 	var result user.User
 
-	data, err := u.bigCache.Get(u.prefixUser + prefix + key)
+	data, err := c.bigCache.Get(c.getPrefixUser() + c.getPrefixTelegramID() + key)
 	if err != nil {
-		return result, err
+		return user.User{}, err
 	}
 
 	if err := msgpack.Unmarshal(data, &result); err != nil {
-		return result, err
+		return user.User{}, err
 	}
 
 	return result, nil
 }
 
 // Exists checks whether a user exists in BigCache by key.
-func (u *User) Exists(key string, prefix string) (bool, error) {
-	_, err := u.bigCache.Get(u.prefixUser + prefix + key)
+func (c *User) Exists(key string) (bool, error) {
+	_, err := c.bigCache.Get(c.getPrefixUser() + c.getPrefixTelegramID() + key)
 	if err != nil {
 		if errors.Is(err, bigcache.ErrEntryNotFound) {
 			return false, nil
@@ -113,6 +107,16 @@ func (u *User) Exists(key string, prefix string) (bool, error) {
 }
 
 // Delete removes a user from the cache by key.
-func (u *User) Delete(key string, prefix string) error {
-	return u.bigCache.Delete(u.prefixUser + prefix + key)
+func (c *User) Delete(key string) error {
+	return c.bigCache.Delete(c.getPrefixUser() + c.getPrefixTelegramID() + key)
+}
+
+// getPrefixUser get prefix user.
+func (c *User) getPrefixUser() string {
+	return c.prefixUser
+}
+
+// getPrefixTelegramID get prefix telegram id.
+func (c *User) getPrefixTelegramID() string {
+	return c.prefixTelegramID
 }

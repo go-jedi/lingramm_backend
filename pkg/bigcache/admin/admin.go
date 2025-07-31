@@ -17,12 +17,11 @@ const (
 
 //go:generate mockery --name=IAdmin --output=mocks --case=underscore
 type IAdmin interface {
-	GetPrefixTelegramID() string
-	Set(key string, val admin.Admin, prefix string) error
-	All(prefix string) ([]admin.Admin, error)
-	Get(key string, prefix string) (admin.Admin, error)
-	Exists(key string, prefix string) (bool, error)
-	Delete(key string, prefix string) error
+	Set(key string, val admin.Admin) error
+	All() ([]admin.Admin, error)
+	Get(key string) (admin.Admin, error)
+	Exists(key string) (bool, error)
+	Delete(key string) error
 }
 
 type Admin struct {
@@ -39,26 +38,21 @@ func New(bigCache *bigcache.BigCache) *Admin {
 	}
 }
 
-// GetPrefixTelegramID get prefix telegram_id.
-func (a *Admin) GetPrefixTelegramID() string {
-	return a.prefixTelegramID
-}
-
 // Set stores admin in BigCache using MessagePack serialization.
-func (a *Admin) Set(key string, val admin.Admin, prefix string) error {
+func (c *Admin) Set(key string, val admin.Admin) error {
 	b, err := msgpack.Marshal(val)
 	if err != nil {
 		return err
 	}
 
-	return a.bigCache.Set(a.prefixAdmin+prefix+key, b)
+	return c.bigCache.Set(c.getPrefixAdmin()+c.getPrefixTelegramID()+key, b)
 }
 
 // All retrieves all admins entries from the cache that match the prefix.
-func (a *Admin) All(prefix string) ([]admin.Admin, error) {
-	var results []admin.Admin
+func (c *Admin) All() ([]admin.Admin, error) {
+	var result []admin.Admin
 
-	iter := a.bigCache.Iterator()
+	iter := c.bigCache.Iterator()
 	for iter.SetNext() {
 		entry, err := iter.Value()
 		if err != nil {
@@ -68,7 +62,7 @@ func (a *Admin) All(prefix string) ([]admin.Admin, error) {
 
 		key := entry.Key()
 
-		if !strings.HasPrefix(key, a.prefixAdmin+prefix) {
+		if !strings.HasPrefix(key, c.getPrefixAdmin()+c.getPrefixTelegramID()) {
 			continue
 		}
 
@@ -78,19 +72,19 @@ func (a *Admin) All(prefix string) ([]admin.Admin, error) {
 			continue
 		}
 
-		results = append(results, adm)
+		result = append(result, adm)
 	}
 
-	return results, nil
+	return result, nil
 }
 
 // Get retrieves admin from BigCache and deserializes it using MessagePack.
-func (a *Admin) Get(key string, prefix string) (admin.Admin, error) {
+func (c *Admin) Get(key string) (admin.Admin, error) {
 	var result admin.Admin
 
-	data, err := a.bigCache.Get(a.prefixAdmin + prefix + key)
+	data, err := c.bigCache.Get(c.getPrefixAdmin() + c.getPrefixTelegramID() + key)
 	if err != nil {
-		return result, err
+		return admin.Admin{}, err
 	}
 
 	if err := msgpack.Unmarshal(data, &result); err != nil {
@@ -100,9 +94,9 @@ func (a *Admin) Get(key string, prefix string) (admin.Admin, error) {
 	return result, nil
 }
 
-// Exists checks whether a user exists in BigCache by key.
-func (a *Admin) Exists(key string, prefix string) (bool, error) {
-	_, err := a.bigCache.Get(a.prefixAdmin + prefix + key)
+// Exists checks whether admin exists in BigCache by key.
+func (c *Admin) Exists(key string) (bool, error) {
+	_, err := c.bigCache.Get(c.getPrefixAdmin() + c.getPrefixTelegramID() + key)
 	if err != nil {
 		if errors.Is(err, bigcache.ErrEntryNotFound) {
 			return false, nil
@@ -113,6 +107,16 @@ func (a *Admin) Exists(key string, prefix string) (bool, error) {
 }
 
 // Delete removes admin from the cache by key.
-func (a *Admin) Delete(key string, prefix string) error {
-	return a.bigCache.Delete(a.prefixAdmin + prefix + key)
+func (c *Admin) Delete(key string) error {
+	return c.bigCache.Delete(c.getPrefixAdmin() + c.getPrefixTelegramID() + key)
+}
+
+// getPrefixAdmin get prefix admin.
+func (c *Admin) getPrefixAdmin() string {
+	return c.prefixAdmin
+}
+
+// getPrefixTelegramID get prefix telegram id.
+func (c *Admin) getPrefixTelegramID() string {
+	return c.prefixTelegramID
 }
