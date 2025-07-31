@@ -69,7 +69,7 @@ func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achiev
 		}
 	}()
 
-	// check achievement exists by code
+	// check achievement exists by code.
 	existsAchievementByCode, err := s.achievementRepository.ExistsAchievementByCode.Execute(ctx, tx, dto.Code)
 	if err != nil {
 		return achievement.Detail{}, err

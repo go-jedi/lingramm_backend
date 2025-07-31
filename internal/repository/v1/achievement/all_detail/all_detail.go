@@ -31,6 +31,8 @@ func New(
 		logger:       logger,
 	}
 
+	r.init()
+
 	return r
 }
 

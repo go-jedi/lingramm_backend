@@ -80,10 +80,10 @@ file_server:
 
 cron:
   un_delete_file_achievement_cleaner:
-    sleep_duration: 2 # minutes
+    sleep_duration: 720 # minutes
     timeout: 15 # second
   un_delete_file_client_cleaner:
-    sleep_duration: 1 # minutes
+    sleep_duration: 1440 # minutes
     timeout: 15 # second
 
 middleware:

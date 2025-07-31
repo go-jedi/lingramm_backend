@@ -38,7 +38,7 @@ func (h *GetUserBalance) Execute(c fiber.Ctx) error {
 	if err != nil {
 		h.logger.Error("failed to get user balance", "error", err)
 		c.Status(fiber.StatusInternalServerError)
-		return c.JSON(response.New[any](false, "failed to exists user by telegram id", err.Error(), nil))
+		return c.JSON(response.New[any](false, "failed to get user balance", err.Error(), nil))
 	}
 
 	return c.JSON(response.New[userbalance.UserBalance](true, "success", "", result))
