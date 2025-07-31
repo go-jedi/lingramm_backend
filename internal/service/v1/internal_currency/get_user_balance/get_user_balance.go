@@ -93,7 +93,7 @@ func (s *GetUserBalance) Execute(ctx context.Context, telegramID string) (userba
 func (s *GetUserBalance) checkExistsUser(ctx context.Context, tx pgx.Tx, telegramID string) (bool, error) {
 	// Check if the user exists in the cache by Telegram ID.
 	// If found and no error occurred, return true immediately.
-	ieFromCache, err := s.bigCache.User.Exists(telegramID, s.bigCache.User.GetPrefixTelegramID())
+	ieFromCache, err := s.bigCache.User.Exists(telegramID)
 	if err == nil && ieFromCache {
 		return true, nil
 	}

@@ -13,9 +13,9 @@ type IAdmin struct {
 	mock.Mock
 }
 
-// All provides a mock function with given fields: prefix
-func (_m *IAdmin) All(prefix string) ([]admin.Admin, error) {
-	ret := _m.Called(prefix)
+// All provides a mock function with no fields
+func (_m *IAdmin) All() ([]admin.Admin, error) {
+	ret := _m.Called()
 
 	if len(ret) == 0 {
 		panic("no return value specified for All")
@@ -23,19 +23,19 @@ func (_m *IAdmin) All(prefix string) ([]admin.Admin, error) {
 
 	var r0 []admin.Admin
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string) ([]admin.Admin, error)); ok {
-		return rf(prefix)
+	if rf, ok := ret.Get(0).(func() ([]admin.Admin, error)); ok {
+		return rf()
 	}
-	if rf, ok := ret.Get(0).(func(string) []admin.Admin); ok {
-		r0 = rf(prefix)
+	if rf, ok := ret.Get(0).(func() []admin.Admin); ok {
+		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).([]admin.Admin)
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(string) error); ok {
-		r1 = rf(prefix)
+	if rf, ok := ret.Get(1).(func() error); ok {
+		r1 = rf()
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -43,17 +43,17 @@ func (_m *IAdmin) All(prefix string) ([]admin.Admin, error) {
 	return r0, r1
 }
 
-// Delete provides a mock function with given fields: key, prefix
-func (_m *IAdmin) Delete(key string, prefix string) error {
-	ret := _m.Called(key, prefix)
+// Delete provides a mock function with given fields: key
+func (_m *IAdmin) Delete(key string) error {
+	ret := _m.Called(key)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Delete")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, string) error); ok {
-		r0 = rf(key, prefix)
+	if rf, ok := ret.Get(0).(func(string) error); ok {
+		r0 = rf(key)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -61,9 +61,9 @@ func (_m *IAdmin) Delete(key string, prefix string) error {
 	return r0
 }
 
-// Exists provides a mock function with given fields: key, prefix
-func (_m *IAdmin) Exists(key string, prefix string) (bool, error) {
-	ret := _m.Called(key, prefix)
+// Exists provides a mock function with given fields: key
+func (_m *IAdmin) Exists(key string) (bool, error) {
+	ret := _m.Called(key)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Exists")
@@ -71,17 +71,17 @@ func (_m *IAdmin) Exists(key string, prefix string) (bool, error) {
 
 	var r0 bool
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string) (bool, error)); ok {
-		return rf(key, prefix)
+	if rf, ok := ret.Get(0).(func(string) (bool, error)); ok {
+		return rf(key)
 	}
-	if rf, ok := ret.Get(0).(func(string, string) bool); ok {
-		r0 = rf(key, prefix)
+	if rf, ok := ret.Get(0).(func(string) bool); ok {
+		r0 = rf(key)
 	} else {
 		r0 = ret.Get(0).(bool)
 	}
 
-	if rf, ok := ret.Get(1).(func(string, string) error); ok {
-		r1 = rf(key, prefix)
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(key)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -89,9 +89,9 @@ func (_m *IAdmin) Exists(key string, prefix string) (bool, error) {
 	return r0, r1
 }
 
-// Get provides a mock function with given fields: key, prefix
-func (_m *IAdmin) Get(key string, prefix string) (admin.Admin, error) {
-	ret := _m.Called(key, prefix)
+// Get provides a mock function with given fields: key
+func (_m *IAdmin) Get(key string) (admin.Admin, error) {
+	ret := _m.Called(key)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Get")
@@ -99,17 +99,17 @@ func (_m *IAdmin) Get(key string, prefix string) (admin.Admin, error) {
 
 	var r0 admin.Admin
 	var r1 error
-	if rf, ok := ret.Get(0).(func(string, string) (admin.Admin, error)); ok {
-		return rf(key, prefix)
+	if rf, ok := ret.Get(0).(func(string) (admin.Admin, error)); ok {
+		return rf(key)
 	}
-	if rf, ok := ret.Get(0).(func(string, string) admin.Admin); ok {
-		r0 = rf(key, prefix)
+	if rf, ok := ret.Get(0).(func(string) admin.Admin); ok {
+		r0 = rf(key)
 	} else {
 		r0 = ret.Get(0).(admin.Admin)
 	}
 
-	if rf, ok := ret.Get(1).(func(string, string) error); ok {
-		r1 = rf(key, prefix)
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(key)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -117,35 +117,17 @@ func (_m *IAdmin) Get(key string, prefix string) (admin.Admin, error) {
 	return r0, r1
 }
 
-// GetPrefixTelegramID provides a mock function with no fields
-func (_m *IAdmin) GetPrefixTelegramID() string {
-	ret := _m.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetPrefixTelegramID")
-	}
-
-	var r0 string
-	if rf, ok := ret.Get(0).(func() string); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(string)
-	}
-
-	return r0
-}
-
-// Set provides a mock function with given fields: key, val, prefix
-func (_m *IAdmin) Set(key string, val admin.Admin, prefix string) error {
-	ret := _m.Called(key, val, prefix)
+// Set provides a mock function with given fields: key, val
+func (_m *IAdmin) Set(key string, val admin.Admin) error {
+	ret := _m.Called(key, val)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Set")
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(string, admin.Admin, string) error); ok {
-		r0 = rf(key, val, prefix)
+	if rf, ok := ret.Get(0).(func(string, admin.Admin) error); ok {
+		r0 = rf(key, val)
 	} else {
 		r0 = ret.Error(0)
 	}

@@ -23,9 +23,8 @@ func setupCache(t *testing.T) *User {
 
 func TestSet(t *testing.T) {
 	type in struct {
-		key    string
-		val    user.User
-		prefix string
+		key string
+		val user.User
 	}
 
 	type want struct {
@@ -54,9 +53,8 @@ func TestSet(t *testing.T) {
 		{
 			name: "ok",
 			in: in{
-				key:    telegramID,
-				val:    testUser,
-				prefix: "telegram_id:",
+				key: telegramID,
+				val: testUser,
 			},
 			want: want{
 				user: testUser,
@@ -69,10 +67,10 @@ func TestSet(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			cache := setupCache(t)
 
-			err := cache.Set(test.in.key, test.in.val, test.in.prefix)
+			err := cache.Set(test.in.key, test.in.val)
 			assert.NoError(t, err)
 
-			got, err := cache.Get(test.in.key, test.in.prefix)
+			got, err := cache.Get(test.in.key)
 			assert.Equal(t, test.want.err, err)
 
 			assert.Equal(t, test.want.user.ID, got.ID)
@@ -89,9 +87,8 @@ func TestSet(t *testing.T) {
 
 func TestAll(t *testing.T) {
 	type in struct {
-		key    string
-		val    user.User
-		prefix string
+		key string
+		val user.User
 	}
 
 	type want struct {
@@ -120,9 +117,8 @@ func TestAll(t *testing.T) {
 		{
 			name: "ok",
 			in: in{
-				key:    telegramID,
-				val:    testUser,
-				prefix: "telegram_id:",
+				key: telegramID,
+				val: testUser,
 			},
 			want: want{
 				user: []user.User{testUser},
@@ -135,10 +131,10 @@ func TestAll(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			cache := setupCache(t)
 
-			err := cache.Set(test.in.key, test.in.val, test.in.prefix)
+			err := cache.Set(test.in.key, test.in.val)
 			assert.NoError(t, err)
 
-			got, err := cache.All(test.in.prefix)
+			got, err := cache.All()
 			assert.Equal(t, test.want.err, err)
 
 			assert.Len(t, got, len(test.want.user))
@@ -157,9 +153,8 @@ func TestAll(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	type in struct {
-		key    string
-		val    user.User
-		prefix string
+		key string
+		val user.User
 	}
 
 	type want struct {
@@ -188,9 +183,8 @@ func TestGet(t *testing.T) {
 		{
 			name: "ok",
 			in: in{
-				key:    telegramID,
-				val:    testUser,
-				prefix: "telegram_id:",
+				key: telegramID,
+				val: testUser,
 			},
 			want: want{
 				user: testUser,
@@ -200,9 +194,8 @@ func TestGet(t *testing.T) {
 		{
 			name: "not found",
 			in: in{
-				key:    telegramID,
-				val:    user.User{},
-				prefix: "telegram_id:",
+				key: telegramID,
+				val: user.User{},
 			},
 			want: want{
 				user: user.User{},
@@ -217,10 +210,10 @@ func TestGet(t *testing.T) {
 
 			switch test.name {
 			case "ok":
-				err := cache.Set(test.in.key, test.in.val, test.in.prefix)
+				err := cache.Set(test.in.key, test.in.val)
 				assert.NoError(t, err)
 
-				got, err := cache.Get(test.in.key, test.in.prefix)
+				got, err := cache.Get(test.in.key)
 				assert.Equal(t, test.want.err, err)
 
 				assert.Equal(t, test.want.user.ID, got.ID)
@@ -232,7 +225,7 @@ func TestGet(t *testing.T) {
 				assert.WithinDuration(t, test.want.user.CreatedAt, got.CreatedAt, time.Millisecond)
 				assert.WithinDuration(t, test.want.user.UpdatedAt, got.UpdatedAt, time.Millisecond)
 			default:
-				_, err := cache.Get(test.in.key, test.in.prefix)
+				_, err := cache.Get(test.in.key)
 				assert.Equal(t, test.want.err, err)
 			}
 		})
@@ -241,9 +234,8 @@ func TestGet(t *testing.T) {
 
 func TestExists(t *testing.T) {
 	type in struct {
-		key    string
-		val    user.User
-		prefix string
+		key string
+		val user.User
 	}
 
 	type want struct {
@@ -272,9 +264,8 @@ func TestExists(t *testing.T) {
 		{
 			name: "ok",
 			in: in{
-				key:    telegramID,
-				val:    testUser,
-				prefix: "telegram_id:",
+				key: telegramID,
+				val: testUser,
 			},
 			want: want{
 				exists: true,
@@ -284,9 +275,8 @@ func TestExists(t *testing.T) {
 		{
 			name: "not found",
 			in: in{
-				key:    telegramID,
-				val:    testUser,
-				prefix: "telegram_id:",
+				key: telegramID,
+				val: testUser,
 			},
 			want: want{
 				exists: false,
@@ -301,14 +291,14 @@ func TestExists(t *testing.T) {
 
 			switch test.name {
 			case "ok":
-				err := cache.Set(test.in.key, test.in.val, test.in.prefix)
+				err := cache.Set(test.in.key, test.in.val)
 				assert.NoError(t, err)
 
-				got, err := cache.Exists(test.in.key, test.in.prefix)
+				got, err := cache.Exists(test.in.key)
 				assert.Equal(t, test.want.err, err)
 				assert.Equal(t, test.want.exists, got)
 			default:
-				got, err := cache.Exists(test.in.key, test.in.prefix)
+				got, err := cache.Exists(test.in.key)
 				assert.Equal(t, test.want.err, err)
 				assert.Equal(t, test.want.exists, got)
 			}
@@ -318,9 +308,8 @@ func TestExists(t *testing.T) {
 
 func TestDelete(t *testing.T) {
 	type in struct {
-		key    string
-		val    user.User
-		prefix string
+		key string
+		val user.User
 	}
 
 	type want struct {
@@ -349,9 +338,8 @@ func TestDelete(t *testing.T) {
 		{
 			name: "ok",
 			in: in{
-				key:    telegramID,
-				val:    testUser,
-				prefix: "telegram_id:",
+				key: telegramID,
+				val: testUser,
 			},
 			want: want{
 				user: testUser,
@@ -364,10 +352,10 @@ func TestDelete(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			cache := setupCache(t)
 
-			err := cache.Set(test.in.key, test.in.val, test.in.prefix)
+			err := cache.Set(test.in.key, test.in.val)
 			assert.NoError(t, err)
 
-			err = cache.Delete(test.in.key, test.in.prefix)
+			err = cache.Delete(test.in.key)
 			assert.NoError(t, err)
 		})
 	}

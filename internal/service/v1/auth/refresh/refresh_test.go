@@ -91,9 +91,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockRefreshTokenRedisBehavior: func(m *refreshtokenredismocks.IRefreshToken) {
 				m.On("Get", ctx, dto.TelegramID).Return(refreshToken, nil)
@@ -127,9 +125,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(true, nil)
+				m.On("Exists", dto.TelegramID).Return(true, nil)
 			},
 			mockRefreshTokenRedisBehavior: func(m *refreshtokenredismocks.IRefreshToken) {
 				m.On("Get", ctx, dto.TelegramID).Return(refreshToken, nil)
@@ -160,9 +156,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsByTelegramIDBehavior: func(m *existsbytelegramidmocks.IExistsByTelegramID, tx *poolsmocks.ITx) {
 				m.On("Execute", ctx, tx, dto.TelegramID).Return(false, errors.New("some error"))
@@ -185,9 +179,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsByTelegramIDBehavior: func(m *existsbytelegramidmocks.IExistsByTelegramID, tx *poolsmocks.ITx) {
 				m.On("Execute", ctx, tx, dto.TelegramID).Return(false, nil)
@@ -213,9 +205,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsByTelegramIDBehavior: func(m *existsbytelegramidmocks.IExistsByTelegramID, tx *poolsmocks.ITx) {
 				m.On("Execute", ctx, tx, dto.TelegramID).Return(true, nil)
@@ -244,9 +234,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsByTelegramIDBehavior: func(m *existsbytelegramidmocks.IExistsByTelegramID, tx *poolsmocks.ITx) {
 				m.On("Execute", ctx, tx, dto.TelegramID).Return(true, nil)
@@ -278,9 +266,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsByTelegramIDBehavior: func(m *existsbytelegramidmocks.IExistsByTelegramID, tx *poolsmocks.ITx) {
 				m.On("Execute", ctx, tx, dto.TelegramID).Return(true, nil)
@@ -312,9 +298,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsByTelegramIDBehavior: func(m *existsbytelegramidmocks.IExistsByTelegramID, tx *poolsmocks.ITx) {
 				m.On("Execute", ctx, tx, dto.TelegramID).Return(true, nil)
@@ -346,9 +330,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsByTelegramIDBehavior: func(m *existsbytelegramidmocks.IExistsByTelegramID, tx *poolsmocks.ITx) {
 				m.On("Execute", ctx, tx, dto.TelegramID).Return(true, nil)
@@ -381,9 +363,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsByTelegramIDBehavior: func(m *existsbytelegramidmocks.IExistsByTelegramID, tx *poolsmocks.ITx) {
 				m.On("Execute", ctx, tx, dto.TelegramID).Return(true, nil)
@@ -418,9 +398,7 @@ func TestRefresh(t *testing.T) {
 				m.On("Debug", "[refresh user token] execute service")
 			},
 			mockUserBigCacheBehavior: func(m *userbigcachemocks.IUser) {
-				prefix := "telegram_id:"
-				m.On("GetPrefixTelegramID").Return(prefix)
-				m.On("Exists", dto.TelegramID, prefix).Return(false, bigcache.ErrEntryNotFound)
+				m.On("Exists", dto.TelegramID).Return(false, bigcache.ErrEntryNotFound)
 			},
 			mockExistsByTelegramIDBehavior: func(m *existsbytelegramidmocks.IExistsByTelegramID, tx *poolsmocks.ITx) {
 				m.On("Execute", ctx, tx, dto.TelegramID).Return(true, nil)
