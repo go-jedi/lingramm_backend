@@ -75,3 +75,35 @@ type RefreshResponse struct {
 	AccessToken  string    `json:"access_token"`
 	RefreshToken string    `json:"refresh_token"`
 }
+
+//
+// SWAGGER
+//
+
+type SignInSwaggerResponse struct {
+	Status  bool       `json:"status" example:"true"`
+	Message string     `json:"message" example:"success"`
+	Error   string     `json:"error" example:""`
+	Data    SignInResp `json:"data"`
+}
+
+type CheckSwaggerResponse struct {
+	Status  bool          `json:"status" example:"true"`
+	Message string        `json:"message" example:"success"`
+	Error   string        `json:"error" example:""`
+	Data    CheckResponse `json:"data"`
+}
+
+type RefreshSwaggerResponse struct {
+	Status  bool            `json:"status" example:"true"`
+	Message string          `json:"message" example:"success"`
+	Error   string          `json:"error" example:""`
+	Data    RefreshResponse `json:"data"`
+}
+
+type ErrorSwaggerResponse struct {
+	Status  bool        `json:"status" example:"false"`
+	Message string      `json:"message" example:"some error"`
+	Error   string      `json:"error" example:"some error"`
+	Data    interface{} `json:"data"`
+}

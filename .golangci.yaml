@@ -57,6 +57,8 @@ linters:
         text: a blank import should be only in a main or test package
       - path: (.+)\.go$
         text: File is not properly formatted
+      - path: (.+)\.go$
+        text: Comment should end in a period
     paths:
       - mocks
       - third_party$

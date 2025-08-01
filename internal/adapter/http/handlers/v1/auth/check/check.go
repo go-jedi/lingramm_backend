@@ -27,6 +27,19 @@ func New(
 	}
 }
 
+// Execute check user token.
+//
+// @Summary Check user token
+// @Description Check if the provided Telegram ID and token are valid
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param request body auth.CheckDTO true "Check request body"
+// @Success 200 {object} auth.CheckSwaggerResponse "Successful check user token"
+// @Failure 400 {object} auth.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} auth.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/auth/check [post]
 func (h *Check) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[check user token] execute handler")
 

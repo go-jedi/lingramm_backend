@@ -31,6 +31,17 @@ func New(
 	}
 }
 
+// Execute sign in user.
+// @Summary Sign in user
+// @Description Sign in a user using their Telegram ID, username, first name, and last name
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body auth.SignInDTO true "Sign in request body"
+// @Success 200 {object} auth.SignInSwaggerResponse "Successful response with tokens"
+// @Failure 400 {object} auth.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} auth.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/auth/signin [post]
 func (h *SignIn) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[sign in user] execute handler")
 

@@ -1,4 +1,132 @@
 basePath: /v1.
+definitions:
+  auth.CheckDTO:
+    properties:
+      telegram_id:
+        minLength: 1
+        type: string
+      token:
+        minLength: 1
+        type: string
+    required:
+    - telegram_id
+    - token
+    type: object
+  auth.CheckResponse:
+    properties:
+      exp_at:
+        type: string
+      telegram_id:
+        type: string
+      token:
+        type: string
+    type: object
+  auth.CheckSwaggerResponse:
+    properties:
+      data:
+        $ref: '#/definitions/auth.CheckResponse'
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  auth.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  auth.RefreshDTO:
+    properties:
+      refresh_token:
+        minLength: 1
+        type: string
+      telegram_id:
+        minLength: 1
+        type: string
+    required:
+    - refresh_token
+    - telegram_id
+    type: object
+  auth.RefreshResponse:
+    properties:
+      access_exp_at:
+        type: string
+      access_token:
+        type: string
+      refresh_exp_at:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  auth.RefreshSwaggerResponse:
+    properties:
+      data:
+        $ref: '#/definitions/auth.RefreshResponse'
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  auth.SignInDTO:
+    properties:
+      first_name:
+        minLength: 1
+        type: string
+      last_name:
+        minLength: 1
+        type: string
+      telegram_id:
+        minLength: 1
+        type: string
+      username:
+        minLength: 1
+        type: string
+    required:
+    - telegram_id
+    type: object
+  auth.SignInResp:
+    properties:
+      access_exp_at:
+        type: string
+      access_token:
+        type: string
+      refresh_exp_at:
+        type: string
+      refresh_token:
+        type: string
+    type: object
+  auth.SignInSwaggerResponse:
+    properties:
+      data:
+        $ref: '#/definitions/auth.SignInResp'
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
 host: localhost:50050
 info:
   contact: {}
@@ -8,5 +136,109 @@ info:
     All endpoints are secured and optimized for real-time communication with Telegram Mini Apps.
   title: Lingramm API — Telegram Web App Backend
   version: "1.0"
-paths: {}
+paths:
+  /v1/auth/check:
+    post:
+      consumes:
+      - application/json
+      description: Check if the provided Telegram ID and token are valid
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Check request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.CheckDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful check user token
+          schema:
+            $ref: '#/definitions/auth.CheckSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/auth.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/auth.ErrorSwaggerResponse'
+      summary: Check user token
+      tags:
+      - Authentication
+  /v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh the access token using the provided Telegram ID and refresh
+        token
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Refresh request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RefreshDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with new tokens
+          schema:
+            $ref: '#/definitions/auth.RefreshSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/auth.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/auth.ErrorSwaggerResponse'
+      summary: Refresh user token
+      tags:
+      - Authentication
+  /v1/auth/signin:
+    post:
+      consumes:
+      - application/json
+      description: Sign in a user using their Telegram ID, username, first name, and
+        last name
+      parameters:
+      - description: Sign in request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/auth.SignInDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with tokens
+          schema:
+            $ref: '#/definitions/auth.SignInSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/auth.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/auth.ErrorSwaggerResponse'
+      summary: Sign in user
+      tags:
+      - Authentication
 swagger: "2.0"
