@@ -2,8 +2,13 @@ package app
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"os"
+	"os/signal"
 	"strings"
+	"sync"
+	"syscall"
 
 	"github.com/go-jedi/lingramm_backend/config"
 	"github.com/go-jedi/lingramm_backend/internal/app/dependencies"
@@ -14,6 +19,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/go-jedi/lingramm_backend/pkg/redis"
+	swaggerserver "github.com/go-jedi/lingramm_backend/pkg/swagger_server"
 	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
@@ -21,17 +27,18 @@ import (
 )
 
 type App struct {
-	cfg          config.Config
-	logger       *logger.Logger
-	validator    *validator.Validator
-	uuid         *uuid.UUID
-	jwt          *jwt.JWT
-	postgres     *postgres.Postgres
-	redis        *redis.Redis
-	bigCache     *bigcachepkg.BigCache
-	hs           *httpserver.HTTPServer
-	fileServer   *fileserver.FileServer
-	dependencies *dependencies.Dependencies
+	cfg           config.Config
+	logger        *logger.Logger
+	validator     *validator.Validator
+	uuid          *uuid.UUID
+	jwt           *jwt.JWT
+	postgres      *postgres.Postgres
+	redis         *redis.Redis
+	bigCache      *bigcachepkg.BigCache
+	hs            *httpserver.HTTPServer
+	swaggerServer *swaggerserver.SwaggerServer
+	fileServer    *fileserver.FileServer
+	dependencies  *dependencies.Dependencies
 }
 
 func New(ctx context.Context) (*App, error) {
@@ -46,7 +53,43 @@ func New(ctx context.Context) (*App, error) {
 
 // Run application.
 func (a *App) Run() error {
-	return a.runHTTPServer()
+	const (
+		errChanLength  = 2
+		stopChanLength = 1
+		delta          = 2
+	)
+
+	var wg sync.WaitGroup
+	errChan := make(chan error, errChanLength)
+	stop := make(chan os.Signal, stopChanLength)
+	signal.Notify(stop, syscall.SIGINT, syscall.SIGTERM)
+
+	wg.Add(delta)
+
+	go func() {
+		defer wg.Done()
+		if err := a.runHTTPServer(); err != nil {
+			errChan <- fmt.Errorf("http server error: %w", err)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		if err := a.runSwaggerServer(); err != nil {
+			errChan <- fmt.Errorf("swagger server error: %w", err)
+		}
+	}()
+
+	select {
+	case sig := <-stop:
+		log.Printf("caught signal: %s", sig)
+	case err := <-errChan:
+		log.Printf("server error: %v", err)
+	}
+
+	wg.Wait()
+
+	return nil
 }
 
 // initDeps initialize deps.
@@ -61,6 +104,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initRedis,
 		a.initBigCache,
 		a.initHTTPServer,
+		a.initSwaggerServer,
 		a.initFileServer,
 		a.initDependencies,
 	}
@@ -152,6 +196,16 @@ func (a *App) initHTTPServer(_ context.Context) (err error) {
 	return
 }
 
+// initSwaggerServer initialize swagger server.
+func (a *App) initSwaggerServer(_ context.Context) (err error) {
+	a.swaggerServer, err = swaggerserver.New(a.cfg.SwaggerServer, a.cfg.IPs.Allowed)
+	if err != nil {
+		return err
+	}
+
+	return
+}
+
 // initFileServer initialize file server.
 func (a *App) initFileServer(_ context.Context) error {
 	a.fileServer = fileserver.New(a.cfg.FileServer, a.uuid)
@@ -206,4 +260,9 @@ func (a *App) initDependencies(ctx context.Context) error {
 // runHTTPServer run http server.
 func (a *App) runHTTPServer() error {
 	return a.hs.Start()
+}
+
+// runSwaggerServer run swagger.
+func (a *App) runSwaggerServer() error {
+	return a.swaggerServer.Start()
 }

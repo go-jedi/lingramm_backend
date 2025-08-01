@@ -102,6 +102,37 @@ cookie:
     partitioned: false
     session_only: false
 
+ips:
+  allowed:
+    - 127.0.0.1
+
+swagger_server:
+  host: 127.0.0.1
+  port: 40050
+  shutdown_timeout: 10 # second
+  cors:
+    allow_origins:
+      - "*"
+    allow_methods:
+      - POST
+      - GET
+      - PUT
+      - PATCH
+      - DELETE
+      - HEAD
+      - OPTIONS
+    allow_headers:
+      - Origin
+      - Content-Length
+      - Content-Type
+      - Accept
+      - Authorization
+    expose_headers:
+      - Content-Length
+    max_age: 3600
+    allow_credentials: false
+    allow_private_network: false
+
 httpserver:
   host: 127.0.0.1
   port: 50050

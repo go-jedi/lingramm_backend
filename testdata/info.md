@@ -1,3 +1,6 @@
+### generate swagger:
+- `swag init -g cmd/app/main.go`
+
 ### migrations:
 
 #### create:
