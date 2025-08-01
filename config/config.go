@@ -154,6 +154,17 @@ type CookieConfig struct {
 	} `yaml:"refresh"`
 }
 
+type IPsConfig struct {
+	Allowed []string `yaml:"allowed"`
+}
+
+type SwaggerServerConfig struct {
+	Host            string     `yaml:"host"`
+	Cors            CorsConfig `yaml:"cors"`
+	ShutdownTimeout int64      `yaml:"shutdown_timeout"`
+	Port            int        `yaml:"port"`
+}
+
 type HTTPServerConfig struct {
 	Host                  string     `yaml:"host"`
 	Cors                  CorsConfig `yaml:"cors"`
@@ -165,16 +176,18 @@ type HTTPServerConfig struct {
 }
 
 type Config struct {
-	Logger     LoggerConfig     `yaml:"logger"`
-	JWT        JWTConfig        `yaml:"jwt"`
-	Postgres   PostgresConfig   `yaml:"postgres"`
-	BigCache   BigCacheConfig   `yaml:"big_cache"`
-	Redis      RedisConfig      `yaml:"redis"`
-	FileServer FileServerConfig `yaml:"file_server"`
-	Cron       CronConfig       `yaml:"cron"`
-	Middleware MiddlewareConfig `yaml:"middleware"`
-	Cookie     CookieConfig     `yaml:"cookie"`
-	HTTPServer HTTPServerConfig `yaml:"httpserver"`
+	Logger        LoggerConfig        `yaml:"logger"`
+	JWT           JWTConfig           `yaml:"jwt"`
+	Postgres      PostgresConfig      `yaml:"postgres"`
+	BigCache      BigCacheConfig      `yaml:"big_cache"`
+	Redis         RedisConfig         `yaml:"redis"`
+	FileServer    FileServerConfig    `yaml:"file_server"`
+	Cron          CronConfig          `yaml:"cron"`
+	Middleware    MiddlewareConfig    `yaml:"middleware"`
+	Cookie        CookieConfig        `yaml:"cookie"`
+	IPs           IPsConfig           `yaml:"ips"`
+	SwaggerServer SwaggerServerConfig `yaml:"swagger_server"`
+	HTTPServer    HTTPServerConfig    `yaml:"httpserver"`
 }
 
 // LoadConfig load config file.

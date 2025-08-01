@@ -1,0 +1,12 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the backend API for the Lingramm Telegram Web Application.\nIt provides endpoints for user interactions, game logic, statistics, tools, and more.\nAll endpoints are secured and optimized for real-time communication with Telegram Mini Apps.",
+        "title": "Lingramm API — Telegram Web App Backend",
+        "contact": {},
+        "version": "1.0"
+    },
+    "host": "localhost:50050",
+    "basePath": "/v1.",
+    "paths": {}
+}

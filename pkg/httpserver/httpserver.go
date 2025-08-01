@@ -33,10 +33,10 @@ type IHTTPServer interface {
 }
 
 type HTTPServer struct {
-	App                   *fiber.App
-	host                  string
 	shutdownTimeout       int64
 	port                  int
+	App                   *fiber.App
+	host                  string
 	disableStartupMessage bool
 	enablePrefork         bool
 	enablePrintRoutes     bool
@@ -44,9 +44,9 @@ type HTTPServer struct {
 
 func New(cfg config.HTTPServerConfig) (*HTTPServer, error) {
 	hs := &HTTPServer{
-		host:                  cfg.Host,
 		shutdownTimeout:       cfg.ShutdownTimeout,
 		port:                  cfg.Port,
+		host:                  cfg.Host,
 		disableStartupMessage: cfg.DisableStartupMessage,
 		enablePrefork:         cfg.EnablePrefork,
 		enablePrintRoutes:     cfg.EnablePrintRoutes,
@@ -124,7 +124,7 @@ func (hs *HTTPServer) Start() error {
 		log.Println("server started successfully")
 	}
 
-	return hs.gracefulStop()
+	return hs.gracefulShutdown()
 }
 
 func (hs *HTTPServer) errorHandler(c fiber.Ctx, err error) error {
@@ -151,8 +151,8 @@ func (hs *HTTPServer) ping() {
 	})
 }
 
-// gracefulStop server with graceful shutdown.
-func (hs *HTTPServer) gracefulStop() error {
+// gracefulShutdown server with graceful shutdown.
+func (hs *HTTPServer) gracefulShutdown() error {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 
