@@ -27,6 +27,19 @@ func New(
 	}
 }
 
+// Execute refresh the user token.
+//
+// @Summary Refresh user token
+// @Description Refresh the access token using the provided Telegram ID and refresh token
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param request body auth.RefreshDTO true "Refresh request body"
+// @Success 200 {object} auth.RefreshSwaggerResponse "Successful response with new tokens"
+// @Failure 400 {object} auth.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} auth.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/auth/refresh [post]
 func (h *Refresh) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[refresh user token] execute handler")
 
