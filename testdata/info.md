@@ -23,6 +23,8 @@
 - `migrate create -ext sql -dir migrations -seq user_stats_table`
 - `migrate create -ext sql -dir migrations -seq text_contents_table`
 - `migrate create -ext sql -dir migrations -seq text_translations_table`
+- `migrate create -ext sql -dir migrations -seq daily_tasks_table`
+- `migrate create -ext sql -dir migrations -seq user_daily_tasks_table`
 - `migrate create -ext sql -dir migrations -seq languages_table`
 
 #### execute:
