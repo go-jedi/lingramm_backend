@@ -64,6 +64,11 @@ type UnDeleteFileAchievementConfig struct {
 	Expiration   int64 `yaml:"expiration"`
 }
 
+type UnDeleteFileAwardConfig struct {
+	QueryTimeout int64 `yaml:"query_timeout"`
+	Expiration   int64 `yaml:"expiration"`
+}
+
 type RedisConfig struct {
 	Addr                    string                        `yaml:"addr"`
 	Password                string                        `yaml:"password"`
@@ -80,6 +85,7 @@ type RedisConfig struct {
 	RefreshToken            RefreshTokenConfig            `yaml:"refresh_token"`
 	UnDeleteFileClient      UnDeleteFileClientConfig      `yaml:"un_delete_file_client"`
 	UnDeleteFileAchievement UnDeleteFileAchievementConfig `yaml:"un_delete_file_achievement"`
+	UnDeleteFileAward       UnDeleteFileAwardConfig       `yaml:"un_delete_file_award"`
 }
 
 type ClientAssets struct {
@@ -106,9 +112,22 @@ type AchievementAssets struct {
 	IsNext             bool   `yaml:"is_next"`
 }
 
+type AwardAssets struct {
+	Path               string `yaml:"path"`
+	URL                string `yaml:"url"`
+	Dir                string `yaml:"dir"`
+	IsNextIgnoreFormat string `yaml:"is_next_ignore_format"`
+	MaxFileSize        int64  `yaml:"max_file_size"`
+	ImageQuality       int    `yaml:"image_quality"`
+	Browse             bool   `yaml:"browse"`
+	Compress           bool   `yaml:"compress"`
+	IsNext             bool   `yaml:"is_next"`
+}
+
 type FileServerConfig struct {
 	ClientAssets      ClientAssets      `yaml:"client_assets"`
 	AchievementAssets AchievementAssets `yaml:"achievement_assets"`
+	AwardAssets       AwardAssets       `yaml:"award_assets"`
 	DirPerm           uint32            `yaml:"dir_perm"`
 	FilePerm          uint32            `yaml:"file_perm"`
 }
@@ -124,14 +143,18 @@ type CorsConfig struct {
 }
 
 type CronConfig struct {
-	UnDeleteFileAchievementCleaner struct {
-		SleepDuration int `yaml:"sleep_duration"`
-		Timeout       int `yaml:"timeout"`
-	} `yaml:"un_delete_file_achievement_cleaner"`
 	UnDeleteFileClientCleaner struct {
 		SleepDuration int `yaml:"sleep_duration"`
 		Timeout       int `yaml:"timeout"`
 	} `yaml:"un_delete_file_client_cleaner"`
+	UnDeleteFileAchievementCleaner struct {
+		SleepDuration int `yaml:"sleep_duration"`
+		Timeout       int `yaml:"timeout"`
+	} `yaml:"un_delete_file_achievement_cleaner"`
+	UnDeleteFileAwardCleaner struct {
+		SleepDuration int `yaml:"sleep_duration"`
+		Timeout       int `yaml:"timeout"`
+	} `yaml:"un_delete_file_award_cleaner"`
 }
 
 type MiddlewareConfig struct {

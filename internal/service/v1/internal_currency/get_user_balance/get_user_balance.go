@@ -46,7 +46,11 @@ func New(
 func (s *GetUserBalance) Execute(ctx context.Context, telegramID string) (userbalance.UserBalance, error) {
 	s.logger.Debug("[get user balance] execute service")
 
-	var err error
+	var (
+		err    error
+		result userbalance.UserBalance
+		ie     bool
+	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
@@ -63,16 +67,17 @@ func (s *GetUserBalance) Execute(ctx context.Context, telegramID string) (userba
 		}
 	}()
 
-	ie, err := s.checkExistsUser(ctx, tx, telegramID)
+	ie, err = s.checkExistsUser(ctx, tx, telegramID)
 	if err != nil {
 		return userbalance.UserBalance{}, err
 	}
 
 	if !ie {
-		return userbalance.UserBalance{}, apperrors.ErrUserDoesNotExist
+		err = apperrors.ErrUserDoesNotExist
+		return userbalance.UserBalance{}, err
 	}
 
-	result, err := s.internalCurrencyRepository.GetUserBalance.Execute(ctx, tx, telegramID)
+	result, err = s.internalCurrencyRepository.GetUserBalance.Execute(ctx, tx, telegramID)
 	if err != nil {
 		return userbalance.UserBalance{}, err
 	}

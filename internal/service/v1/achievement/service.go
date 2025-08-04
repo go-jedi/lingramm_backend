@@ -3,6 +3,7 @@ package achievement
 import (
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
 	achievementassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/achievement_assets"
+	awardassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/award_assets"
 	alldetail "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement/all_detail"
 	"github.com/go-jedi/lingramm_backend/internal/service/v1/achievement/create"
 	deletedetailbyachievementid "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement/delete_detail_by_achievement_id"
@@ -23,6 +24,7 @@ type Service struct {
 func New(
 	achievementRepository *achievementrepository.Repository,
 	achievementAssetsRepository *achievementassetsrepository.Repository,
+	awardAssetsRepository *awardassetsrepository.Repository,
 	logger logger.ILogger,
 	postgres *postgres.Postgres,
 	redis *redis.Redis,
@@ -30,8 +32,8 @@ func New(
 ) *Service {
 	return &Service{
 		All:                         alldetail.New(achievementRepository, logger, postgres),
-		Create:                      create.New(achievementRepository, achievementAssetsRepository, logger, postgres, fileServer),
-		DeleteDetailByAchievementID: deletedetailbyachievementid.New(achievementRepository, achievementAssetsRepository, logger, postgres, redis),
+		Create:                      create.New(achievementRepository, achievementAssetsRepository, awardAssetsRepository, logger, postgres, redis, fileServer),
+		DeleteDetailByAchievementID: deletedetailbyachievementid.New(achievementRepository, achievementAssetsRepository, awardAssetsRepository, logger, postgres, redis),
 		GetDetailByAchievementID:    getdetailbyachievementid.New(achievementRepository, logger, postgres),
 	}
 }

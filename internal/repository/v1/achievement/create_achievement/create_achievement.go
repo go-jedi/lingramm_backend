@@ -51,10 +51,11 @@ func (r *CreateAchievement) Execute(ctx context.Context, tx pgx.Tx, dto achievem
 	q := `
 		INSERT INTO achievements(
 		    achievement_assets_id,
+		    award_assets_id,
 		    code,
 		    name,
 		    description
-		) VALUES($1, $2, $3, $4)
+		) VALUES($1, $2, $3, $4, $5)
 		RETURNING *;
 	`
 
@@ -62,11 +63,12 @@ func (r *CreateAchievement) Execute(ctx context.Context, tx pgx.Tx, dto achievem
 
 	if err := tx.QueryRow(
 		ctxTimeout, q,
-		dto.AchievementAssetsID, dto.Code,
-		dto.Name, dto.Description,
+		dto.AchievementAssetsID, dto.AwardAssetsID,
+		dto.Code, dto.Name, dto.Description,
 	).Scan(
 		&na.ID, &na.AchievementAssetsID,
-		&na.Code, &na.Name, &na.Description,
+		&na.AwardAssetsID, &na.Code,
+		&na.Name, &na.Description,
 		&na.CreatedAt, &na.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

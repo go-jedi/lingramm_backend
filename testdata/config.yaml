@@ -11,7 +11,7 @@ logger:
 jwt:
   secret_path: testdata/jwt/.secret # path to file with secret key
   secret_hash_len: 30
-  access_exp_at: 5 # minutes
+  access_exp_at: 60 # minutes
   refresh_exp_at: 7 # days
 
 postgres:
@@ -57,6 +57,9 @@ redis:
   un_delete_file_achievement:
     query_timeout: 2 # second
     expiration: 0 # days
+  un_delete_file_award:
+    query_timeout: 2 # second
+    expiration: 0 # days
 
 file_server:
   client_assets:
@@ -75,15 +78,26 @@ file_server:
     image_quality: 30
     browse: true
     compress: true
+  award_assets:
+    path: /images/award*
+    url: /images/award
+    dir: testdata/file_server/images/award
+    max_file_size: 5242880 # 5 MB
+    image_quality: 30
+    browse: true
+    compress: true
   dir_perm: 0755
   file_perm: 0644
 
 cron:
-  un_delete_file_achievement_cleaner:
-    sleep_duration: 720 # minutes
-    timeout: 15 # second
   un_delete_file_client_cleaner:
     sleep_duration: 1440 # minutes
+    timeout: 15 # second
+  un_delete_file_achievement_cleaner:
+    sleep_duration: 1 # minutes
+    timeout: 15 # second
+  un_delete_file_award_cleaner:
+    sleep_duration: 1 # minutes
     timeout: 15 # second
 
 middleware:

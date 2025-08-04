@@ -43,7 +43,11 @@ func New(
 func (s *AddAdminUser) Execute(ctx context.Context, telegramID string) (admin.Admin, error) {
 	s.logger.Debug("[add a new admin user] execute service")
 
-	var err error
+	var (
+		err error
+		ie  bool
+		na  admin.Admin
+	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
@@ -60,16 +64,17 @@ func (s *AddAdminUser) Execute(ctx context.Context, telegramID string) (admin.Ad
 		}
 	}()
 
-	ie, err := s.checkExistsAdmin(ctx, tx, telegramID)
+	ie, err = s.checkExistsAdmin(ctx, tx, telegramID)
 	if err != nil {
 		return admin.Admin{}, err
 	}
 
 	if ie {
-		return admin.Admin{}, apperrors.ErrAdminAlreadyExists
+		err = apperrors.ErrAdminAlreadyExists
+		return admin.Admin{}, err
 	}
 
-	na, err := s.createAdmin(ctx, tx, telegramID)
+	na, err = s.createAdmin(ctx, tx, telegramID)
 	if err != nil {
 		return admin.Admin{}, err
 	}

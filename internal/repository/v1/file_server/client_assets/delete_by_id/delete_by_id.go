@@ -60,9 +60,10 @@ func (r *DeleteByID) Execute(ctx context.Context, tx pgx.Tx, id int64) (clientas
 		ctxTimeout, q,
 		id,
 	).Scan(
-		&dca.ID, &dca.NameFile, &dca.ServerPathFile,
-		&dca.ClientPathFile, &dca.Extension, &dca.Quality,
-		&dca.OldNameFile, &dca.OldExtension, &dca.CreatedAt, &dca.UpdatedAt,
+		&dca.ID, &dca.NameFile, &dca.NameFileWithoutExtension,
+		&dca.ServerPathFile, &dca.ClientPathFile, &dca.Extension,
+		&dca.Quality, &dca.OldNameFile, &dca.OldExtension,
+		&dca.CreatedAt, &dca.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			r.logger.Error("request timed out while delete client assets by id", "err", err)

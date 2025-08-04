@@ -5,6 +5,7 @@ import (
 
 	"github.com/go-jedi/lingramm_backend/config"
 	undeletefileachievementcleaner "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/un_delete_file_achievement_cleaner"
+	undeletefileawardcleaner "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/un_delete_file_award_cleaner"
 	undeletefileclientcleaner "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/un_delete_file_client_cleaner"
 	achievementhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/achievement"
 	adminhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/admin"
@@ -17,6 +18,7 @@ import (
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
 	adminrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/admin"
 	achievementassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/achievement_assets"
+	awardassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/award_assets"
 	clientassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/client_assets"
 	internalcurrencyrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/internal_currency"
 	localizedtextepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/localized_text"
@@ -76,6 +78,9 @@ type Dependencies struct {
 	// achievement assets.
 	achievementAssetsRepository *achievementassetsrepository.Repository
 
+	// award assets.
+	awardAssetsRepository *awardassetsrepository.Repository
+
 	// achievement.
 	achievementRepository *achievementrepository.Repository
 	achievementService    *achievementservice.Service
@@ -93,6 +98,7 @@ type Dependencies struct {
 
 	// cron.
 	unDeleteFileAchievementCleaner *undeletefileachievementcleaner.UnDeleteFileAchievementCleaner
+	unDeleteFileAwardCleaner       *undeletefileawardcleaner.UnDeleteFileAwardCleaner
 	unDeleteFileClientCleaner      *undeletefileclientcleaner.UnDeleteFileClientCleaner
 }
 
@@ -153,5 +159,6 @@ func (d *Dependencies) initHandler() {
 // initCron initialize cron.
 func (d *Dependencies) initCron(ctx context.Context) {
 	_ = d.UnDeleteFileAchievementCleanerCron(ctx)
+	_ = d.UnDeleteFileAwardCleanerCron(ctx)
 	_ = d.UnDeleteFileClientCleanerCron(ctx)
 }

@@ -5,12 +5,14 @@ import (
 	"time"
 
 	achievementassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/achievement_assets"
+	awardassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/award_assets"
 )
 
 // Achievement represents achievement in the system.
 type Achievement struct {
 	ID                  int64     `json:"id"`
 	AchievementAssetsID int64     `json:"achievement_assets_id"`
+	AwardAssetsID       int64     `json:"award_assets_id"`
 	CreatedAt           time.Time `json:"created_at"`
 	UpdatedAt           time.Time `json:"updated_at"`
 	Description         *string   `json:"description,omitempty"`
@@ -34,6 +36,7 @@ type Detail struct {
 	Achievement       Achievement                         `json:"achievement"`
 	Condition         Condition                           `json:"condition"`
 	AchievementAssets achievementassets.AchievementAssets `json:"achievement_assets"`
+	AwardAssets       awardassets.AwardAssets             `json:"award_assets"`
 }
 
 //
@@ -41,13 +44,14 @@ type Detail struct {
 //
 
 type CreateDTO struct {
-	Value         int64 `json:"value" validate:"required,gt=0"`
-	FileHeader    *multipart.FileHeader
-	Description   *string `json:"description" validate:"omitempty,min=1"`
-	Code          string  `json:"code" validate:"required,min=1"`
-	Name          string  `json:"name" validate:"required,min=1"`
-	ConditionType string  `json:"condition_type" validate:"required,min=1"`
-	Operator      string  `json:"operator" validate:"required,min=1"`
+	Value                 int64 `json:"value" validate:"required,gt=0"`
+	FileAchievementHeader *multipart.FileHeader
+	FileAwardHeader       *multipart.FileHeader
+	Description           *string `json:"description" validate:"omitempty,min=1"`
+	Code                  string  `json:"code" validate:"required,min=1"`
+	Name                  string  `json:"name" validate:"required,min=1"`
+	ConditionType         string  `json:"condition_type" validate:"required,min=1"`
+	Operator              string  `json:"operator" validate:"required,min=1"`
 }
 
 //
@@ -56,6 +60,7 @@ type CreateDTO struct {
 
 type CreateAchievementDTO struct {
 	AchievementAssetsID int64   `json:"achievement_assets_id"`
+	AwardAssetsID       int64   `json:"award_assets_id"`
 	Description         *string `json:"description,omitempty"`
 	Code                string  `json:"code"`
 	Name                string  `json:"name"`

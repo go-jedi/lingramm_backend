@@ -60,9 +60,10 @@ func (r *DeleteByID) Execute(ctx context.Context, tx pgx.Tx, id int64) (awardass
 		ctxTimeout, q,
 		id,
 	).Scan(
-		&daa.ID, &daa.NameFile, &daa.ServerPathFile,
-		&daa.ClientPathFile, &daa.Extension, &daa.Quality,
-		&daa.OldNameFile, &daa.OldExtension, &daa.CreatedAt, &daa.UpdatedAt,
+		&daa.ID, &daa.NameFile, &daa.NameFileWithoutExtension,
+		&daa.ServerPathFile, &daa.ClientPathFile, &daa.Extension,
+		&daa.Quality, &daa.OldNameFile, &daa.OldExtension,
+		&daa.CreatedAt, &daa.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			r.logger.Error("request timed out while delete award assets by id", "err", err)

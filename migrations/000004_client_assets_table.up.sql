@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS client_assets(
     id SERIAL PRIMARY KEY, -- Уникальный идентификатор.
     name_file TEXT NOT NULL, -- Имя файла.
+    name_file_without_extension TEXT NOT NULL, -- Имя файла без расширения.
     server_path_file TEXT NOT NULL, -- Путь до файла для сервера.
     client_path_file TEXT NOT NULL, -- Путь до файла для клиента.
     extension VARCHAR(255) NOT NULL, -- Расширение файла.

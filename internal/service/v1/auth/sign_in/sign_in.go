@@ -55,6 +55,7 @@ func (s *SignIn) Execute(ctx context.Context, dto auth.SignInDTO) (auth.SignInRe
 	var (
 		err error
 		u   auth.SignInResp
+		ie  bool
 	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
@@ -72,7 +73,7 @@ func (s *SignIn) Execute(ctx context.Context, dto auth.SignInDTO) (auth.SignInRe
 		}
 	}()
 
-	ie, err := s.checkExistsUser(ctx, tx, dto.TelegramID, dto.Username)
+	ie, err = s.checkExistsUser(ctx, tx, dto.TelegramID, dto.Username)
 	if err != nil {
 		return auth.SignInResp{}, err
 	}

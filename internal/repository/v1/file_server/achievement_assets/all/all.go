@@ -71,10 +71,9 @@ func (r *All) Execute(ctx context.Context, tx pgx.Tx) ([]achievementassets.Achie
 		var achievementAsset achievementassets.AchievementAssets
 
 		if err := rows.Scan(
-			&achievementAsset.ID, &achievementAsset.NameFile,
-			&achievementAsset.ServerPathFile, &achievementAsset.ClientPathFile,
-			&achievementAsset.Extension, &achievementAsset.Quality,
-			&achievementAsset.OldNameFile, &achievementAsset.OldExtension,
+			&achievementAsset.ID, &achievementAsset.NameFile, &achievementAsset.NameFileWithoutExtension,
+			&achievementAsset.ServerPathFile, &achievementAsset.ClientPathFile, &achievementAsset.Extension,
+			&achievementAsset.Quality, &achievementAsset.OldNameFile, &achievementAsset.OldExtension,
 			&achievementAsset.CreatedAt, &achievementAsset.UpdatedAt,
 		); err != nil {
 			r.logger.Error("failed to scan row to get all achievement assets", "err", err)

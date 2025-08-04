@@ -51,7 +51,12 @@ func New(
 func (s *Refresh) Execute(ctx context.Context, dto auth.RefreshDTO) (auth.RefreshResponse, error) {
 	s.logger.Debug("[refresh user token] execute service")
 
-	var err error
+	var (
+		err    error
+		vr     jwt.VerifyResp
+		tokens jwt.GenerateResp
+		ie     bool
+	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
@@ -69,17 +74,18 @@ func (s *Refresh) Execute(ctx context.Context, dto auth.RefreshDTO) (auth.Refres
 	}()
 
 	// check exists user from cache or database.
-	ie, err := s.checkExistsUser(ctx, tx, dto.TelegramID)
+	ie, err = s.checkExistsUser(ctx, tx, dto.TelegramID)
 	if err != nil {
 		return auth.RefreshResponse{}, err
 	}
 
 	if !ie {
-		return auth.RefreshResponse{}, apperrors.ErrUserDoesNotExist
+		err = apperrors.ErrUserDoesNotExist
+		return auth.RefreshResponse{}, err
 	}
 
 	// check verify token.
-	vr, err := s.jwt.Verify(dto.TelegramID, dto.RefreshToken)
+	vr, err = s.jwt.Verify(dto.TelegramID, dto.RefreshToken)
 	if err != nil {
 		return auth.RefreshResponse{}, err
 	}
@@ -91,7 +97,7 @@ func (s *Refresh) Execute(ctx context.Context, dto auth.RefreshDTO) (auth.Refres
 	}
 
 	// generate access, refresh tokens.
-	tokens, err := s.jwt.Generate(vr.TelegramID)
+	tokens, err = s.jwt.Generate(vr.TelegramID)
 	if err != nil {
 		return auth.RefreshResponse{}, err
 	}
