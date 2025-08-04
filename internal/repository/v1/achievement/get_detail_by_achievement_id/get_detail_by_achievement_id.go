@@ -54,6 +54,7 @@ func (r *GetDetailByAchievementID) Execute(ctx context.Context, tx pgx.Tx, achie
 				'achievement', JSONB_BUILD_OBJECT(
 					'id', a.id,
 					'achievement_assets_id', a.achievement_assets_id,
+					'award_assets_id', a.award_assets_id,
 					'code', a.code,
 					'name', a.name,
 					'description', a.description,
@@ -72,6 +73,7 @@ func (r *GetDetailByAchievementID) Execute(ctx context.Context, tx pgx.Tx, achie
 				'achievement_assets', JSONB_BUILD_OBJECT(
 					'id', aa.id,
 					'name_file', aa.name_file,
+					'name_file_without_extension', aa.name_file_without_extension,
 					'server_path_file', aa.server_path_file,
 					'client_path_file', aa.client_path_file,
 					'extension', aa.extension,
@@ -80,11 +82,25 @@ func (r *GetDetailByAchievementID) Execute(ctx context.Context, tx pgx.Tx, achie
 					'old_extension', aa.old_extension,
 					'created_at', aa.created_at,
 					'updated_at', aa.updated_at
+				),
+				'award_assets', JSONB_BUILD_OBJECT(
+					'id', awa.id,
+					'name_file', awa.name_file,
+					'name_file_without_extension', awa.name_file_without_extension,
+					'server_path_file', awa.server_path_file,
+					'client_path_file', awa.client_path_file,
+					'extension', awa.extension,
+					'quality', awa.quality,
+					'old_name_file', awa.old_name_file,
+					'old_extension', awa.old_extension,
+					'created_at', awa.created_at,
+					'updated_at', awa.updated_at
 				)
 			)
 		FROM achievements a
 		INNER JOIN achievement_conditions ac ON a.id = ac.achievement_id
 		INNER JOIN achievement_assets aa ON a.achievement_assets_id = aa.id
+		INNER JOIN award_assets awa ON a.award_assets_id = awa.id
 		WHERE a.id = $1;
 	`
 

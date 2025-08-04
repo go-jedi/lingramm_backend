@@ -40,7 +40,10 @@ func New(
 func (s *ExistsByTelegramID) Execute(ctx context.Context, telegramID string) (bool, error) {
 	s.logger.Debug("[check admin exists by telegram id] execute service")
 
-	var err error
+	var (
+		err error
+		ie  bool
+	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
@@ -57,7 +60,7 @@ func (s *ExistsByTelegramID) Execute(ctx context.Context, telegramID string) (bo
 		}
 	}()
 
-	ie, err := s.checkExistsAdmin(ctx, tx, telegramID)
+	ie, err = s.checkExistsAdmin(ctx, tx, telegramID)
 	if err != nil {
 		return false, err
 	}

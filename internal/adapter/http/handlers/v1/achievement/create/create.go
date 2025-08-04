@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/achievement"
 	achievementassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/achievement_assets"
+	awardassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/award_assets"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -52,28 +53,43 @@ func (h *Create) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed parse string to int64", err.Error(), nil))
 	}
 
-	fileHeader, err := c.FormFile("file")
+	fileAchievementHeader, err := c.FormFile("file_achievement")
 	if err != nil {
-		h.logger.Error("failed to get the first file for the provided form key", "error", err)
+		h.logger.Error("failed to get the file achievement for the provided form key", "error", err)
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(response.New[any](false, "failed to get the first file for the provided form key", err.Error(), nil))
+		return c.JSON(response.New[any](false, "failed to get the file achievement for the provided form key", err.Error(), nil))
 	}
 
-	contentType := strings.ToLower(fileHeader.Header.Get("Content-Type"))
-	if _, ok := achievementassets.SupportedImageTypes[contentType]; !ok {
-		h.logger.Error(fmt.Sprintf("unsupported file type: %s", contentType), "error")
+	fileAwardHeader, err := c.FormFile("file_award")
+	if err != nil {
+		h.logger.Error("failed to get the file award for the provided form key", "error", err)
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(response.New[any](false, "unsupported file type", fmt.Errorf("%w: %s", apperrors.ErrUnsupportedFormat, contentType).Error(), nil))
+		return c.JSON(response.New[any](false, "failed to get the file award for the provided form key", err.Error(), nil))
+	}
+
+	contentTypeAchievement := strings.ToLower(fileAchievementHeader.Header.Get("Content-Type"))
+	if _, ok := achievementassets.SupportedImageTypes[contentTypeAchievement]; !ok {
+		h.logger.Error(fmt.Sprintf("unsupported file achievement type: %s", contentTypeAchievement), "error")
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(response.New[any](false, "unsupported file achievement type", fmt.Errorf("%w: %s", apperrors.ErrUnsupportedFormat, contentTypeAchievement).Error(), nil))
+	}
+
+	contentTypeAward := strings.ToLower(fileAwardHeader.Header.Get("Content-Type"))
+	if _, ok := awardassets.SupportedImageTypes[contentTypeAward]; !ok {
+		h.logger.Error(fmt.Sprintf("unsupported file award type: %s", contentTypeAward), "error")
+		c.Status(fiber.StatusBadRequest)
+		return c.JSON(response.New[any](false, "unsupported file award type", fmt.Errorf("%w: %s", apperrors.ErrUnsupportedFormat, contentTypeAward).Error(), nil))
 	}
 
 	dto := achievement.CreateDTO{
-		Value:         value,
-		FileHeader:    fileHeader,
-		Description:   &description,
-		Code:          code,
-		Name:          name,
-		ConditionType: conditionType,
-		Operator:      operator,
+		Value:                 value,
+		FileAchievementHeader: fileAchievementHeader,
+		FileAwardHeader:       fileAwardHeader,
+		Description:           &description,
+		Code:                  code,
+		Name:                  name,
+		ConditionType:         conditionType,
+		Operator:              operator,
 	}
 
 	if err := h.validator.StructCtx(c, dto); err != nil {

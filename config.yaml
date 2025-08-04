@@ -57,6 +57,9 @@ redis:
   un_delete_file_achievement:
     query_timeout: 2 # second
     expiration: 0 # days
+  un_delete_file_award:
+    query_timeout: 2 # second
+    expiration: 0 # days
 
 file_server:
   client_assets:
@@ -79,15 +82,28 @@ file_server:
     compress: true
     is_next: false
     is_next_ignore_format: .webp
+  award_assets:
+    path: /images/award*
+    url: /images/award
+    dir: testdata/file_server/images/award
+    max_file_size: 5242880 # 5 MB
+    image_quality: 30
+    browse: false
+    compress: true
+    is_next: false
+    is_next_ignore_format: .webp
   dir_perm: 0755
   file_perm: 0644
 
 cron:
+  un_delete_file_client_cleaner:
+    sleep_duration: 1440 # minutes
+    timeout: 15 # second
   un_delete_file_achievement_cleaner:
     sleep_duration: 720 # minutes
     timeout: 15 # second
-  un_delete_file_client_cleaner:
-    sleep_duration: 1440 # minutes
+  un_delete_file_award_cleaner:
+    sleep_duration: 720 # minutes
     timeout: 15 # second
 
 middleware:

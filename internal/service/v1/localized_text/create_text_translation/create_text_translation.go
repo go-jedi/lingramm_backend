@@ -43,7 +43,12 @@ func New(
 func (s *CreateTextTranslation) Execute(ctx context.Context, dto localizedtext.CreateTextTranslationDTO) (localizedtext.TextTranslations, error) {
 	s.logger.Debug("[create text translation] execute service")
 
-	var err error
+	var (
+		err                   error
+		result                localizedtext.TextTranslations
+		existsTextContent     bool
+		existsTextTranslation bool
+	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
@@ -61,33 +66,36 @@ func (s *CreateTextTranslation) Execute(ctx context.Context, dto localizedtext.C
 	}()
 
 	// check text content exists by id.
-	existsTextContent, err := s.localizedTextRepository.ExistsTextContentByID.Execute(ctx, tx, dto.ContentID)
+	existsTextContent, err = s.localizedTextRepository.ExistsTextContentByID.Execute(ctx, tx, dto.ContentID)
 	if err != nil {
 		return localizedtext.TextTranslations{}, err
 	}
 
 	if !existsTextContent { // if text content does not exist.
-		return localizedtext.TextTranslations{}, apperrors.ErrTextContentDoesNotExist
+		err = apperrors.ErrTextContentDoesNotExist
+		return localizedtext.TextTranslations{}, err
 	}
 
 	// check text translation exists.
-	existsTextTranslation, err := s.localizedTextRepository.ExistsTextTranslation.Execute(ctx, tx, dto.ContentID, dto.Lang)
+	existsTextTranslation, err = s.localizedTextRepository.ExistsTextTranslation.Execute(ctx, tx, dto.ContentID, dto.Lang)
 	if err != nil {
 		return localizedtext.TextTranslations{}, err
 	}
 
 	if existsTextTranslation { // if text translation already exist.
-		return localizedtext.TextTranslations{}, apperrors.ErrTextTranslationAlreadyExists
+		err = apperrors.ErrTextTranslationAlreadyExists
+		return localizedtext.TextTranslations{}, err
 	}
 
 	// create text translation.
-	result, err := s.localizedTextRepository.CreateTextTranslation.Execute(ctx, tx, dto)
+	result, err = s.localizedTextRepository.CreateTextTranslation.Execute(ctx, tx, dto)
 	if err != nil {
 		return localizedtext.TextTranslations{}, err
 	}
 
 	// delete localized text by language in cache.
-	if err := s.bigCache.LocalizedText.Delete(dto.Lang); err != nil {
+	err = s.bigCache.LocalizedText.Delete(dto.Lang)
+	if err != nil {
 		s.logger.Warn(fmt.Sprintf("failed to delete localized text cache for language=%s: %v", dto.Lang, err))
 	}
 

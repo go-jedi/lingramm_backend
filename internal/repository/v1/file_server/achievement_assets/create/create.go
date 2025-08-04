@@ -51,13 +51,14 @@ func (r *Create) Execute(ctx context.Context, tx pgx.Tx, data achievementassets.
 	q := `
 		INSERT INTO achievement_assets(
 		    name_file,
+		    name_file_without_extension,
 		    server_path_file,
 		    client_path_file,
 		    extension,
 		    quality,
 		    old_name_file,
 		    old_extension
-		) VALUES($1, $2, $3, $4, $5, $6, $7)
+		) VALUES($1, $2, $3, $4, $5, $6, $7, $8)
 		RETURNING *;
 	`
 
@@ -65,12 +66,14 @@ func (r *Create) Execute(ctx context.Context, tx pgx.Tx, data achievementassets.
 
 	if err := tx.QueryRow(
 		ctxTimeout, q,
-		data.NameFile, data.ServerPathFile, data.ClientPathFile,
-		data.Extension, data.Quality, data.OldNameFile, data.OldExtension,
+		data.NameFile, data.NameFileWithoutExtension, data.ServerPathFile,
+		data.ClientPathFile, data.Extension, data.Quality,
+		data.OldNameFile, data.OldExtension,
 	).Scan(
-		&aa.ID, &aa.NameFile, &aa.ServerPathFile,
-		&aa.ClientPathFile, &aa.Extension, &aa.Quality,
-		&aa.OldNameFile, &aa.OldExtension, &aa.CreatedAt, &aa.UpdatedAt,
+		&aa.ID, &aa.NameFile, &aa.NameFileWithoutExtension,
+		&aa.ServerPathFile, &aa.ClientPathFile, &aa.Extension,
+		&aa.Quality, &aa.OldNameFile, &aa.OldExtension,
+		&aa.CreatedAt, &aa.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			r.logger.Error("request timed out while create a achievement assets", "err", err)

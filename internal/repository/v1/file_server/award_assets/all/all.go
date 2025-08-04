@@ -71,10 +71,9 @@ func (r *All) Execute(ctx context.Context, tx pgx.Tx) ([]awardassets.AwardAssets
 		var awardAsset awardassets.AwardAssets
 
 		if err := rows.Scan(
-			&awardAsset.ID, &awardAsset.NameFile,
-			&awardAsset.ServerPathFile, &awardAsset.ClientPathFile,
-			&awardAsset.Extension, &awardAsset.Quality,
-			&awardAsset.OldNameFile, &awardAsset.OldExtension,
+			&awardAsset.ID, &awardAsset.NameFile, &awardAsset.NameFileWithoutExtension,
+			&awardAsset.ServerPathFile, &awardAsset.ClientPathFile, &awardAsset.Extension,
+			&awardAsset.Quality, &awardAsset.OldNameFile, &awardAsset.OldExtension,
 			&awardAsset.CreatedAt, &awardAsset.UpdatedAt,
 		); err != nil {
 			r.logger.Error("failed to scan row to get all award assets", "err", err)

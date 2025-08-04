@@ -3,7 +3,7 @@ package deletebyid
 import (
 	"context"
 	"log"
-	"strconv"
+	"os"
 
 	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
 	clientassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/client_assets"
@@ -43,7 +43,11 @@ func New(
 func (s *DeleteByID) Execute(ctx context.Context, id int64) (clientassets.ClientAssets, error) {
 	s.logger.Debug("[delete client assets by id] execute service")
 
-	var err error
+	var (
+		err    error
+		result clientassets.ClientAssets
+		ie     bool
+	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
@@ -61,23 +65,24 @@ func (s *DeleteByID) Execute(ctx context.Context, id int64) (clientassets.Client
 	}()
 
 	// check client assets exists by id.
-	ie, err := s.clientAssetsRepository.ExistsByID.Execute(ctx, tx, id)
+	ie, err = s.clientAssetsRepository.ExistsByID.Execute(ctx, tx, id)
 	if err != nil {
 		return clientassets.ClientAssets{}, err
 	}
 
 	if !ie { // if client assets does not exist.
-		return clientassets.ClientAssets{}, apperrors.ErrClientAssetsDoesNotExist
+		err = apperrors.ErrClientAssetsDoesNotExist
+		return clientassets.ClientAssets{}, err
 	}
 
 	// delete client assets by id.
-	result, err := s.clientAssetsRepository.DeleteByID.Execute(ctx, tx, id)
+	result, err = s.clientAssetsRepository.DeleteByID.Execute(ctx, tx, id)
 	if err != nil {
 		return clientassets.ClientAssets{}, err
 	}
 
 	// remove file.
-	s.deleteClientFile(ctx, result.ID, result.ServerPathFile)
+	s.deleteClientFile(ctx, result.NameFileWithoutExtension, result.ServerPathFile)
 
 	err = tx.Commit(ctx)
 	if err != nil {
@@ -87,20 +92,14 @@ func (s *DeleteByID) Execute(ctx context.Context, id int64) (clientassets.Client
 	return result, nil
 }
 
-func (s *DeleteByID) deleteClientFile(ctx context.Context, clientAssetsID int64, path string) {
-	const base = 10
+func (s *DeleteByID) deleteClientFile(ctx context.Context, nameFileWithoutExtension string, path string) {
+	if err := os.Remove(path); err != nil {
+		s.logger.Warn("failed to remove client file", "path", path, "error", err)
 
-	if err := s.redis.UnDeleteFileClient.Set(ctx, strconv.FormatInt(clientAssetsID, base), path); err != nil {
-		s.logger.Warn("failed to set un delete client file", "path", path, "error", err)
+		if err := s.redis.UnDeleteFileClient.Set(ctx, nameFileWithoutExtension, path); err != nil {
+			s.logger.Warn("failed to set un delete client file", "path", path, "error", err)
+		}
+	} else {
+		s.logger.Debug("client file removed", "path", path)
 	}
-
-	// if err := os.Remove(path); err != nil {
-	//	s.logger.Warn("failed to remove client file", "path", path, "error", err)
-	//
-	//	if err := s.redis.UnDeleteFileClient.Set(ctx, strconv.FormatInt(clientAssetsID, base), path); err != nil {
-	//		s.logger.Warn("failed to set un delete client file", "path", path, "error", err)
-	//	}
-	// } else {
-	//	s.logger.Debug("client file removed", "path", path)
-	// }
 }

@@ -1,4 +1,4 @@
-package achievementassets
+package awardassets
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"time"
 
 	"github.com/go-jedi/lingramm_backend/config"
-	achievementassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/achievement_assets"
+	awardassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/award_assets"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 	"github.com/h2non/bimg"
@@ -26,14 +26,14 @@ var (
 	ErrDirectoryMissing = errors.New("directory does not exist")
 )
 
-// IAchievementAssets defines the interface for the file server.
+// IAwardAssets defines the interface for the file server.
 //
-//go:generate mockery --name=IAchievementAssets --output=mocks --case=underscore
-type IAchievementAssets interface {
-	UploadAndConvertToWebP(ctx context.Context, fileHeader *multipart.FileHeader) (achievementassets.UploadAndConvertToWebpResponse, error)
+//go:generate mockery --name=IAwardAssets --output=mocks --case=underscore
+type IAwardAssets interface {
+	UploadAndConvertToWebP(ctx context.Context, fileHeader *multipart.FileHeader) (awardassets.UploadAndConvertToWebpResponse, error)
 }
 
-type AchievementAssets struct {
+type AwardAssets struct {
 	maxFileSize  int64 // Maximum allowed file size
 	uuid         *uuid.UUID
 	url          string      // URL for client access
@@ -43,25 +43,23 @@ type AchievementAssets struct {
 	filePerm     os.FileMode // File permission mode (uint32)
 }
 
-// New creates a new AchievementAssets instance with the given configuration.
-func New(cfg config.FileServerConfig, uuid *uuid.UUID) *AchievementAssets {
-	aa := &AchievementAssets{
-		url:          cfg.AchievementAssets.URL,
-		dir:          cfg.AchievementAssets.Dir,
-		maxFileSize:  cfg.AchievementAssets.MaxFileSize,
-		imageQuality: cfg.AchievementAssets.ImageQuality,
+// New creates a new AwardAssets instance with the given configuration.
+func New(cfg config.FileServerConfig, uuid *uuid.UUID) *AwardAssets {
+	aa := &AwardAssets{
+		url:          cfg.AwardAssets.URL,
+		dir:          cfg.AwardAssets.Dir,
+		maxFileSize:  cfg.AwardAssets.MaxFileSize,
+		imageQuality: cfg.AwardAssets.ImageQuality,
 		dirPerm:      os.FileMode(cfg.DirPerm),
 		filePerm:     os.FileMode(cfg.FilePerm),
 		uuid:         uuid,
 	}
 
-	aa.init()
-
 	return aa
 }
 
-// init sets default values for any unconfigured AchievementAssets properties.
-func (aa *AchievementAssets) init() {
+// init sets default values for any unconfigured AwardAssets properties.
+func (aa *AwardAssets) init() {
 	if aa.maxFileSize == 0 {
 		aa.maxFileSize = defaultMaxSize
 	}
@@ -80,13 +78,13 @@ func (aa *AchievementAssets) init() {
 }
 
 // getFileExt get file extension.
-func (aa *AchievementAssets) getFileExt(filename string) string {
+func (aa *AwardAssets) getFileExt(filename string) string {
 	return strings.TrimSuffix(filepath.Ext(filename), filepath.Base(filename))
 }
 
 // sanitizePath checks if the given path is safe to use.
 // returns cleaned path or error if path is invalid.
-func (aa *AchievementAssets) sanitizePath(path string) (string, error) {
+func (aa *AwardAssets) sanitizePath(path string) (string, error) {
 	if path == "" {
 		return "", ErrInvalidPath
 	}
@@ -109,13 +107,13 @@ func (aa *AchievementAssets) sanitizePath(path string) (string, error) {
 }
 
 // validateFile checks if the file meets size and format requirements.
-func (aa *AchievementAssets) validateFile(fileHeader *multipart.FileHeader) error {
+func (aa *AwardAssets) validateFile(fileHeader *multipart.FileHeader) error {
 	if fileHeader.Size > aa.maxFileSize {
 		return ErrFileTooLarge
 	}
 
 	contentType := fileHeader.Header.Get("Content-Type")
-	if _, ok := achievementassets.SupportedImageTypes[contentType]; !ok {
+	if _, ok := awardassets.SupportedImageTypes[contentType]; !ok {
 		log.Printf("unsupported file type: %s", contentType)
 		return apperrors.ErrUnsupportedFormat
 	}
@@ -124,7 +122,7 @@ func (aa *AchievementAssets) validateFile(fileHeader *multipart.FileHeader) erro
 }
 
 // ensureUploadDirectory checks if the target directory exists.
-func (aa *AchievementAssets) ensureUploadDirectory(uploadPath string) error {
+func (aa *AwardAssets) ensureUploadDirectory(uploadPath string) error {
 	if _, err := os.Stat(uploadPath); os.IsNotExist(err) {
 		return fmt.Errorf("%w: %s", ErrDirectoryMissing, uploadPath)
 	}
@@ -132,7 +130,7 @@ func (aa *AchievementAssets) ensureUploadDirectory(uploadPath string) error {
 }
 
 // readFileData reads file content with context support and size limitation.
-func (aa *AchievementAssets) readFileData(ctx context.Context, file multipart.File) ([]byte, error) {
+func (aa *AwardAssets) readFileData(ctx context.Context, file multipart.File) ([]byte, error) {
 	done := make(chan struct{})
 	var data []byte
 	var readErr error
@@ -151,7 +149,7 @@ func (aa *AchievementAssets) readFileData(ctx context.Context, file multipart.Fi
 }
 
 // convertToWebP converts image data to WebP format with context support.
-func (aa *AchievementAssets) convertToWebP(ctx context.Context, rawFile []byte) ([]byte, error) {
+func (aa *AwardAssets) convertToWebP(ctx context.Context, rawFile []byte) ([]byte, error) {
 	done := make(chan struct{})
 	var webp []byte
 	var convertErr error
@@ -174,10 +172,10 @@ func (aa *AchievementAssets) convertToWebP(ctx context.Context, rawFile []byte) 
 }
 
 // UploadAndConvertToWebP handles the file upload process including validation, conversion and storage.
-func (aa *AchievementAssets) UploadAndConvertToWebP(ctx context.Context, fileHeader *multipart.FileHeader) (achievementassets.UploadAndConvertToWebpResponse, error) {
+func (aa *AwardAssets) UploadAndConvertToWebP(ctx context.Context, fileHeader *multipart.FileHeader) (awardassets.UploadAndConvertToWebpResponse, error) {
 	// check if context is already canceled.
 	if err := ctx.Err(); err != nil {
-		return achievementassets.UploadAndConvertToWebpResponse{}, err
+		return awardassets.UploadAndConvertToWebpResponse{}, err
 	}
 
 	// measure upload duration.
@@ -188,19 +186,19 @@ func (aa *AchievementAssets) UploadAndConvertToWebP(ctx context.Context, fileHea
 
 	// validate the uploaded file.
 	if err := aa.validateFile(fileHeader); err != nil {
-		return achievementassets.UploadAndConvertToWebpResponse{}, err
+		return awardassets.UploadAndConvertToWebpResponse{}, err
 	}
 
 	// sanitize the target directory path.
 	sanitizedDir, err := aa.sanitizePath(aa.dir)
 	if err != nil {
-		return achievementassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("invalid directory: %w", err)
+		return awardassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("invalid directory: %w", err)
 	}
 
 	// open the uploaded file.
 	file, err := fileHeader.Open()
 	if err != nil {
-		return achievementassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to open file: %w", err)
+		return awardassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to open file: %w", err)
 	}
 	defer func() {
 		if err := file.Close(); err != nil {
@@ -210,33 +208,33 @@ func (aa *AchievementAssets) UploadAndConvertToWebP(ctx context.Context, fileHea
 
 	// prepare full upload path and verify directory exists.
 	if err := aa.ensureUploadDirectory(sanitizedDir); err != nil {
-		return achievementassets.UploadAndConvertToWebpResponse{}, err
+		return awardassets.UploadAndConvertToWebpResponse{}, err
 	}
 
 	// read file data with context support.
 	rawFile, err := aa.readFileData(ctx, file)
 	if err != nil {
-		return achievementassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to read file: %w", err)
+		return awardassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to read file: %w", err)
 	}
 
 	// convert image to WebP format.
 	webp, err := aa.convertToWebP(ctx, rawFile)
 	if err != nil {
-		return achievementassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to convert image: %w", err)
+		return awardassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to convert image: %w", err)
 	}
 
 	// generate unique filename and save the converted image.
 	newName, err := aa.uuid.Generate()
 	if err != nil {
-		return achievementassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to generate uuid: %w", err)
+		return awardassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to generate uuid: %w", err)
 	}
 
 	newFilePath := filepath.Join(sanitizedDir, newName+webpExt)
 	if err := os.WriteFile(newFilePath, webp, aa.filePerm); err != nil {
-		return achievementassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to save converted image: %w", err)
+		return awardassets.UploadAndConvertToWebpResponse{}, fmt.Errorf("failed to save converted image: %w", err)
 	}
 
-	return achievementassets.UploadAndConvertToWebpResponse{
+	return awardassets.UploadAndConvertToWebpResponse{
 		Quality:                  aa.imageQuality,
 		NameFile:                 newName + webpExt,
 		NameFileWithoutExtension: newName,

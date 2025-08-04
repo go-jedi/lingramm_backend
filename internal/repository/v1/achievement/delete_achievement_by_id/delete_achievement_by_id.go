@@ -61,7 +61,8 @@ func (r *DeleteAchievementByID) Execute(ctx context.Context, tx pgx.Tx, id int64
 		id,
 	).Scan(
 		&da.ID, &da.AchievementAssetsID,
-		&da.Code, &da.Name, &da.Description,
+		&da.AwardAssetsID, &da.Code,
+		&da.Name, &da.Description,
 		&da.CreatedAt, &da.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

@@ -17,6 +17,7 @@
 - `migrate create -ext sql -dir migrations -seq users_blacklist_table`
 - `migrate create -ext sql -dir migrations -seq admins_table`
 - `migrate create -ext sql -dir migrations -seq achievement_assets_table`
+- `migrate create -ext sql -dir migrations -seq award_assets_table`
 - `migrate create -ext sql -dir migrations -seq achievements_table`
 - `migrate create -ext sql -dir migrations -seq achievement_conditions_table`
 - `migrate create -ext sql -dir migrations -seq user_achievements_table`
@@ -25,7 +26,6 @@
 - `migrate create -ext sql -dir migrations -seq text_translations_table`
 - `migrate create -ext sql -dir migrations -seq daily_tasks_table`
 - `migrate create -ext sql -dir migrations -seq user_daily_tasks_table`
-- `migrate create -ext sql -dir migrations -seq award_assets_table`
 - `migrate create -ext sql -dir migrations -seq languages_table`
 
 #### execute:

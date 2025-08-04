@@ -11,7 +11,7 @@ import (
 
 const (
 	prefixUnDeleteFileClient = "un_delete_file_client:"
-	prefixFileID             = "file_id:"
+	prefixFileName           = "file_name:"
 )
 
 //go:generate mockery --name=IUnDeleteFileClient --output=mocks --case=underscore
@@ -27,14 +27,14 @@ type UnDeleteFileClient struct {
 	expiration               int64
 	client                   *redis.Client
 	prefixUnDeleteFileClient string
-	prefixFileID             string
+	prefixFileName           string
 }
 
 func New(cfg config.UnDeleteFileClientConfig, client *redis.Client) *UnDeleteFileClient {
 	return &UnDeleteFileClient{
 		client:                   client,
 		prefixUnDeleteFileClient: prefixUnDeleteFileClient,
-		prefixFileID:             prefixFileID,
+		prefixFileName:           prefixFileName,
 		queryTimeout:             cfg.QueryTimeout,
 		expiration:               cfg.Expiration,
 	}
@@ -52,7 +52,7 @@ func (c *UnDeleteFileClient) Set(ctx context.Context, key string, val string) er
 
 	return c.client.Set(
 		ctx,
-		c.getPrefixUnDeleteFileClient()+c.getPrefixFileID()+key,
+		c.getPrefixUnDeleteFileClient()+c.getPrefixFileName()+key,
 		b,
 		c.getExpiration(),
 	).Err()
@@ -67,7 +67,7 @@ func (c *UnDeleteFileClient) All(ctx context.Context) (map[string]string, error)
 	var (
 		cursor uint64
 		result = make(map[string]string)
-		match  = c.getPrefixUnDeleteFileClient() + c.getPrefixFileID() + "*"
+		match  = c.getPrefixUnDeleteFileClient() + c.getPrefixFileName() + "*"
 	)
 
 	for {
@@ -133,9 +133,9 @@ func (c *UnDeleteFileClient) getPrefixUnDeleteFileClient() string {
 	return c.prefixUnDeleteFileClient
 }
 
-// getPrefixFileID get prefix file id.
-func (c *UnDeleteFileClient) getPrefixFileID() string {
-	return c.prefixFileID
+// getPrefixFileName get prefix file name.
+func (c *UnDeleteFileClient) getPrefixFileName() string {
+	return c.prefixFileName
 }
 
 // getExpiration get expiration date for row in cache.

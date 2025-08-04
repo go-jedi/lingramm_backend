@@ -22,6 +22,7 @@ func (d *Dependencies) AchievementService() *achievementservice.Service {
 		d.achievementService = achievementservice.New(
 			d.AchievementRepository(),
 			d.AchievementAssetsRepository(),
+			d.AwardAssetsRepository(),
 			d.logger,
 			d.postgres,
 			d.redis,

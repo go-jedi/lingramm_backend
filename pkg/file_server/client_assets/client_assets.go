@@ -237,12 +237,13 @@ func (ca *ClientAssets) UploadAndConvertToWebP(ctx context.Context, fileHeader *
 	}
 
 	return clientassets.UploadAndConvertToWebpResponse{
-		Quality:        ca.imageQuality,
-		NameFile:       newName + webpExt,
-		ServerPathFile: filepath.Join(sanitizedDir, newName+webpExt),
-		ClientPathFile: filepath.Join(ca.url, newName+webpExt),
-		Extension:      webpExt,
-		OldNameFile:    fileHeader.Filename,
-		OldExtension:   ca.getFileExt(fileHeader.Filename),
+		Quality:                  ca.imageQuality,
+		NameFile:                 newName + webpExt,
+		NameFileWithoutExtension: newName,
+		ServerPathFile:           filepath.Join(sanitizedDir, newName+webpExt),
+		ClientPathFile:           filepath.Join(ca.url, newName+webpExt),
+		Extension:                webpExt,
+		OldNameFile:              fileHeader.Filename,
+		OldExtension:             ca.getFileExt(fileHeader.Filename),
 	}, nil
 }

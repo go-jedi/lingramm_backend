@@ -1,4 +1,4 @@
-package undeletefileachievement
+package undeletefileaward
 
 import (
 	"context"
@@ -10,38 +10,38 @@ import (
 )
 
 const (
-	prefixUnDeleteFileAchievement = "un_delete_file_achievement:"
-	prefixFileName                = "file_name:"
+	prefixUnDeleteFileAward = "un_delete_file_award:"
+	prefixFileName          = "file_name:"
 )
 
-//go:generate mockery --name=IUnDeleteFileAchievement --output=mocks --case=underscore
-type IUnDeleteFileAchievement interface {
+//go:generate mockery --name=IUnDeleteFileAward --output=mocks --case=underscore
+type IUnDeleteFileAward interface {
 	Set(ctx context.Context, key string, val string) error
 	All(ctx context.Context) (map[string]string, error)
 	Delete(ctx context.Context, key string) error
 	DeleteKeys(ctx context.Context, keys []string) error
 }
 
-type UnDeleteFileAchievement struct {
-	queryTimeout                  int64
-	expiration                    int64
-	client                        *redis.Client
-	prefixUnDeleteFileAchievement string
-	prefixFileName                string
+type UnDeleteFileAward struct {
+	queryTimeout            int64
+	expiration              int64
+	client                  *redis.Client
+	prefixUnDeleteFileAward string
+	prefixFileName          string
 }
 
-func New(cfg config.UnDeleteFileAchievementConfig, client *redis.Client) *UnDeleteFileAchievement {
-	return &UnDeleteFileAchievement{
-		client:                        client,
-		prefixUnDeleteFileAchievement: prefixUnDeleteFileAchievement,
-		prefixFileName:                prefixFileName,
-		queryTimeout:                  cfg.QueryTimeout,
-		expiration:                    cfg.Expiration,
+func New(cfg config.UnDeleteFileAwardConfig, client *redis.Client) *UnDeleteFileAward {
+	return &UnDeleteFileAward{
+		client:                  client,
+		prefixUnDeleteFileAward: prefixUnDeleteFileAward,
+		prefixFileName:          prefixFileName,
+		queryTimeout:            cfg.QueryTimeout,
+		expiration:              cfg.Expiration,
 	}
 }
 
-// Set stores un delete file achievement in Redis using MessagePack serialization.
-func (c *UnDeleteFileAchievement) Set(ctx context.Context, key string, val string) error {
+// Set stores un delete file award in Redis using MessagePack serialization.
+func (c *UnDeleteFileAward) Set(ctx context.Context, key string, val string) error {
 	b, err := msgpack.Marshal(val)
 	if err != nil {
 		return err
@@ -52,14 +52,14 @@ func (c *UnDeleteFileAchievement) Set(ctx context.Context, key string, val strin
 
 	return c.client.Set(
 		ctx,
-		c.getPrefixUnDeleteFileAchievement()+c.getPrefixFileName()+key,
+		c.getPrefixUnDeleteFileAward()+c.getPrefixFileName()+key,
 		b,
 		c.getExpiration(),
 	).Err()
 }
 
-// All retrieves all un delete files achievement entries from the cache.
-func (c *UnDeleteFileAchievement) All(ctx context.Context) (map[string]string, error) {
+// All retrieves all un delete files award entries from the cache.
+func (c *UnDeleteFileAward) All(ctx context.Context) (map[string]string, error) {
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
@@ -67,7 +67,7 @@ func (c *UnDeleteFileAchievement) All(ctx context.Context) (map[string]string, e
 	var (
 		cursor uint64
 		result = make(map[string]string)
-		match  = c.getPrefixUnDeleteFileAchievement() + c.getPrefixFileName() + "*"
+		match  = c.getPrefixUnDeleteFileAward() + c.getPrefixFileName() + "*"
 	)
 
 	for {
@@ -112,39 +112,39 @@ func (c *UnDeleteFileAchievement) All(ctx context.Context) (map[string]string, e
 	return result, nil
 }
 
-// Delete removes un delete file achievement from the cache by key.
-func (c *UnDeleteFileAchievement) Delete(ctx context.Context, key string) error {
+// Delete removes un delete file award from the cache by key.
+func (c *UnDeleteFileAward) Delete(ctx context.Context, key string) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
 	return c.client.Del(ctx, key).Err()
 }
 
-// DeleteKeys removes un delete files achievement from the cache by keys.
-func (c *UnDeleteFileAchievement) DeleteKeys(ctx context.Context, keys []string) error {
+// DeleteKeys removes un delete files award from the cache by keys.
+func (c *UnDeleteFileAward) DeleteKeys(ctx context.Context, keys []string) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
 	return c.client.Del(ctx, keys...).Err()
 }
 
-// getPrefixUnDeleteFileAchievement get prefix un delete file achievement.
-func (c *UnDeleteFileAchievement) getPrefixUnDeleteFileAchievement() string {
-	return c.prefixUnDeleteFileAchievement
+// getPrefixUnDeleteFileAward get prefix un delete file award.
+func (c *UnDeleteFileAward) getPrefixUnDeleteFileAward() string {
+	return c.prefixUnDeleteFileAward
 }
 
 // getPrefixFileName get prefix file name.
-func (c *UnDeleteFileAchievement) getPrefixFileName() string {
+func (c *UnDeleteFileAward) getPrefixFileName() string {
 	return c.prefixFileName
 }
 
 // getExpiration get expiration date for row in cache.
-func (c *UnDeleteFileAchievement) getExpiration() time.Duration {
+func (c *UnDeleteFileAward) getExpiration() time.Duration {
 	return time.Duration(c.expiration) * 24 * time.Hour
 }
 
 // convertToBytes safely converts interface{} to []byte.
-func (c *UnDeleteFileAchievement) convertToBytes(val interface{}) []byte {
+func (c *UnDeleteFileAward) convertToBytes(val interface{}) []byte {
 	switch v := val.(type) {
 	case []byte:
 		return v

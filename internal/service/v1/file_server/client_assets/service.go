@@ -26,7 +26,7 @@ func New(
 ) *Service {
 	return &Service{
 		All:        all.New(clientAssetsRepository, logger, postgres),
-		Create:     create.New(clientAssetsRepository, logger, postgres, fileServer),
+		Create:     create.New(clientAssetsRepository, logger, postgres, redis, fileServer),
 		DeleteByID: deletebyid.New(clientAssetsRepository, logger, postgres, redis),
 	}
 }

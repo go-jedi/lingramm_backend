@@ -46,7 +46,11 @@ func New(
 func (s *Check) Execute(ctx context.Context, dto auth.CheckDTO) (auth.CheckResponse, error) {
 	s.logger.Debug("[check user token] execute service")
 
-	var err error
+	var (
+		err error
+		vr  jwt.VerifyResp
+		ie  bool
+	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
 		IsoLevel:   pgx.ReadCommitted,
@@ -64,17 +68,18 @@ func (s *Check) Execute(ctx context.Context, dto auth.CheckDTO) (auth.CheckRespo
 	}()
 
 	// check exists user from cache or database.
-	ie, err := s.checkExistsUser(ctx, tx, dto.TelegramID)
+	ie, err = s.checkExistsUser(ctx, tx, dto.TelegramID)
 	if err != nil {
 		return auth.CheckResponse{}, err
 	}
 
 	if !ie {
-		return auth.CheckResponse{}, apperrors.ErrUserDoesNotExist
+		err = apperrors.ErrUserDoesNotExist
+		return auth.CheckResponse{}, err
 	}
 
 	// check verify token.
-	vr, err := s.jwt.Verify(dto.TelegramID, dto.Token)
+	vr, err = s.jwt.Verify(dto.TelegramID, dto.Token)
 	if err != nil {
 		return auth.CheckResponse{}, err
 	}

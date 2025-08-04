@@ -9,6 +9,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/config"
 	refreshtoken "github.com/go-jedi/lingramm_backend/pkg/redis/refresh_token"
 	undeletefileachievement "github.com/go-jedi/lingramm_backend/pkg/redis/un_delete_file_achievement"
+	undeletefileaward "github.com/go-jedi/lingramm_backend/pkg/redis/un_delete_file_award"
 	undeletefileclient "github.com/go-jedi/lingramm_backend/pkg/redis/un_delete_file_client"
 	"github.com/redis/go-redis/v9"
 )
@@ -17,8 +18,9 @@ var ErrRedisPingFailed = errors.New("redis ping failed")
 
 type Redis struct {
 	RefreshToken            refreshtoken.IRefreshToken
-	UnDeleteFileClient      undeletefileclient.IUnDeleteFileClient
 	UnDeleteFileAchievement undeletefileachievement.IUnDeleteFileAchievement
+	UnDeleteFileAward       undeletefileaward.IUnDeleteFileAward
+	UnDeleteFileClient      undeletefileclient.IUnDeleteFileClient
 }
 
 func New(ctx context.Context, cfg config.RedisConfig) (*Redis, error) {
@@ -45,8 +47,9 @@ func New(ctx context.Context, cfg config.RedisConfig) (*Redis, error) {
 	}
 
 	r.RefreshToken = refreshtoken.New(cfg, c)
-	r.UnDeleteFileClient = undeletefileclient.New(cfg.UnDeleteFileClient, c)
 	r.UnDeleteFileAchievement = undeletefileachievement.New(cfg.UnDeleteFileAchievement, c)
+	r.UnDeleteFileAward = undeletefileaward.New(cfg.UnDeleteFileAward, c)
+	r.UnDeleteFileClient = undeletefileclient.New(cfg.UnDeleteFileClient, c)
 
 	return r, nil
 }
