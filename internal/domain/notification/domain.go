@@ -1,0 +1,19 @@
+package notification
+
+import "time"
+
+// Notification represents notification in the system.
+type Notification struct {
+	ID         int64      `json:"id"`
+	Message    Message    `json:"message"`
+	Type       string     `json:"type"`
+	TelegramID string     `json:"telegram_id"`
+	Status     string     `json:"status"`
+	CreatedAt  time.Time  `json:"created_at"`
+	SentAt     *time.Time `json:"sent_at,omitempty"`
+}
+
+type Message struct {
+	Title string `json:"title"`
+	Text  string `json:"text"`
+}

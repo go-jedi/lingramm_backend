@@ -26,6 +26,88 @@ type JWTConfig struct {
 	SecretPath    string `yaml:"secret_path"`
 }
 
+type ConsumerConfig struct {
+	StreamName   string `yaml:"stream_name"`
+	Subject      string `yaml:"subject"`
+	Timeout      int    `yaml:"timeout"`
+	StreamOption struct {
+		Name      string `yaml:"name"`
+		Storage   int    `yaml:"storage"`
+		Retention int    `yaml:"retention"`
+		MaxAge    int    `yaml:"max_age"`
+		MaxMsgs   int64  `yaml:"max_msgs"`
+		MaxBytes  int64  `yaml:"max_bytes"`
+		Discard   int    `yaml:"discard"`
+	} `yaml:"stream_option"`
+	NatsOption struct {
+		MaxReconnects        int    `yaml:"max_reconnects"`
+		ReconnectWait        int    `yaml:"reconnect_wait"`
+		Timeout              int    `yaml:"timeout"`
+		DrainTimeout         int    `yaml:"drain_timeout"`
+		PingInterval         int    `yaml:"ping_interval"`
+		MaxPingsOutstanding  int    `yaml:"max_pings_outstanding"`
+		ClosedHandler        bool   `yaml:"closed_handler"`
+		ReconnectHandler     bool   `yaml:"reconnect_handler"`
+		DisconnectErrHandler bool   `yaml:"disconnect_err_handler"`
+		ErrorHandler         bool   `yaml:"error_handler"`
+		Name                 string `yaml:"name"`
+		ReconnectJitter      struct {
+			Jitter       int `yaml:"jitter"`
+			JitterForTLS int `yaml:"jitter_for_tls"`
+		} `yaml:"reconnect_jitter"`
+	} `yaml:"nats_option"`
+	SubscribeOption struct {
+		AckWait       int    `yaml:"ack_wait"`
+		MaxAckPending int    `yaml:"max_ack_pending"`
+		ManualAck     bool   `yaml:"manual_ack"`
+		DeliverAll    bool   `yaml:"deliver_all"`
+		Durable       string `yaml:"durable"`
+	} `yaml:"subscribe_option"`
+}
+
+type PublisherConfig struct {
+	StreamName   string `yaml:"stream_name"`
+	Subject      string `yaml:"subject"`
+	Timeout      int    `yaml:"timeout"`
+	StreamOption struct {
+		Name        string `yaml:"name"`
+		Storage     int    `yaml:"storage"`
+		Retention   int    `yaml:"retention"`
+		MaxAge      int    `yaml:"max_age"`
+		MaxMsgs     int64  `yaml:"max_msgs"`
+		MaxBytes    int64  `yaml:"max_bytes"`
+		Discard     int    `yaml:"discard"`
+		Replicas    int    `yaml:"replicas"`
+		AllowDirect bool   `yaml:"allow_direct"`
+		DenyDelete  bool   `yaml:"deny_delete"`
+		DenyPurge   bool   `yaml:"deny_purge"`
+	} `yaml:"stream_option"`
+	NatsOption struct {
+		MaxReconnects   int    `yaml:"max_reconnects"`
+		ReconnectWait   int    `yaml:"reconnect_wait"`
+		ErrorHandler    bool   `yaml:"error_handler"`
+		Name            string `yaml:"name"`
+		ReconnectJitter struct {
+			Jitter       int `yaml:"jitter"`
+			JitterForTLS int `yaml:"jitter_for_tls"`
+		} `yaml:"reconnect_jitter"`
+	} `yaml:"nats_option"`
+	JetStreamOption struct {
+		PublishAsyncMaxPending int  `yaml:"publish_async_max_pending"`
+		PublishAsyncErrHandler bool `yaml:"publish_async_err_handler"`
+	} `yaml:"jet_stream_option"`
+}
+
+type NatsNotificationConfig struct {
+	NatsURL   string          `yaml:"nats_url"`
+	Consumer  ConsumerConfig  `yaml:"consumer"`
+	Publisher PublisherConfig `yaml:"publisher"`
+}
+
+type NatsConfig struct {
+	Notification NatsNotificationConfig `yaml:"notification"`
+}
+
 type PostgresConfig struct {
 	QueryTimeout  int64  `yaml:"query_timeout"`
 	Port          int    `yaml:"port"`
@@ -201,6 +283,7 @@ type HTTPServerConfig struct {
 type Config struct {
 	Logger        LoggerConfig        `yaml:"logger"`
 	JWT           JWTConfig           `yaml:"jwt"`
+	Nats          NatsConfig          `yaml:"nats"`
 	Postgres      PostgresConfig      `yaml:"postgres"`
 	BigCache      BigCacheConfig      `yaml:"big_cache"`
 	Redis         RedisConfig         `yaml:"redis"`
