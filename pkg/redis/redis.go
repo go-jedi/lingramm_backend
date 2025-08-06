@@ -46,7 +46,7 @@ func New(ctx context.Context, cfg config.RedisConfig) (*Redis, error) {
 		return nil, fmt.Errorf("%w: %v", ErrRedisPingFailed, err)
 	}
 
-	r.RefreshToken = refreshtoken.New(cfg, c)
+	r.RefreshToken = refreshtoken.New(cfg.RefreshToken, c)
 	r.UnDeleteFileAchievement = undeletefileachievement.New(cfg.UnDeleteFileAchievement, c)
 	r.UnDeleteFileAward = undeletefileaward.New(cfg.UnDeleteFileAward, c)
 	r.UnDeleteFileClient = undeletefileclient.New(cfg.UnDeleteFileClient, c)

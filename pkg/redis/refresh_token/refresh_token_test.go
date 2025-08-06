@@ -58,7 +58,7 @@ func setupCache() *RefreshToken {
 		MaxRetryBackoff: time.Duration(cfg.MaxRetryBackoff) * time.Millisecond,
 	})
 
-	return New(cfg, c)
+	return New(cfg.RefreshToken, c)
 }
 
 func TestSet(t *testing.T) {

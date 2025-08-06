@@ -13,6 +13,7 @@ services:
 #    depends_on:
 #      - postgres
 #      - redis
+#      - nats
 
   postgres:
     image: postgres:latest
@@ -37,3 +38,17 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_DATABASES=${REDIS_DATABASES}
+
+  nats:
+    image: nats:latest
+    restart: always
+    ports:
+      - "4222:4222"   # client connections - клиентские подключения
+      - "8222:8222"   # monitoring - мониторинг
+      - "6222:6222"   # routing (cluster) - маршрутизация
+    command: >
+      -js
+      -m 8222
+      --sd /data/jetstream
+    volumes:
+      - ../nats_data:/data/jetstream

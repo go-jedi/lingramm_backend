@@ -47,12 +47,12 @@ func (c *UnDeleteFileClient) Set(ctx context.Context, key string, val string) er
 		return err
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
 	return c.client.Set(
-		ctx,
-		c.getPrefixUnDeleteFileClient()+c.getPrefixFileName()+key,
+		ctxTimeout,
+		c.getRedisKey(key),
 		b,
 		c.getExpiration(),
 	).Err()
@@ -60,7 +60,7 @@ func (c *UnDeleteFileClient) Set(ctx context.Context, key string, val string) er
 
 // All retrieves all un delete files client entries from the cache.
 func (c *UnDeleteFileClient) All(ctx context.Context) (map[string]string, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
 	const count = 200
@@ -71,7 +71,7 @@ func (c *UnDeleteFileClient) All(ctx context.Context) (map[string]string, error)
 	)
 
 	for {
-		keys, nextCursor, err := c.client.Scan(ctx, cursor, match, count).Result()
+		keys, nextCursor, err := c.client.Scan(ctxTimeout, cursor, match, count).Result()
 		if err != nil {
 			return nil, err
 		}
@@ -84,7 +84,7 @@ func (c *UnDeleteFileClient) All(ctx context.Context) (map[string]string, error)
 			continue
 		}
 
-		values, err := c.client.MGet(ctx, keys...).Result()
+		values, err := c.client.MGet(ctxTimeout, keys...).Result()
 		if err != nil {
 			return nil, err
 		}
@@ -114,18 +114,23 @@ func (c *UnDeleteFileClient) All(ctx context.Context) (map[string]string, error)
 
 // Delete removes un delete file client from the cache by key.
 func (c *UnDeleteFileClient) Delete(ctx context.Context, key string) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	return c.client.Del(ctx, key).Err()
+	return c.client.Del(ctxTimeout, key).Err()
 }
 
 // DeleteKeys removes un delete files client from the cache by keys.
 func (c *UnDeleteFileClient) DeleteKeys(ctx context.Context, keys []string) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	return c.client.Del(ctx, keys...).Err()
+	return c.client.Del(ctxTimeout, keys...).Err()
+}
+
+// getRedisKey get redis key.
+func (c *UnDeleteFileClient) getRedisKey(key string) string {
+	return c.getPrefixUnDeleteFileClient() + c.getPrefixFileName() + key
 }
 
 // getPrefixUnDeleteFileClient get prefix un delete file.

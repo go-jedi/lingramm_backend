@@ -26,6 +26,9 @@
 - `migrate create -ext sql -dir migrations -seq text_translations_table`
 - `migrate create -ext sql -dir migrations -seq daily_tasks_table`
 - `migrate create -ext sql -dir migrations -seq user_daily_tasks_table`
+- `migrate create -ext sql -dir migrations -seq notifications_type`
+- `migrate create -ext sql -dir migrations -seq notifications_table`
+- `migrate create -ext sql -dir migrations -seq notifications_index`
 - `migrate create -ext sql -dir migrations -seq languages_table`
 
 #### execute:
@@ -61,6 +64,8 @@
 #### remove all local branch without main:
 - `git branch | grep -v "main" | xargs git branch -D`
 
+#### cancel commit:
+- `git reset --soft HEAD~1`
 
 
 ## Про cookie в fiber v3:

@@ -34,13 +34,13 @@ type RefreshToken struct {
 	prefixTelegramID   string
 }
 
-func New(cfg config.RedisConfig, client *redis.Client) *RefreshToken {
+func New(cfg config.RefreshTokenConfig, client *redis.Client) *RefreshToken {
 	return &RefreshToken{
 		client:             client,
 		prefixRefreshToken: prefixRefreshToken,
 		prefixTelegramID:   prefixTelegramID,
-		queryTimeout:       cfg.RefreshToken.QueryTimeout,
-		expiration:         cfg.RefreshToken.Expiration,
+		queryTimeout:       cfg.QueryTimeout,
+		expiration:         cfg.Expiration,
 	}
 }
 
@@ -51,12 +51,12 @@ func (c *RefreshToken) Set(ctx context.Context, key string, val string) error {
 		return err
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
 	return c.client.Set(
-		ctx,
-		c.getPrefixRefreshToken()+c.getPrefixTelegramID()+key,
+		ctxTimeout,
+		c.getRedisKey(key),
 		b,
 		c.getExpiration(),
 	).Err()
@@ -69,12 +69,12 @@ func (c *RefreshToken) SetWithExpiration(ctx context.Context, key string, val st
 		return err
 	}
 
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
 	return c.client.Set(
-		ctx,
-		c.getPrefixRefreshToken()+c.getPrefixTelegramID()+key,
+		ctxTimeout,
+		c.getRedisKey(key),
 		b,
 		expiration,
 	).Err()
@@ -82,7 +82,7 @@ func (c *RefreshToken) SetWithExpiration(ctx context.Context, key string, val st
 
 // All retrieves all refresh token entries from the cache.
 func (c *RefreshToken) All(ctx context.Context) (map[string]string, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
 	const count = 200
@@ -93,7 +93,7 @@ func (c *RefreshToken) All(ctx context.Context) (map[string]string, error) {
 	)
 
 	for {
-		keys, nextCursor, err := c.client.Scan(ctx, cursor, match, count).Result()
+		keys, nextCursor, err := c.client.Scan(ctxTimeout, cursor, match, count).Result()
 		if err != nil {
 			return nil, err
 		}
@@ -106,7 +106,7 @@ func (c *RefreshToken) All(ctx context.Context) (map[string]string, error) {
 			continue
 		}
 
-		values, err := c.client.MGet(ctx, keys...).Result()
+		values, err := c.client.MGet(ctxTimeout, keys...).Result()
 		if err != nil {
 			return nil, err
 		}
@@ -136,12 +136,12 @@ func (c *RefreshToken) All(ctx context.Context) (map[string]string, error) {
 
 // Get retrieves refresh token from Redis and deserializes it using MessagePack.
 func (c *RefreshToken) Get(ctx context.Context, key string) (string, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
 	b, err := c.client.Get(
-		ctx,
-		c.getPrefixRefreshToken()+c.getPrefixTelegramID()+key,
+		ctxTimeout,
+		c.getRedisKey(key),
 	).Bytes()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
@@ -160,10 +160,10 @@ func (c *RefreshToken) Get(ctx context.Context, key string) (string, error) {
 
 // Exists checks whether a refresh token exists in Redis by key.
 func (c *RefreshToken) Exists(ctx context.Context, key string) (bool, error) {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	count, err := c.client.Exists(ctx, c.getPrefixRefreshToken()+c.getPrefixTelegramID()+key).Result()
+	count, err := c.client.Exists(ctxTimeout, c.getRedisKey(key)).Result()
 	if err != nil {
 		return false, err
 	}
@@ -173,18 +173,23 @@ func (c *RefreshToken) Exists(ctx context.Context, key string) (bool, error) {
 
 // Delete removes refresh token from the cache by key.
 func (c *RefreshToken) Delete(ctx context.Context, key string) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	return c.client.Del(ctx, key).Err()
+	return c.client.Del(ctxTimeout, key).Err()
 }
 
 // DeleteKeys removes refresh tokens from the cache by keys.
 func (c *RefreshToken) DeleteKeys(ctx context.Context, keys []string) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	return c.client.Del(ctx, keys...).Err()
+	return c.client.Del(ctxTimeout, keys...).Err()
+}
+
+// getRedisKey get redis key.
+func (c *RefreshToken) getRedisKey(key string) string {
+	return c.getPrefixRefreshToken() + c.getPrefixTelegramID() + key
 }
 
 // getPrefixRefreshToken get prefix refresh token.

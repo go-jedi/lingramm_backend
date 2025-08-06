@@ -2,6 +2,7 @@
 bin
 .idea
 tmp
+nats_data
 .env
 .secret
 testdata/jwt/.secret
