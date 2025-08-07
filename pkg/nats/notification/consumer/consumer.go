@@ -26,21 +26,27 @@ var (
 	ErrGettingJetStream                = errors.New("error getting JetStream")
 )
 
+// IConsumer defines the interface for the consumer nats.
+//
+//go:generate mockery --name=IConsumer --output=mocks --case=underscore
+type IConsumer interface {
+	Start(ctx context.Context, telegramID string, fn func(notification.Notification) error) error
+	Close(ctx context.Context) error
+}
+
 // Consumer is responsible for subscribing to a JetStream subject,
 // handling messages, and delivering them to an external handler function.
 type Consumer struct {
-	nc         *nats.Conn            // Low-level NATS connection.
-	js         nats.JetStreamContext // JetStream context for stream and consumer APIs.
-	sub        *nats.Subscription    // Durable subscription to receive messages.
-	opts       options               // Configuration values for NATS, stream, and subscription.
-	closeOnce  sync.Once             // Ensures shutdown logic is executed only once.
-	telegramID string                // Used to generate unique subject/durable names per user.
+	nc        *nats.Conn            // Low-level NATS connection.
+	js        nats.JetStreamContext // JetStream context for stream and consumer APIs.
+	sub       *nats.Subscription    // Durable subscription to receive messages.
+	opts      options               // Configuration values for NATS, stream, and subscription.
+	closeOnce sync.Once             // Ensures shutdown logic is executed only once.
 }
 
-func New(cfg config.NatsNotificationConfig, telegramID string) (*Consumer, error) {
+func New(cfg config.NatsNotificationConfig) (*Consumer, error) {
 	c := &Consumer{
-		opts:       getOptions(cfg),
-		telegramID: telegramID,
+		opts: getOptions(cfg),
 	}
 
 	if err := c.validate(); err != nil {
@@ -93,9 +99,9 @@ func (c *Consumer) validate() error {
 
 // Start creates a durable subscription to a JetStream subject.
 // Messages are handled asynchronously using a provided handler function.
-func (c *Consumer) Start(ctx context.Context, fn func(notification.Notification) error) error {
-	subject := c.opts.subject + c.telegramID
-	durable := c.opts.subscribeOption.durable + c.telegramID
+func (c *Consumer) Start(ctx context.Context, telegramID string, fn func(notification.Notification) error) error {
+	subject := c.opts.subject + telegramID
+	durable := c.opts.subscribeOption.durable + telegramID
 
 	if err := c.ensureStream(); err != nil {
 		return err
@@ -103,7 +109,7 @@ func (c *Consumer) Start(ctx context.Context, fn func(notification.Notification)
 
 	log.Printf("subscribing to [%s] with durable [%s]", subject, durable)
 
-	sub, err := c.js.Subscribe(subject, c.messageHandler(ctx, fn), c.getSubscribeOptions()...)
+	sub, err := c.js.Subscribe(subject, c.messageHandler(ctx, fn), c.getSubscribeOptions(telegramID)...)
 	if err != nil {
 		log.Printf("subscription error [%s]: %v", subject, err)
 		return err
@@ -238,7 +244,7 @@ func (c *Consumer) getNatsOptions() []nats.Option {
 		nats.DrainTimeout(c.opts.natsOption.drainTimeout),
 		nats.PingInterval(c.opts.natsOption.pingInterval),
 		nats.MaxPingsOutstanding(c.opts.natsOption.maxPingsOutstanding),
-		nats.Name(c.opts.natsOption.name + c.telegramID),
+		nats.Name(c.opts.natsOption.name),
 	}
 
 	if c.opts.natsOption.closedHandler {
@@ -270,7 +276,7 @@ func (c *Consumer) getNatsOptions() []nats.Option {
 func (c *Consumer) getStreamOptions() *nats.StreamConfig {
 	return &nats.StreamConfig{
 		Name:      c.opts.streamName,
-		Subjects:  []string{c.opts.subject + c.telegramID},
+		Subjects:  []string{c.opts.subject + "*"},
 		Storage:   nats.StorageType(c.opts.streamOption.storage),
 		Retention: nats.RetentionPolicy(c.opts.streamOption.retention),
 		MaxAge:    c.opts.streamOption.maxAge,
@@ -284,9 +290,9 @@ func (c *Consumer) getStreamOptions() *nats.StreamConfig {
 // - Durable: stores delivery state for resuming after reconnect,
 // - AckWait: controls redelivery time,
 // - MaxAckPending: limits number of in-flight messages.
-func (c *Consumer) getSubscribeOptions() []nats.SubOpt {
+func (c *Consumer) getSubscribeOptions(telegramID string) []nats.SubOpt {
 	opts := []nats.SubOpt{
-		nats.Durable(c.opts.subscribeOption.durable + c.telegramID),
+		nats.Durable(c.opts.subscribeOption.durable + telegramID),
 		nats.AckWait(c.opts.subscribeOption.ackWait),
 		nats.MaxAckPending(c.opts.subscribeOption.maxAckPending),
 	}
