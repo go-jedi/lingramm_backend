@@ -33,7 +33,7 @@ func (_m *IPublisher) Close() error {
 }
 
 // Start provides a mock function with given fields: ctx, telegramID, data
-func (_m *IPublisher) Start(ctx context.Context, telegramID string, data notification.Notification) error {
+func (_m *IPublisher) Start(ctx context.Context, telegramID string, data notification.SendNotificationDTO) error {
 	ret := _m.Called(ctx, telegramID, data)
 
 	if len(ret) == 0 {
@@ -41,7 +41,7 @@ func (_m *IPublisher) Start(ctx context.Context, telegramID string, data notific
 	}
 
 	var r0 error
-	if rf, ok := ret.Get(0).(func(context.Context, string, notification.Notification) error); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, string, notification.SendNotificationDTO) error); ok {
 		r0 = rf(ctx, telegramID, data)
 	} else {
 		r0 = ret.Error(0)

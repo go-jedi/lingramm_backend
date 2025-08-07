@@ -36,7 +36,7 @@ var (
 //
 //go:generate mockery --name=IPublisher --output=mocks --case=underscore
 type IPublisher interface {
-	Start(ctx context.Context, telegramID string, data notification.Notification) error
+	Start(ctx context.Context, telegramID string, data notification.SendNotificationDTO) error
 	Close() error
 	WaitForCompletion(ctx context.Context) error
 }
@@ -98,7 +98,7 @@ func (p *Publisher) validate() error {
 }
 
 // Start serializes and publishes the notification to JetStream with retries.
-func (p *Publisher) Start(ctx context.Context, telegramID string, data notification.Notification) error {
+func (p *Publisher) Start(ctx context.Context, telegramID string, data notification.SendNotificationDTO) error {
 	subject := p.opts.subject + telegramID
 
 	// ensure the stream exists or create it.
