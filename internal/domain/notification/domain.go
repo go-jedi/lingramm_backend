@@ -27,3 +27,15 @@ type CreateDTO struct {
 	Type       string  `json:"type"`
 	TelegramID string  `json:"telegram_id"`
 }
+
+//
+// SEND NOTIFICATION
+//
+
+type SendNotificationDTO struct {
+	ID         int64     `json:"id"`
+	Message    Message   `json:"message"`
+	Type       string    `json:"type"`
+	TelegramID string    `json:"telegram_id"`
+	CreatedAt  time.Time `json:"created_at"`
+}
