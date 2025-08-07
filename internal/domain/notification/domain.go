@@ -17,3 +17,13 @@ type Message struct {
 	Title string `json:"title"`
 	Text  string `json:"text"`
 }
+
+//
+// CREATE
+//
+
+type CreateDTO struct {
+	Message    Message `json:"message"`
+	Type       string  `json:"type"`
+	TelegramID string  `json:"telegram_id"`
+}

@@ -32,19 +32,26 @@ var (
 	ErrTimeoutWaitingForAsyncCompletion = errors.New("timeout waiting for async completion")
 )
 
+// IPublisher defines the interface for the publisher nats.
+//
+//go:generate mockery --name=IPublisher --output=mocks --case=underscore
+type IPublisher interface {
+	Start(ctx context.Context, telegramID string, data notification.Notification) error
+	Close() error
+	WaitForCompletion(ctx context.Context) error
+}
+
 // Publisher handles connection to NATS and JetStream publishing logic.
 type Publisher struct {
-	nc         *nats.Conn            // NATS connection.
-	js         nats.JetStreamContext // JetStream context.
-	opts       options               // configuration options.
-	telegramID string                // used to customize subject per user.
+	nc   *nats.Conn            // NATS connection.
+	js   nats.JetStreamContext // JetStream context.
+	opts options               // configuration options.
 }
 
 // New creates and initializes a new Publisher instance.
-func New(cfg config.NatsNotificationConfig, telegramID string) (*Publisher, error) {
+func New(cfg config.NatsNotificationConfig) (*Publisher, error) {
 	p := &Publisher{
-		opts:       getOptions(cfg),
-		telegramID: telegramID,
+		opts: getOptions(cfg),
 	}
 
 	// validate required fields.
@@ -91,8 +98,8 @@ func (p *Publisher) validate() error {
 }
 
 // Start serializes and publishes the notification to JetStream with retries.
-func (p *Publisher) Start(ctx context.Context, data notification.Notification) error {
-	subject := p.opts.subject + p.telegramID
+func (p *Publisher) Start(ctx context.Context, telegramID string, data notification.Notification) error {
+	subject := p.opts.subject + telegramID
 
 	// ensure the stream exists or create it.
 	if err := p.ensureStream(); err != nil {
@@ -114,7 +121,7 @@ func (p *Publisher) Start(ctx context.Context, data notification.Notification) e
 
 		// log high async pending threshold.
 		if pending := p.js.PublishAsyncPending(); pending > p.opts.jetStreamOption.publishAsyncMaxPending-10 {
-			log.Printf("[publisher][%s] high pending async messages: %d", p.telegramID, pending)
+			log.Printf("[publisher][%s] high pending async messages: %d", telegramID, pending)
 		}
 
 		ackFuture, err = p.js.PublishAsync(subject, rawData)
@@ -163,12 +170,12 @@ func (p *Publisher) Close() error {
 
 		// wait for all async publishes to complete.
 		if err := p.WaitForCompletion(ctx); err != nil {
-			log.Printf("[Publisher][%s] async publish wait failed: %v", p.telegramID, err)
+			log.Printf("[Publisher] async publish wait failed: %v", err)
 		}
 
 		// cleanly drain NATS connection.
 		if err := p.nc.Drain(); err != nil {
-			log.Printf("[Publisher][%s] drain failed: %v", p.telegramID, err)
+			log.Printf("[Publisher] drain failed: %v", err)
 		}
 	}
 	return nil
@@ -214,12 +221,12 @@ func (p *Publisher) getNatsOptions() []nats.Option {
 		nats.MaxReconnects(p.opts.natsOption.maxReconnects),
 		nats.ReconnectWait(p.opts.natsOption.reconnectWait),
 		nats.ReconnectJitter(p.opts.natsOption.reconnectJitter.jitter, p.opts.natsOption.reconnectJitter.jitterForTLS),
-		nats.Name(p.opts.natsOption.name + p.telegramID),
+		nats.Name(p.opts.natsOption.name),
 	}
 
 	if p.opts.natsOption.errorHandler {
 		opts = append(opts, nats.ErrorHandler(func(_ *nats.Conn, _ *nats.Subscription, err error) {
-			log.Printf("[Publisher][%s] async error: %v", p.telegramID, err)
+			log.Printf("[Publisher] async error: %v", err)
 		}))
 	}
 
@@ -234,7 +241,7 @@ func (p *Publisher) getJetStreamOptions() []nats.JSOpt {
 
 	if p.opts.jetStreamOption.publishAsyncErrHandler {
 		opts = append(opts, nats.PublishAsyncErrHandler(func(_ nats.JetStream, _ *nats.Msg, err error) {
-			log.Printf("[Publisher][%s] async publish error: %v", p.telegramID, err)
+			log.Printf("[Publisher] async publish error: %v", err)
 		}))
 	}
 
@@ -245,7 +252,7 @@ func (p *Publisher) getJetStreamOptions() []nats.JSOpt {
 func (p *Publisher) getStreamOptions() *nats.StreamConfig {
 	return &nats.StreamConfig{
 		Name:        p.opts.streamName,
-		Subjects:    []string{p.opts.subject + p.telegramID},
+		Subjects:    []string{p.opts.subject + "*"},
 		Storage:     nats.StorageType(p.opts.streamOption.storage),
 		Retention:   nats.RetentionPolicy(p.opts.streamOption.retention),
 		MaxAge:      p.opts.streamOption.maxAge,
