@@ -3,13 +3,15 @@ package notification
 import (
 	notificationrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/notification"
 	"github.com/go-jedi/lingramm_backend/internal/service/v1/notification/create"
+	updatestatus "github.com/go-jedi/lingramm_backend/internal/service/v1/notification/update_status"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/nats"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 )
 
 type Service struct {
-	Create create.ICreate
+	Create       create.ICreate
+	UpdateStatus updatestatus.IUpdateStatus
 }
 
 func New(
@@ -20,6 +22,7 @@ func New(
 	postgres *postgres.Postgres,
 ) *Service {
 	return &Service{
-		Create: create.New(notificationRepository, natsTimeout, logger, nats, postgres),
+		Create:       create.New(notificationRepository, natsTimeout, logger, nats, postgres),
+		UpdateStatus: updatestatus.New(notificationRepository, logger, postgres),
 	}
 }
