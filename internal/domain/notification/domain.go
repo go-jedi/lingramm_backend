@@ -2,6 +2,12 @@ package notification
 
 import "time"
 
+const (
+	PendingStatus = "PENDING"
+	SentStatus    = "SENT"
+	FailedStatus  = "FAILED"
+)
+
 // Notification represents notification in the system.
 type Notification struct {
 	ID         int64      `json:"id"`
