@@ -1,5 +1,6 @@
 volumes:
   postgres_volume:
+  rabbitmq_volume:
 
 services:
 #  lingvogramm_backend:
@@ -13,7 +14,7 @@ services:
 #    depends_on:
 #      - postgres
 #      - redis
-#      - nats
+#      - rabbitmq
 
   postgres:
     image: postgres:latest
@@ -39,16 +40,21 @@ services:
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_DATABASES=${REDIS_DATABASES}
 
-  nats:
-    image: nats:latest
+  rabbitmq:
+    image: rabbitmq:4.1.3-management-alpine
+    container_name: rabbitmq
     restart: always
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+      RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-/}
     ports:
-      - "4222:4222"   # client connections - клиентские подключения
-      - "8222:8222"   # monitoring - мониторинг
-      - "6222:6222"   # routing (cluster) - маршрутизация
-    command: >
-      -js
-      -m 8222
-      --sd /data/jetstream
+      - "56720:5672"    # AMQP
+      - "15672:15672"  # Web UI
     volumes:
-      - ../nats_data:/data/jetstream
+      - rabbitmq_volume:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 6

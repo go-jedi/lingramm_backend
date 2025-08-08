@@ -12,7 +12,7 @@ This project is a telegram web apps application for a foreign language tutor tha
 - <b>PostgreSQL:</b> Relational SQL database for storing data.
 - <b>Docker:</b> Containerization for simplifying deployment and management of the application.
 - <b>Kubernetes (K8s):</b> Container orchestration for managing deployment and scaling.
-- <b>NATS + JetStream:</b> High-performance messaging system for event-driven communication and stream persistence.
+- <b>RabbitMQ:</b> High-performance messaging system for event-driven communication and stream persistence.
 - <b>Golangci-lint:</b> Tool for static code analysis in Golang.
 - <b>Unit Tests:</b> Unit tests for verifying individual components of the application.
 - <b>Integration Tests:</b> Integration tests for verifying the interaction of various components of the application.
