@@ -17,7 +17,6 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/httpserver"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
-	"github.com/go-jedi/lingramm_backend/pkg/nats"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	swaggerserver "github.com/go-jedi/lingramm_backend/pkg/swagger_server"
@@ -33,7 +32,6 @@ type App struct {
 	validator     *validator.Validator
 	uuid          *uuid.UUID
 	jwt           *jwt.JWT
-	nats          *nats.Nats
 	postgres      *postgres.Postgres
 	redis         *redis.Redis
 	bigCache      *bigcachepkg.BigCache
@@ -102,7 +100,6 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initValidator,
 		a.initUUID,
 		a.initJWT,
-		a.initNats,
 		a.initPostgres,
 		a.initRedis,
 		a.initBigCache,
@@ -152,16 +149,6 @@ func (a *App) initUUID(_ context.Context) error {
 // initJWT initialize jwt.
 func (a *App) initJWT(_ context.Context) (err error) {
 	a.jwt, err = jwt.New(a.cfg.JWT, a.uuid)
-	if err != nil {
-		return err
-	}
-
-	return
-}
-
-// initNats initialize nats.
-func (a *App) initNats(_ context.Context) (err error) {
-	a.nats, err = nats.New(a.cfg.Nats)
 	if err != nil {
 		return err
 	}
@@ -261,7 +248,6 @@ func (a *App) initDependencies(ctx context.Context) error {
 		a.validator,
 		a.uuid,
 		a.jwt,
-		a.nats,
 		a.postgres,
 		a.redis,
 		a.bigCache,

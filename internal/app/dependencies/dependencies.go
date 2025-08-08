@@ -34,7 +34,6 @@ import (
 	fileserver "github.com/go-jedi/lingramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
-	"github.com/go-jedi/lingramm_backend/pkg/nats"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	"github.com/go-jedi/lingramm_backend/pkg/uuid"
@@ -50,7 +49,6 @@ type Dependencies struct {
 	uuid       *uuid.UUID
 	jwt        *jwt.JWT
 	middleware *middleware.Middleware
-	nats       *nats.Nats
 	postgres   *postgres.Postgres
 	redis      *redis.Redis
 	bigCache   *bigcachepkg.BigCache
@@ -112,7 +110,6 @@ func New(
 	validator *validator.Validator,
 	uuid *uuid.UUID,
 	jwt *jwt.JWT,
-	nats *nats.Nats,
 	postgres *postgres.Postgres,
 	redis *redis.Redis,
 	bigCache *bigcachepkg.BigCache,
@@ -125,7 +122,6 @@ func New(
 		validator:  validator,
 		uuid:       uuid,
 		jwt:        jwt,
-		nats:       nats,
 		postgres:   postgres,
 		redis:      redis,
 		bigCache:   bigCache,

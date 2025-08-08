@@ -3,12 +3,10 @@ package create
 import (
 	"context"
 	"log"
-	"time"
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/notification"
 	notificationrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/notification"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
-	"github.com/go-jedi/lingramm_backend/pkg/nats"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/jackc/pgx/v5"
 )
@@ -20,24 +18,18 @@ type ICreate interface {
 
 type Create struct {
 	notificationRepository *notificationrepository.Repository
-	natsTimeout            int64
 	logger                 logger.ILogger
-	nats                   *nats.Nats
 	postgres               *postgres.Postgres
 }
 
 func New(
 	notificationRepository *notificationrepository.Repository,
-	natsTimeout int64,
 	logger logger.ILogger,
-	nats *nats.Nats,
 	postgres *postgres.Postgres,
 ) *Create {
 	return &Create{
 		notificationRepository: notificationRepository,
-		natsTimeout:            natsTimeout,
 		logger:                 logger,
-		nats:                   nats,
 		postgres:               postgres,
 	}
 }
@@ -71,12 +63,6 @@ func (s *Create) Execute(ctx context.Context, dto notification.CreateDTO) (notif
 		return notification.Notification{}, err
 	}
 
-	// send notification user by nats.
-	err = s.sendNotification(ctx, result)
-	if err != nil {
-		return notification.Notification{}, err
-	}
-
 	err = tx.Commit(ctx)
 	if err != nil {
 		return notification.Notification{}, err
@@ -85,6 +71,15 @@ func (s *Create) Execute(ctx context.Context, dto notification.CreateDTO) (notif
 	return result, nil
 }
 
+/*
+	// send notification user by nats.
+		err = s.sendNotification(ctx, result)
+		if err != nil {
+			return notification.Notification{}, err
+		}
+*/
+
+/*
 // sendNotification send notification.
 func (s *Create) sendNotification(ctx context.Context, n notification.Notification) error {
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(s.natsTimeout)*time.Second)
@@ -105,3 +100,4 @@ func (s *Create) sendNotification(ctx context.Context, n notification.Notificati
 
 	return nil
 }
+*/
