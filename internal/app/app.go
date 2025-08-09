@@ -18,6 +18,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/rabbitmq"
 	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	swaggerserver "github.com/go-jedi/lingramm_backend/pkg/swagger_server"
 	"github.com/go-jedi/lingramm_backend/pkg/uuid"
@@ -32,6 +33,7 @@ type App struct {
 	validator     *validator.Validator
 	uuid          *uuid.UUID
 	jwt           *jwt.JWT
+	rabbitMQ      *rabbitmq.RabbitMQ
 	postgres      *postgres.Postgres
 	redis         *redis.Redis
 	bigCache      *bigcachepkg.BigCache
@@ -100,6 +102,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initValidator,
 		a.initUUID,
 		a.initJWT,
+		a.initRabbitMQ,
 		a.initPostgres,
 		a.initRedis,
 		a.initBigCache,
@@ -149,6 +152,16 @@ func (a *App) initUUID(_ context.Context) error {
 // initJWT initialize jwt.
 func (a *App) initJWT(_ context.Context) (err error) {
 	a.jwt, err = jwt.New(a.cfg.JWT, a.uuid)
+	if err != nil {
+		return err
+	}
+
+	return
+}
+
+// initRabbitMQ initialize rabbitmq.
+func (a *App) initRabbitMQ(_ context.Context) (err error) {
+	a.rabbitMQ, err = rabbitmq.New(a.cfg.RabbitMQ)
 	if err != nil {
 		return err
 	}
@@ -248,6 +261,7 @@ func (a *App) initDependencies(ctx context.Context) error {
 		a.validator,
 		a.uuid,
 		a.jwt,
+		a.rabbitMQ,
 		a.postgres,
 		a.redis,
 		a.bigCache,

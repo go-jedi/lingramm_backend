@@ -35,6 +35,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/rabbitmq"
 	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
@@ -49,6 +50,7 @@ type Dependencies struct {
 	uuid       *uuid.UUID
 	jwt        *jwt.JWT
 	middleware *middleware.Middleware
+	rabbitMQ   *rabbitmq.RabbitMQ
 	postgres   *postgres.Postgres
 	redis      *redis.Redis
 	bigCache   *bigcachepkg.BigCache
@@ -110,6 +112,7 @@ func New(
 	validator *validator.Validator,
 	uuid *uuid.UUID,
 	jwt *jwt.JWT,
+	rabbitMQ *rabbitmq.RabbitMQ,
 	postgres *postgres.Postgres,
 	redis *redis.Redis,
 	bigCache *bigcachepkg.BigCache,
@@ -122,6 +125,7 @@ func New(
 		validator:  validator,
 		uuid:       uuid,
 		jwt:        jwt,
+		rabbitMQ:   rabbitMQ,
 		postgres:   postgres,
 		redis:      redis,
 		bigCache:   bigCache,

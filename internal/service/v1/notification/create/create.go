@@ -3,11 +3,13 @@ package create
 import (
 	"context"
 	"log"
+	"time"
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/notification"
 	notificationrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/notification"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/rabbitmq"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -18,18 +20,24 @@ type ICreate interface {
 
 type Create struct {
 	notificationRepository *notificationrepository.Repository
+	queryRabbitMQTimeout   int64
 	logger                 logger.ILogger
+	rabbitMQ               *rabbitmq.RabbitMQ
 	postgres               *postgres.Postgres
 }
 
 func New(
 	notificationRepository *notificationrepository.Repository,
+	queryRabbitMQTimeout int64,
 	logger logger.ILogger,
+	rabbitMQ *rabbitmq.RabbitMQ,
 	postgres *postgres.Postgres,
 ) *Create {
 	return &Create{
 		notificationRepository: notificationRepository,
+		queryRabbitMQTimeout:   queryRabbitMQTimeout,
 		logger:                 logger,
+		rabbitMQ:               rabbitMQ,
 		postgres:               postgres,
 	}
 }
@@ -63,6 +71,12 @@ func (s *Create) Execute(ctx context.Context, dto notification.CreateDTO) (notif
 		return notification.Notification{}, err
 	}
 
+	// send notification user by rabbitmq.
+	err = s.sendNotification(ctx, result)
+	if err != nil {
+		return notification.Notification{}, err
+	}
+
 	err = tx.Commit(ctx)
 	if err != nil {
 		return notification.Notification{}, err
@@ -71,18 +85,9 @@ func (s *Create) Execute(ctx context.Context, dto notification.CreateDTO) (notif
 	return result, nil
 }
 
-/*
-	// send notification user by nats.
-		err = s.sendNotification(ctx, result)
-		if err != nil {
-			return notification.Notification{}, err
-		}
-*/
-
-/*
 // sendNotification send notification.
 func (s *Create) sendNotification(ctx context.Context, n notification.Notification) error {
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(s.natsTimeout)*time.Second)
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(s.queryRabbitMQTimeout)*time.Second)
 	defer cancel()
 
 	data := notification.SendNotificationDTO{
@@ -93,11 +98,11 @@ func (s *Create) sendNotification(ctx context.Context, n notification.Notificati
 		CreatedAt:  n.CreatedAt,
 	}
 
-	if err := s.nats.Notification.Publisher.Start(ctxTimeout, data.TelegramID, data); err != nil {
-		log.Printf("failed to publish notification: %v", err)
+	// send notification in rabbitmq.
+	if err := s.rabbitMQ.Notification.Publisher.Execute(ctxTimeout, data.TelegramID, data); err != nil {
+		log.Printf("failed to publish notification by rabbitmq: %v", err)
 		return err
 	}
 
 	return nil
 }
-*/
