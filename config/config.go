@@ -183,6 +183,11 @@ type UnDeleteFileAwardConfig struct {
 	Expiration   int64 `yaml:"expiration"`
 }
 
+type UserPresenceConfig struct {
+	QueryTimeout int64 `yaml:"query_timeout"`
+	Expiration   int64 `yaml:"expiration"`
+}
+
 type RedisConfig struct {
 	Addr                    string                        `yaml:"addr"`
 	Password                string                        `yaml:"password"`
@@ -200,6 +205,7 @@ type RedisConfig struct {
 	UnDeleteFileClient      UnDeleteFileClientConfig      `yaml:"un_delete_file_client"`
 	UnDeleteFileAchievement UnDeleteFileAchievementConfig `yaml:"un_delete_file_achievement"`
 	UnDeleteFileAward       UnDeleteFileAwardConfig       `yaml:"un_delete_file_award"`
+	UserPresence            UserPresenceConfig            `yaml:"user_presence"`
 }
 
 type ClientAssets struct {
