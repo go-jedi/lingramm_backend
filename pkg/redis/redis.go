@@ -11,6 +11,7 @@ import (
 	undeletefileachievement "github.com/go-jedi/lingramm_backend/pkg/redis/un_delete_file_achievement"
 	undeletefileaward "github.com/go-jedi/lingramm_backend/pkg/redis/un_delete_file_award"
 	undeletefileclient "github.com/go-jedi/lingramm_backend/pkg/redis/un_delete_file_client"
+	userpresence "github.com/go-jedi/lingramm_backend/pkg/redis/user_presence"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -21,6 +22,7 @@ type Redis struct {
 	UnDeleteFileAchievement undeletefileachievement.IUnDeleteFileAchievement
 	UnDeleteFileAward       undeletefileaward.IUnDeleteFileAward
 	UnDeleteFileClient      undeletefileclient.IUnDeleteFileClient
+	UserPresence            userpresence.IUserPresence
 }
 
 func New(ctx context.Context, cfg config.RedisConfig) (*Redis, error) {
@@ -50,6 +52,7 @@ func New(ctx context.Context, cfg config.RedisConfig) (*Redis, error) {
 	r.UnDeleteFileAchievement = undeletefileachievement.New(cfg.UnDeleteFileAchievement, c)
 	r.UnDeleteFileAward = undeletefileaward.New(cfg.UnDeleteFileAward, c)
 	r.UnDeleteFileClient = undeletefileclient.New(cfg.UnDeleteFileClient, c)
+	r.UserPresence = userpresence.New(cfg.UserPresence, c)
 
 	return r, nil
 }

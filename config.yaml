@@ -146,6 +146,9 @@ redis:
   un_delete_file_award:
     query_timeout: 2 # second
     expiration: 0 # days
+  user_presence:
+    query_timeout: 2 # second
+    expiration: 60 # second
 
 file_server:
   client_assets:
