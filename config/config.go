@@ -26,6 +26,120 @@ type JWTConfig struct {
 	SecretPath    string `yaml:"secret_path"`
 }
 
+type ConsumerConfig struct {
+	URL                   string `yaml:"url"`
+	TimeoutCheckConnect   int    `yaml:"timeout_check_connect"`
+	TimeoutPublishMessage int    `yaml:"timeout_publish_message"`
+	Amqp                  struct {
+		Dialer struct {
+			Timeout   int `yaml:"timeout"`
+			KeepAlive int `yaml:"keep_alive"`
+		} `yaml:"dialer"`
+		SASL struct {
+			IsPlainAuth bool `yaml:"is_plain_auth"`
+			PlainAuth   struct {
+				Username string `yaml:"username"`
+				Password string `yaml:"password"`
+			} `yaml:"plain_auth"`
+		} `yaml:"sasl"`
+		VHost      string `yaml:"v_host"`
+		ChannelMax uint16 `yaml:"channel_max"`
+		FrameSize  int    `yaml:"frame_size"`
+		HeartBeat  int    `yaml:"heart_beat"`
+		Properties struct {
+			ConnectionName string `yaml:"connection_name"`
+		} `yaml:"properties"`
+		Locale string `yaml:"locale"`
+		IsDial bool   `yaml:"is_dial"`
+	} `yaml:"amqp"`
+	Exchange struct {
+		Name       string `yaml:"name"`
+		Kind       string `yaml:"kind"`
+		Durable    bool   `yaml:"durable"`
+		AutoDelete bool   `yaml:"auto_delete"`
+		Internal   bool   `yaml:"internal"`
+		NoWait     bool   `yaml:"no_wait"`
+	} `yaml:"exchange"`
+	Queue struct {
+		Name       string `yaml:"name"`
+		Durable    bool   `yaml:"durable"`
+		AutoDelete bool   `yaml:"auto_delete"`
+		Exclusive  bool   `yaml:"exclusive"`
+		NoWait     bool   `yaml:"no_wait"`
+		Args       struct {
+			XExpires    int32 `yaml:"x_expires"`
+			XMessageTTL int32 `yaml:"x_message_ttl"`
+		} `yaml:"args"`
+	} `yaml:"queue"`
+	QueueBind struct {
+		Exchange string `yaml:"exchange"`
+		NoWait   bool   `yaml:"no_wait"`
+	} `yaml:"queue_bind"`
+	Consume struct {
+		Consumer  string `yaml:"consumer"`
+		AutoAck   bool   `yaml:"auto_ack"`
+		Exclusive bool   `yaml:"exclusive"`
+		NoLocal   bool   `yaml:"no_local"`
+		NoWait    bool   `yaml:"no_wait"`
+	} `yaml:"consume"`
+}
+
+type PublisherConfig struct {
+	URL                   string `yaml:"url"`
+	TimeoutCheckConnect   int    `yaml:"timeout_check_connect"`
+	TimeoutPublishMessage int    `yaml:"timeout_publish_message"`
+	QueryTimeout          int64  `yaml:"query_timeout"`
+	Amqp                  struct {
+		Dialer struct {
+			Timeout   int `yaml:"timeout"`
+			KeepAlive int `yaml:"keep_alive"`
+		} `yaml:"dialer"`
+		SASL struct {
+			IsPlainAuth bool `yaml:"is_plain_auth"`
+			PlainAuth   struct {
+				Username string `yaml:"username"`
+				Password string `yaml:"password"`
+			} `yaml:"plain_auth"`
+		} `yaml:"sasl"`
+		VHost      string `yaml:"v_host"`
+		ChannelMax uint16 `yaml:"channel_max"`
+		FrameSize  int    `yaml:"frame_size"`
+		HeartBeat  int    `yaml:"heart_beat"`
+		Properties struct {
+			ConnectionName string `yaml:"connection_name"`
+		} `yaml:"properties"`
+		Locale string `yaml:"locale"`
+		IsDial bool   `yaml:"is_dial"`
+	} `yaml:"amqp"`
+	Exchange struct {
+		Name       string `yaml:"name"`
+		Kind       string `yaml:"kind"`
+		Durable    bool   `yaml:"durable"`
+		AutoDelete bool   `yaml:"auto_delete"`
+		Internal   bool   `yaml:"internal"`
+		NoWait     bool   `yaml:"no_wait"`
+	} `yaml:"exchange"`
+	Publish struct {
+		Exchange   string `yaml:"exchange"`
+		Mandatory  bool   `yaml:"mandatory"`
+		Immediate  bool   `yaml:"immediate"`
+		Publishing struct {
+			ContentType string `yaml:"content_type"`
+			Timestamp   string `yaml:"timestamp"`
+			Type        string `yaml:"type"`
+		} `yaml:"publishing"`
+	} `yaml:"publish"`
+}
+
+type RabbitMQNotificationConfig struct {
+	Consumer  ConsumerConfig  `yaml:"consumer"`
+	Publisher PublisherConfig `yaml:"publisher"`
+}
+
+type RabbitMQConfig struct {
+	Notification RabbitMQNotificationConfig `yaml:"notification"`
+}
+
 type PostgresConfig struct {
 	QueryTimeout  int64  `yaml:"query_timeout"`
 	Port          int    `yaml:"port"`
@@ -201,6 +315,7 @@ type HTTPServerConfig struct {
 type Config struct {
 	Logger        LoggerConfig        `yaml:"logger"`
 	JWT           JWTConfig           `yaml:"jwt"`
+	RabbitMQ      RabbitMQConfig      `yaml:"rabbitmq"`
 	Postgres      PostgresConfig      `yaml:"postgres"`
 	BigCache      BigCacheConfig      `yaml:"big_cache"`
 	Redis         RedisConfig         `yaml:"redis"`

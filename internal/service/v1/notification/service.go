@@ -6,6 +6,7 @@ import (
 	updatestatus "github.com/go-jedi/lingramm_backend/internal/service/v1/notification/update_status"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/rabbitmq"
 )
 
 type Service struct {
@@ -15,11 +16,13 @@ type Service struct {
 
 func New(
 	notificationRepository *notificationrepository.Repository,
+	queryRabbitMQTimeout int64,
 	logger logger.ILogger,
+	rabbitMQ *rabbitmq.RabbitMQ,
 	postgres *postgres.Postgres,
 ) *Service {
 	return &Service{
-		Create:       create.New(notificationRepository, logger, postgres),
+		Create:       create.New(notificationRepository, queryRabbitMQTimeout, logger, rabbitMQ, postgres),
 		UpdateStatus: updatestatus.New(notificationRepository, logger, postgres),
 	}
 }
