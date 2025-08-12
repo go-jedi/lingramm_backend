@@ -14,6 +14,8 @@ import (
 	clientassetshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets"
 	internalcurrencyhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/internal_currency"
 	localizedtexthandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/localized_text"
+	notificationhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/notification"
+	notificationwebsockethandler "github.com/go-jedi/lingramm_backend/internal/adapter/websocket/handlers/v1/notification"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
 	adminrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/admin"
@@ -22,6 +24,7 @@ import (
 	clientassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/client_assets"
 	internalcurrencyrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/internal_currency"
 	localizedtextepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/localized_text"
+	notificationrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/notification"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
@@ -30,6 +33,7 @@ import (
 	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
 	internalcurrencyservice "github.com/go-jedi/lingramm_backend/internal/service/v1/internal_currency"
 	localizedtextservice "github.com/go-jedi/lingramm_backend/internal/service/v1/localized_text"
+	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
@@ -39,6 +43,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
+	wsmanager "github.com/go-jedi/lingramm_backend/pkg/ws_manager"
 	"github.com/gofiber/fiber/v3"
 )
 
@@ -54,6 +59,7 @@ type Dependencies struct {
 	postgres   *postgres.Postgres
 	redis      *redis.Redis
 	bigCache   *bigcachepkg.BigCache
+	wsManager  *wsmanager.WSManager
 	fileServer *fileserver.FileServer
 
 	// auth.
@@ -93,10 +99,18 @@ type Dependencies struct {
 	localizedTextService    *localizedtextservice.Service
 	localizedTextHandler    *localizedtexthandler.Handler
 
+	// notification.
+	notificationRepository *notificationrepository.Repository
+	notificationService    *notificationservice.Service
+	notificationHandler    *notificationhandler.Handler
+
 	// admin.
 	adminRepository *adminrepository.Repository
 	adminService    *adminservice.Service
 	adminHandler    *adminhandler.Handler
+
+	// websocket.
+	notificationWebSocketHandler *notificationwebsockethandler.Handler
 
 	// cron.
 	unDeleteFileAchievementCleaner *undeletefileachievementcleaner.UnDeleteFileAchievementCleaner
@@ -116,6 +130,7 @@ func New(
 	postgres *postgres.Postgres,
 	redis *redis.Redis,
 	bigCache *bigcachepkg.BigCache,
+	wsManager *wsmanager.WSManager,
 	fileServer *fileserver.FileServer,
 ) *Dependencies {
 	d := &Dependencies{
@@ -129,11 +144,13 @@ func New(
 		postgres:   postgres,
 		redis:      redis,
 		bigCache:   bigCache,
+		wsManager:  wsManager,
 		fileServer: fileServer,
 	}
 
 	d.initMiddleware()
 	d.initHandler()
+	d.initWebSocket()
 	d.initCron(ctx)
 
 	return d
@@ -157,7 +174,13 @@ func (d *Dependencies) initHandler() {
 	_ = d.InternalCurrencyHandler()
 	_ = d.AchievementHandler()
 	_ = d.LocalizedTextHandler()
+	_ = d.NotificationHandler()
 	_ = d.AdminHandler()
+}
+
+// initWebSocket initialize web sockets.
+func (d *Dependencies) initWebSocket() {
+	_ = d.NotificationWebSocket()
 }
 
 // initCron initialize cron.

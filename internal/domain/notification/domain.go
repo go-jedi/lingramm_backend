@@ -45,3 +45,8 @@ type SendNotificationDTO struct {
 	TelegramID string    `json:"telegram_id"`
 	CreatedAt  time.Time `json:"created_at"`
 }
+
+type ACKMessage struct {
+	ID   int64  `json:"id"`
+	Type string `json:"type"`
+}

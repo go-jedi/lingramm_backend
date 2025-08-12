@@ -17,7 +17,7 @@ jwt:
 rabbitmq:
   notification:
     consumer:
-      url: amqp://guest:guest@localhost:5672/
+      url: amqp://guest:guest@localhost:56720/
       timeout_check_connect: 20 # second.
       timeout_publish_message: 5 # second.
       amqp:
@@ -63,7 +63,7 @@ rabbitmq:
         no_local: false
         no_wait: false
     publisher:
-      url: amqp://guest:guest@localhost:5672/
+      url: amqp://guest:guest@localhost:56720/
       timeout_check_connect: 20 # second.
       timeout_publish_message: 5 # second.
       query_timeout: 5 # second.
