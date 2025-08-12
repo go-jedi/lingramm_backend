@@ -18,6 +18,8 @@ type IUserPresence interface {
 	Set(ctx context.Context, key string) error
 	SetWithExpiration(ctx context.Context, key string, expiration time.Duration) error
 	Exists(ctx context.Context, key string) (bool, error)
+	RefreshTTL(ctx context.Context, key string) (bool, error)
+	RefreshTTLWithExpiration(ctx context.Context, key string, expiration time.Duration) (bool, error)
 	Delete(ctx context.Context, key string) error
 	DeleteKeys(ctx context.Context, keys []string) error
 }
@@ -79,12 +81,29 @@ func (c *UserPresence) Exists(ctx context.Context, key string) (bool, error) {
 	return count > 0, nil
 }
 
+// RefreshTTL refresh TTL.
+func (c *UserPresence) RefreshTTL(ctx context.Context, key string) (bool, error) {
+	return c.RefreshTTLWithExpiration(ctx, key, c.getExpiration())
+}
+
+// RefreshTTLWithExpiration refresh TTL with expiration.
+func (c *UserPresence) RefreshTTLWithExpiration(ctx context.Context, key string, expiration time.Duration) (bool, error) {
+	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
+	defer cancel()
+
+	return c.client.ExpireXX(
+		ctxTimeout,
+		c.getRedisKey(key),
+		expiration,
+	).Result()
+}
+
 // Delete removes user presence from the cache by key.
 func (c *UserPresence) Delete(ctx context.Context, key string) error {
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	return c.client.Del(ctxTimeout, key).Err()
+	return c.client.Del(ctxTimeout, c.getRedisKey(key)).Err()
 }
 
 // DeleteKeys removes users presences from the cache by keys.
@@ -92,7 +111,11 @@ func (c *UserPresence) DeleteKeys(ctx context.Context, keys []string) error {
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.queryTimeout)*time.Second)
 	defer cancel()
 
-	return c.client.Del(ctxTimeout, keys...).Err()
+	prefixed := make([]string, len(keys))
+	for i, k := range keys {
+		prefixed[i] = c.getRedisKey(k)
+	}
+	return c.client.Del(ctxTimeout, prefixed...).Err()
 }
 
 // getRedisKey get redis key.

@@ -2,14 +2,15 @@ package create
 
 import (
 	"context"
+	"fmt"
 	"log"
-	"time"
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/notification"
 	notificationrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/notification"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/go-jedi/lingramm_backend/pkg/rabbitmq"
+	"github.com/go-jedi/lingramm_backend/pkg/redis"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -20,25 +21,25 @@ type ICreate interface {
 
 type Create struct {
 	notificationRepository *notificationrepository.Repository
-	queryRabbitMQTimeout   int64
 	logger                 logger.ILogger
 	rabbitMQ               *rabbitmq.RabbitMQ
 	postgres               *postgres.Postgres
+	redis                  *redis.Redis
 }
 
 func New(
 	notificationRepository *notificationrepository.Repository,
-	queryRabbitMQTimeout int64,
 	logger logger.ILogger,
 	rabbitMQ *rabbitmq.RabbitMQ,
 	postgres *postgres.Postgres,
+	redis *redis.Redis,
 ) *Create {
 	return &Create{
 		notificationRepository: notificationRepository,
-		queryRabbitMQTimeout:   queryRabbitMQTimeout,
 		logger:                 logger,
 		rabbitMQ:               rabbitMQ,
 		postgres:               postgres,
+		redis:                  redis,
 	}
 }
 
@@ -46,8 +47,9 @@ func (s *Create) Execute(ctx context.Context, dto notification.CreateDTO) (notif
 	s.logger.Debug("[create a new notification] execute service")
 
 	var (
-		err    error
-		result notification.Notification
+		err            error
+		result         notification.Notification
+		isUserPresence bool
 	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
@@ -71,10 +73,15 @@ func (s *Create) Execute(ctx context.Context, dto notification.CreateDTO) (notif
 		return notification.Notification{}, err
 	}
 
-	// send notification user by rabbitmq.
-	err = s.sendNotification(ctx, result)
+	// check exists user is online for send notification with message broker.
+	isUserPresence, err = s.redis.UserPresence.Exists(ctx, dto.TelegramID)
 	if err != nil {
 		return notification.Notification{}, err
+	}
+
+	if isUserPresence { // if the user is online.
+		// send notification user by rabbitmq.
+		s.sendNotification(ctx, result)
 	}
 
 	err = tx.Commit(ctx)
@@ -86,10 +93,7 @@ func (s *Create) Execute(ctx context.Context, dto notification.CreateDTO) (notif
 }
 
 // sendNotification send notification.
-func (s *Create) sendNotification(ctx context.Context, n notification.Notification) error {
-	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(s.queryRabbitMQTimeout)*time.Second)
-	defer cancel()
-
+func (s *Create) sendNotification(ctx context.Context, n notification.Notification) {
 	data := notification.SendNotificationDTO{
 		ID:         n.ID,
 		Message:    n.Message,
@@ -99,10 +103,7 @@ func (s *Create) sendNotification(ctx context.Context, n notification.Notificati
 	}
 
 	// send notification in rabbitmq.
-	if err := s.rabbitMQ.Notification.Publisher.Execute(ctxTimeout, data.TelegramID, data); err != nil {
-		log.Printf("failed to publish notification by rabbitmq: %v", err)
-		return err
+	if err := s.rabbitMQ.Notification.Publisher.Execute(ctx, data.TelegramID, data); err != nil {
+		s.logger.Warn(fmt.Sprintf("failed to publish notification by rabbitmq: %v", err))
 	}
-
-	return nil
 }

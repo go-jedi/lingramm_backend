@@ -23,6 +23,7 @@ import (
 	swaggerserver "github.com/go-jedi/lingramm_backend/pkg/swagger_server"
 	"github.com/go-jedi/lingramm_backend/pkg/uuid"
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
+	wsmanager "github.com/go-jedi/lingramm_backend/pkg/ws_manager"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/middleware/static"
 )
@@ -37,6 +38,7 @@ type App struct {
 	postgres      *postgres.Postgres
 	redis         *redis.Redis
 	bigCache      *bigcachepkg.BigCache
+	wsManager     *wsmanager.WSManager
 	hs            *httpserver.HTTPServer
 	swaggerServer *swaggerserver.SwaggerServer
 	fileServer    *fileserver.FileServer
@@ -106,6 +108,7 @@ func (a *App) initDeps(ctx context.Context) error {
 		a.initPostgres,
 		a.initRedis,
 		a.initBigCache,
+		a.initWSManager,
 		a.initHTTPServer,
 		a.initSwaggerServer,
 		a.initFileServer,
@@ -199,6 +202,13 @@ func (a *App) initBigCache(_ context.Context) (err error) {
 	return
 }
 
+// initWSManager initialize websocket manager.
+func (a *App) initWSManager(_ context.Context) error {
+	a.wsManager = wsmanager.New()
+
+	return nil
+}
+
 // initHTTPServer initialize http server.
 func (a *App) initHTTPServer(_ context.Context) (err error) {
 	a.hs, err = httpserver.New(a.cfg.HTTPServer)
@@ -265,6 +275,7 @@ func (a *App) initDependencies(ctx context.Context) error {
 		a.postgres,
 		a.redis,
 		a.bigCache,
+		a.wsManager,
 		a.fileServer,
 	)
 

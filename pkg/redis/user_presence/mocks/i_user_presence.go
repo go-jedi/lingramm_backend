@@ -78,6 +78,62 @@ func (_m *IUserPresence) Exists(ctx context.Context, key string) (bool, error) {
 	return r0, r1
 }
 
+// RefreshTTL provides a mock function with given fields: ctx, key
+func (_m *IUserPresence) RefreshTTL(ctx context.Context, key string) (bool, error) {
+	ret := _m.Called(ctx, key)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RefreshTTL")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string) (bool, error)); ok {
+		return rf(ctx, key)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string) bool); ok {
+		r0 = rf(ctx, key)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = rf(ctx, key)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
+// RefreshTTLWithExpiration provides a mock function with given fields: ctx, key, expiration
+func (_m *IUserPresence) RefreshTTLWithExpiration(ctx context.Context, key string, expiration time.Duration) (bool, error) {
+	ret := _m.Called(ctx, key, expiration)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RefreshTTLWithExpiration")
+	}
+
+	var r0 bool
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context, string, time.Duration) (bool, error)); ok {
+		return rf(ctx, key, expiration)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context, string, time.Duration) bool); ok {
+		r0 = rf(ctx, key, expiration)
+	} else {
+		r0 = ret.Get(0).(bool)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context, string, time.Duration) error); ok {
+		r1 = rf(ctx, key, expiration)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Set provides a mock function with given fields: ctx, key
 func (_m *IUserPresence) Set(ctx context.Context, key string) error {
 	ret := _m.Called(ctx, key)
