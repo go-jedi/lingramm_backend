@@ -1,7 +1,9 @@
 package deletedetailbyachievementid
 
 import (
+	"context"
 	"strconv"
+	"time"
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/achievement"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
@@ -10,6 +12,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type DeleteDetailByAchievementID struct {
 	achievementService *achievementservice.Service
@@ -49,7 +53,10 @@ func (h *DeleteDetailByAchievementID) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "invalid achievement id", "achievement id must be a positive integer", nil))
 	}
 
-	result, err := h.achievementService.DeleteDetailByAchievementID.Execute(c, achievementID)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.achievementService.DeleteDetailByAchievementID.Execute(ctxTimeout, achievementID)
 	if err != nil {
 		h.logger.Error("failed to delete detail by achievement id", "error", err)
 		c.Status(fiber.StatusInternalServerError)

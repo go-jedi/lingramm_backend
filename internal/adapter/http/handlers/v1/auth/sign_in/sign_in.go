@@ -1,6 +1,9 @@
 package signin
 
 import (
+	"context"
+	"time"
+
 	"github.com/go-jedi/lingramm_backend/config"
 	"github.com/go-jedi/lingramm_backend/internal/domain/auth"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/v1/auth"
@@ -9,6 +12,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type SignIn struct {
 	authService *authservice.Service
@@ -58,7 +63,10 @@ func (h *SignIn) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to validate struct", err.Error(), nil))
 	}
 
-	result, err := h.authService.SignIn.Execute(c, dto)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.authService.SignIn.Execute(ctxTimeout, dto)
 	if err != nil {
 		h.logger.Error("failed to sign in user", "error", err)
 		c.Status(fiber.StatusInternalServerError)

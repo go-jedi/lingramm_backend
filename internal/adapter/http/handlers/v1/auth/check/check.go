@@ -1,6 +1,9 @@
 package check
 
 import (
+	"context"
+	"time"
+
 	"github.com/go-jedi/lingramm_backend/internal/domain/auth"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/v1/auth"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -8,6 +11,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type Check struct {
 	authService *authservice.Service
@@ -56,7 +61,10 @@ func (h *Check) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to validate struct", err.Error(), nil))
 	}
 
-	result, err := h.authService.Check.Execute(c, dto)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.authService.Check.Execute(ctxTimeout, dto)
 	if err != nil {
 		h.logger.Error("failed to check user token", "error", err)
 		c.Status(fiber.StatusInternalServerError)

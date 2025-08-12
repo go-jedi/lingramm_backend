@@ -1,9 +1,11 @@
 package create
 
 import (
+	"context"
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/achievement"
 	achievementassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/achievement_assets"
@@ -15,6 +17,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type Create struct {
 	achievementService *achievementservice.Service
@@ -98,7 +102,10 @@ func (h *Create) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to validate struct", err.Error(), nil))
 	}
 
-	result, err := h.achievementService.Create.Execute(c, dto)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.achievementService.Create.Execute(ctxTimeout, dto)
 	if err != nil {
 		h.logger.Error("failed to create a achievement", "error", err)
 		c.Status(fiber.StatusInternalServerError)

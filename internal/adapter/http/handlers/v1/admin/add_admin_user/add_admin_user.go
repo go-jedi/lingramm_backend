@@ -1,6 +1,9 @@
 package addadminuser
 
 import (
+	"context"
+	"time"
+
 	"github.com/go-jedi/lingramm_backend/internal/domain/admin"
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
@@ -8,6 +11,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type AddAdminUser struct {
 	adminService *adminservice.Service
@@ -34,7 +39,10 @@ func (h *AddAdminUser) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to get param telegramID", apperrors.ErrParamIsRequired.Error(), nil))
 	}
 
-	result, err := h.adminService.AddAdminUser.Execute(c, telegramID)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.adminService.AddAdminUser.Execute(ctxTimeout, telegramID)
 	if err != nil {
 		h.logger.Error("failed to add admin user", "error", err)
 		c.Status(fiber.StatusInternalServerError)

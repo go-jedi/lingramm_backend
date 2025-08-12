@@ -1,12 +1,17 @@
 package alldetail
 
 import (
+	"context"
+	"time"
+
 	"github.com/go-jedi/lingramm_backend/internal/domain/achievement"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type AllDetail struct {
 	achievementService *achievementservice.Service
@@ -26,7 +31,10 @@ func New(
 func (h *AllDetail) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get all detail] execute handler")
 
-	result, err := h.achievementService.All.Execute(c)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.achievementService.All.Execute(ctxTimeout)
 	if err != nil {
 		h.logger.Error("failed to get all detail", "error", err)
 		c.Status(fiber.StatusInternalServerError)

@@ -1,11 +1,16 @@
 package iterator
 
 import (
+	"context"
+	"time"
+
 	bigcacheservice "github.com/go-jedi/lingramm_backend/internal/service/v1/bigcache"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type Iterator struct {
 	bigCacheService *bigcacheservice.Service
@@ -25,7 +30,10 @@ func New(
 func (h *Iterator) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[iterator for show data in bigcache] execute handler")
 
-	result, err := h.bigCacheService.Iterator.Execute(c)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.bigCacheService.Iterator.Execute(ctxTimeout)
 	if err != nil {
 		h.logger.Error("failed to show data in bigcache", "error", err)
 		c.Status(fiber.StatusInternalServerError)

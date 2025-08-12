@@ -1,6 +1,9 @@
 package all
 
 import (
+	"context"
+	"time"
+
 	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
 	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -8,6 +11,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type All struct {
 	clientAssetsService *clientassetsservice.Service
@@ -30,7 +35,10 @@ func New(
 func (h *All) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get all client assets] execute handler")
 
-	result, err := h.clientAssetsService.All.Execute(c)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.clientAssetsService.All.Execute(ctxTimeout)
 	if err != nil {
 		h.logger.Error("failed to get all client assets", "error", err)
 		c.Status(fiber.StatusInternalServerError)

@@ -1,7 +1,9 @@
 package create
 
 import (
+	"context"
 	"fmt"
+	"time"
 
 	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
 	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
@@ -11,6 +13,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type Create struct {
 	clientAssetsService *clientassetsservice.Service
@@ -47,7 +51,10 @@ func (h *Create) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "unsupported file type", fmt.Errorf("%w: %s", apperrors.ErrUnsupportedFormat, contentType).Error(), nil))
 	}
 
-	result, err := h.clientAssetsService.Create.Execute(c, fileHeader)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.clientAssetsService.Create.Execute(ctxTimeout, fileHeader)
 	if err != nil {
 		h.logger.Error("failed to create a client assets", "error", err)
 		c.Status(fiber.StatusInternalServerError)

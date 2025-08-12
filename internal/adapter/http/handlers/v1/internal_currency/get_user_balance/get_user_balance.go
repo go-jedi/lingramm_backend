@@ -1,6 +1,9 @@
 package getuserbalance
 
 import (
+	"context"
+	"time"
+
 	"github.com/go-jedi/lingramm_backend/internal/domain/internal_currency/user_balance"
 	"github.com/go-jedi/lingramm_backend/internal/service/v1/internal_currency"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
@@ -8,6 +11,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type GetUserBalance struct {
 	internalCurrencyService *internalcurrency.Service
@@ -34,7 +39,10 @@ func (h *GetUserBalance) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to get param telegramID", apperrors.ErrParamIsRequired.Error(), nil))
 	}
 
-	result, err := h.internalCurrencyService.GetUserBalance.Execute(c, telegramID)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.internalCurrencyService.GetUserBalance.Execute(ctxTimeout, telegramID)
 	if err != nil {
 		h.logger.Error("failed to get user balance", "error", err)
 		c.Status(fiber.StatusInternalServerError)

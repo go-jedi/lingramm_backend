@@ -1,6 +1,9 @@
 package createtexttranslation
 
 import (
+	"context"
+	"time"
+
 	localizedtext "github.com/go-jedi/lingramm_backend/internal/domain/localized_text"
 	localizedtextservice "github.com/go-jedi/lingramm_backend/internal/service/v1/localized_text"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -8,6 +11,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type CreateTextTranslation struct {
 	localizedTextService *localizedtextservice.Service
@@ -43,7 +48,10 @@ func (h *CreateTextTranslation) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to validate struct", err.Error(), nil))
 	}
 
-	result, err := h.localizedTextService.CreateTextTranslation.Execute(c, dto)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.localizedTextService.CreateTextTranslation.Execute(ctxTimeout, dto)
 	if err != nil {
 		h.logger.Error("failed to create text translation", "error", err)
 		c.Status(fiber.StatusInternalServerError)

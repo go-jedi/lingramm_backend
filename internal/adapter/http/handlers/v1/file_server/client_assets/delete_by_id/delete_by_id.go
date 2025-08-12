@@ -1,7 +1,9 @@
 package deletebyid
 
 import (
+	"context"
 	"strconv"
+	"time"
 
 	clientassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/client_assets"
 	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
@@ -10,6 +12,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type DeleteByID struct {
 	clientAssetsService *clientassetsservice.Service
@@ -49,7 +53,10 @@ func (h *DeleteByID) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "invalid client assets id", "client assets id must be a positive integer", nil))
 	}
 
-	result, err := h.clientAssetsService.DeleteByID.Execute(c, id)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.clientAssetsService.DeleteByID.Execute(ctxTimeout, id)
 	if err != nil {
 		h.logger.Error("failed to delete client assets by id", "error", err)
 		c.Status(fiber.StatusInternalServerError)

@@ -1,6 +1,9 @@
 package allbytelegramid
 
 import (
+	"context"
+	"time"
+
 	"github.com/go-jedi/lingramm_backend/internal/domain/notification"
 	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
@@ -8,6 +11,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/response"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type AllByTelegramID struct {
 	notificationService *notificationservice.Service
@@ -34,7 +39,10 @@ func (h *AllByTelegramID) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to get param telegramID", apperrors.ErrParamIsRequired.Error(), nil))
 	}
 
-	result, err := h.notificationService.AllByTelegramID.Execute(c.RequestCtx(), telegramID)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.notificationService.AllByTelegramID.Execute(ctxTimeout, telegramID)
 	if err != nil {
 		h.logger.Error("failed to get all notifications by telegram id", "error", err)
 		c.Status(fiber.StatusInternalServerError)

@@ -1,6 +1,9 @@
 package create
 
 import (
+	"context"
+	"time"
+
 	"github.com/go-jedi/lingramm_backend/internal/domain/notification"
 	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -8,6 +11,8 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/validator"
 	"github.com/gofiber/fiber/v3"
 )
+
+const timeout = 5 * time.Second
 
 type Create struct {
 	notificationService *notificationservice.Service
@@ -43,7 +48,10 @@ func (h *Create) Execute(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "failed to validate struct", err.Error(), nil))
 	}
 
-	result, err := h.notificationService.Create.Execute(c.RequestCtx(), dto)
+	ctxTimeout, cancel := context.WithTimeout(c.RequestCtx(), timeout)
+	defer cancel()
+
+	result, err := h.notificationService.Create.Execute(ctxTimeout, dto)
 	if err != nil {
 		h.logger.Error("failed to create a new notification", "error", err)
 		c.Status(fiber.StatusInternalServerError)
