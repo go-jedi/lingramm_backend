@@ -1,8 +1,6 @@
 package notification
 
 import (
-	"fmt"
-
 	"github.com/go-jedi/lingramm_backend/internal/adapter/websocket/handlers/v1/notification/stream"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
@@ -29,8 +27,6 @@ func New(
 	h := &Handler{
 		stream: stream.New(notificationService, logger, rabbitMQ, redis, wsManager.NotificationHUB),
 	}
-
-	fmt.Println(logger)
 
 	h.initRoutes(app, middleware)
 

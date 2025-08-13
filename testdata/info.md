@@ -29,6 +29,10 @@
 - `migrate create -ext sql -dir migrations -seq notifications_type`
 - `migrate create -ext sql -dir migrations -seq notifications_table`
 - `migrate create -ext sql -dir migrations -seq notifications_index`
+- `migrate create -ext sql -dir migrations -seq subscriptions_table`
+- `migrate create -ext sql -dir migrations -seq subscription_history_table`
+- `migrate create -ext sql -dir migrations -seq subscription_create_function`
+- `migrate create -ext sql -dir migrations -seq subscriptions_exists_function`
 - `migrate create -ext sql -dir migrations -seq languages_table`
 
 #### execute:

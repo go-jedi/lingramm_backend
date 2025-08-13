@@ -16,7 +16,7 @@ BEGIN
         _src->>'username',
         _src->>'first_name',
         _src->>'last_name'
-    ) ON CONFLICT (telegram_id) DO NOTHING
+    )
     RETURNING * INTO _u;
 
     INSERT INTO user_balances(
@@ -26,6 +26,12 @@ BEGIN
     );
 
     INSERT INTO user_stats(
+        telegram_id
+    ) VALUES(
+        _src->>'telegram_id'
+    );
+
+    INSERT INTO subscriptions(
         telegram_id
     ) VALUES(
         _src->>'telegram_id'
