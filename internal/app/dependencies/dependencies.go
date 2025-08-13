@@ -15,6 +15,7 @@ import (
 	internalcurrencyhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/internal_currency"
 	localizedtexthandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/localized_text"
 	notificationhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/notification"
+	subscriptionhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/subscription"
 	notificationwebsockethandler "github.com/go-jedi/lingramm_backend/internal/adapter/websocket/handlers/v1/notification"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
@@ -25,6 +26,7 @@ import (
 	internalcurrencyrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/internal_currency"
 	localizedtextepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/localized_text"
 	notificationrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/notification"
+	subscriptionrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/subscription"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
@@ -34,6 +36,7 @@ import (
 	internalcurrencyservice "github.com/go-jedi/lingramm_backend/internal/service/v1/internal_currency"
 	localizedtextservice "github.com/go-jedi/lingramm_backend/internal/service/v1/localized_text"
 	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
+	subscriptionservice "github.com/go-jedi/lingramm_backend/internal/service/v1/subscription"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
@@ -103,6 +106,11 @@ type Dependencies struct {
 	notificationRepository *notificationrepository.Repository
 	notificationService    *notificationservice.Service
 	notificationHandler    *notificationhandler.Handler
+
+	// subscription.
+	subscriptionRepository *subscriptionrepository.Repository
+	subscriptionService    *subscriptionservice.Service
+	subscriptionHandler    *subscriptionhandler.Handler
 
 	// admin.
 	adminRepository *adminrepository.Repository
@@ -175,6 +183,7 @@ func (d *Dependencies) initHandler() {
 	_ = d.AchievementHandler()
 	_ = d.LocalizedTextHandler()
 	_ = d.NotificationHandler()
+	_ = d.SubscriptionHandler()
 	_ = d.AdminHandler()
 }
 

@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.subscription_exists(TEXT)
