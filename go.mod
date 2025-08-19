@@ -1,10 +1,10 @@
 module github.com/go-jedi/lingramm_backend
 
-go 1.24.6
+go 1.25.0
 
 require (
 	github.com/allegro/bigcache v1.2.1
-	github.com/brianvoe/gofakeit/v7 v7.3.0
+	github.com/brianvoe/gofakeit/v7 v7.4.0
 	github.com/fasthttp/websocket v1.5.12
 	github.com/go-playground/validator/v10 v10.27.0
 	github.com/gofiber/fiber/v3 v3.0.0-beta.5
