@@ -9,6 +9,7 @@ func (d *Dependencies) AuthService() *authservice.Service {
 	if d.authService == nil {
 		d.authService = authservice.New(
 			d.UserRepository(),
+			d.LevelRepository(),
 			d.logger,
 			d.postgres,
 			d.redis,

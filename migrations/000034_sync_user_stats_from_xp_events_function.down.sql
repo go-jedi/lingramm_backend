@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.sync_user_stats_from_xp_events(TEXT);

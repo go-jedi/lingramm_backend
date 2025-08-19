@@ -22,8 +22,14 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - TZ=${POSTGRES_TZ}
     ports:
       - "54320:5432"
+    command: [
+      "postgres",
+      "-c", "timezone=${POSTGRES_TZ}",
+      "-c", "log_timezone=${POSTGRES_TZ}"
+    ]
     volumes:
       - postgres_volume:/var/lib/postgresql/data
 
@@ -49,8 +55,8 @@ services:
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
       RABBITMQ_DEFAULT_VHOST: ${RABBITMQ_VHOST:-/}
     ports:
-      - "56720:5672"    # AMQP
-      - "15672:15672"  # Web UI
+      - "56720:5672" # AMQP
+      - "15672:15672" # Web UI
     volumes:
       - rabbitmq_volume:/var/lib/rabbitmq
     healthcheck:

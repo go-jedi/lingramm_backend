@@ -4,6 +4,7 @@
 ### migrations:
 
 #### create:
+- `migrate create -ext sql -dir migrations -seq set_timezone`
 - `migrate create -ext sql -dir migrations -seq users_table`
 - `migrate create -ext sql -dir migrations -seq user_create_function`
 - `migrate create -ext sql -dir migrations -seq levels_table`
@@ -33,6 +34,18 @@
 - `migrate create -ext sql -dir migrations -seq subscription_history_table`
 - `migrate create -ext sql -dir migrations -seq subscription_create_function`
 - `migrate create -ext sql -dir migrations -seq subscriptions_exists_function`
+- `migrate create -ext sql -dir migrations -seq xp_events_table`
+- `migrate create -ext sql -dir migrations -seq xp_events_index`
+- `migrate create -ext sql -dir migrations -seq xp_event_create_function`
+- `migrate create -ext sql -dir migrations -seq sync_user_stats_from_xp_events_function`
+- `migrate create -ext sql -dir migrations -seq leaderboard_weeks_table`
+- `migrate create -ext sql -dir migrations -seq leaderboard_weeks_index`
+- `migrate create -ext sql -dir migrations -seq leaderboard_weeks_worker_state_table`
+- `migrate create -ext sql -dir migrations -seq leaderboard_weeks_applied_events_table`
+- `migrate create -ext sql -dir migrations -seq user_level_history_table`
+- `migrate create -ext sql -dir migrations -seq user_level_history_index`
+- `migrate create -ext sql -dir migrations -seq back_fill_missing_level_history_function`
+- `migrate create -ext sql -dir migrations -seq get_level_info_function`
 - `migrate create -ext sql -dir migrations -seq languages_table`
 
 #### execute:

@@ -7,7 +7,9 @@ import (
 	"time"
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/auth"
+	"github.com/go-jedi/lingramm_backend/internal/domain/level"
 	"github.com/go-jedi/lingramm_backend/internal/domain/user"
+	levelrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/level"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
@@ -23,16 +25,18 @@ type ISignIn interface {
 }
 
 type SignIn struct {
-	userRepository *userrepository.Repository
-	logger         logger.ILogger
-	postgres       *postgres.Postgres
-	redis          *redis.Redis
-	bigCache       *bigcachepkg.BigCache
-	jwt            jwt.IJWT
+	userRepository  *userrepository.Repository
+	levelRepository *levelrepository.Repository
+	logger          logger.ILogger
+	postgres        *postgres.Postgres
+	redis           *redis.Redis
+	bigCache        *bigcachepkg.BigCache
+	jwt             jwt.IJWT
 }
 
 func New(
 	userRepository *userrepository.Repository,
+	levelRepository *levelrepository.Repository,
 	logger logger.ILogger,
 	postgres *postgres.Postgres,
 	redis *redis.Redis,
@@ -40,12 +44,13 @@ func New(
 	jwt jwt.IJWT,
 ) *SignIn {
 	return &SignIn{
-		userRepository: userRepository,
-		logger:         logger,
-		postgres:       postgres,
-		redis:          redis,
-		bigCache:       bigCache,
-		jwt:            jwt,
+		userRepository:  userRepository,
+		levelRepository: levelRepository,
+		logger:          logger,
+		postgres:        postgres,
+		redis:           redis,
+		bigCache:        bigCache,
+		jwt:             jwt,
 	}
 }
 
@@ -135,6 +140,11 @@ func (s *SignIn) createUser(ctx context.Context, tx pgx.Tx, dto auth.SignInDTO) 
 		return auth.SignInResp{}, err
 	}
 
+	// create user level history (set 1 level for new user).
+	if err := s.createUserLevelHistory(ctx, tx, nu.TelegramID); err != nil {
+		return auth.SignInResp{}, err
+	}
+
 	// generate access, refresh tokens.
 	tokens, err := s.jwt.Generate(nu.TelegramID)
 	if err != nil {
@@ -157,6 +167,26 @@ func (s *SignIn) createUser(ctx context.Context, tx pgx.Tx, dto auth.SignInDTO) 
 		AccessExpAt:  tokens.AccessExpAt,
 		RefreshExpAt: tokens.RefreshExpAt,
 	}, nil
+}
+
+// createUserLevelHistory create user level history (level 1).
+func (s *SignIn) createUserLevelHistory(ctx context.Context, tx pgx.Tx, telegramID string) error {
+	const (
+		levelNumber = 1
+		xpAtReach   = 0
+	)
+
+	createUserLevelHistoryDTO := level.CreateUserLevelHistoryDTO{
+		TelegramID:  telegramID,
+		LevelNumber: levelNumber,
+		XPAtReach:   xpAtReach,
+	}
+
+	if _, err := s.levelRepository.CreateUserLevelHistory.Execute(ctx, tx, createUserLevelHistoryDTO); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // getUserAndGenerateTokens get user from cache or database.

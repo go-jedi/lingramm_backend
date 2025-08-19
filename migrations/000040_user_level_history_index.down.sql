@@ -1,0 +1,3 @@
+DROP INDEX IF EXISTS idx_user_level_history_telegram_id_reached_at;
+DROP INDEX IF EXISTS idx_user_level_history_source_event_id;
+DROP INDEX IF EXISTS idx_user_level_history_level_number;

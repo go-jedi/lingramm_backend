@@ -49,6 +49,42 @@ func (_m *IValidator) StructCtx(ctx context.Context, s interface{}) error {
 	return r0
 }
 
+// Var provides a mock function with given fields: field, tag
+func (_m *IValidator) Var(field interface{}, tag string) error {
+	ret := _m.Called(field, tag)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Var")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(interface{}, string) error); ok {
+		r0 = rf(field, tag)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// VarCtx provides a mock function with given fields: ctx, field, tag
+func (_m *IValidator) VarCtx(ctx context.Context, field interface{}, tag string) error {
+	ret := _m.Called(ctx, field, tag)
+
+	if len(ret) == 0 {
+		panic("no return value specified for VarCtx")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, interface{}, string) error); ok {
+		r0 = rf(ctx, field, tag)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // NewIValidator creates a new instance of IValidator. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewIValidator(t interface {

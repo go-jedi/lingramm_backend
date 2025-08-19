@@ -183,10 +183,10 @@ cron:
     sleep_duration: 1440 # minutes
     timeout: 15 # second
   un_delete_file_achievement_cleaner:
-    sleep_duration: 1 # minutes
+    sleep_duration: 60 # minutes
     timeout: 15 # second
   un_delete_file_award_cleaner:
-    sleep_duration: 1 # minutes
+    sleep_duration: 60 # minutes
     timeout: 15 # second
 
 middleware:

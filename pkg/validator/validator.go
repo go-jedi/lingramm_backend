@@ -12,6 +12,8 @@ import (
 type IValidator interface {
 	Struct(s interface{}) error
 	StructCtx(ctx context.Context, s interface{}) (err error)
+	Var(field interface{}, tag string) error
+	VarCtx(ctx context.Context, field interface{}, tag string) (err error)
 }
 
 // Validator is a wrapper around validator.Validate that implements IValidator.
