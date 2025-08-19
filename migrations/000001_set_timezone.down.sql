@@ -1,0 +1,1 @@
+ALTER DATABASE lingvogramm_db RESET timezone;

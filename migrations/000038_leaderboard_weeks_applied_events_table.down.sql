@@ -1,0 +1,1 @@
+DROP TABLE IF EXISTS leaderboard_weeks_applied_events;

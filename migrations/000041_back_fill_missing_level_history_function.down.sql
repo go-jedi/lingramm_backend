@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.back_fill_missing_level_history(TEXT);

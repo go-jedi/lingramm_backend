@@ -1,0 +1,3 @@
+DROP INDEX IF EXISTS idx_leaderboard_weeks_week_start_telegram_id_week_user_uniq;
+DROP INDEX IF EXISTS idx_leaderboard_weeks_week_start_xp_week_top;
+DROP INDEX IF EXISTS idx_leaderboard_weeks_telegram_id_week_start_user_history;

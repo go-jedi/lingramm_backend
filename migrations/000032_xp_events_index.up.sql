@@ -1,0 +1,2 @@
+CREATE INDEX IF NOT EXISTS idx_xp_events_week_start_telegram_id ON xp_events(week_start, telegram_id);
+CREATE INDEX IF NOT EXISTS idx_xp_events_telegram_id_occurred_at ON xp_events (telegram_id, occurred_at DESC);

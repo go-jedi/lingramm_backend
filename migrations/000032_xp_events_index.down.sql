@@ -1,0 +1,2 @@
+DROP INDEX IF EXISTS idx_xp_events_week_start_telegram_id;
+DROP INDEX IF EXISTS idx_xp_events_telegram_id_occurred_at;
