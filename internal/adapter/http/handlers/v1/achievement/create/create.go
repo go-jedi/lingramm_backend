@@ -96,7 +96,7 @@ func (h *Create) Execute(c fiber.Ctx) error {
 		Operator:              operator,
 	}
 
-	if err := h.validator.StructCtx(c, dto); err != nil {
+	if err := h.validator.StructCtx(c.RequestCtx(), dto); err != nil {
 		h.logger.Error("failed to validate struct", "error", err)
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(response.New[any](false, "failed to validate struct", err.Error(), nil))

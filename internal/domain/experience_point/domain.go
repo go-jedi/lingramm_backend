@@ -6,9 +6,9 @@ type XPEvents struct {
 	ID         int64     `json:"id"`
 	TelegramID string    `json:"telegram_id"`
 	DeltaXP    int       `json:"delta_xp"`
+	Reason     string    `json:"reason"`
 	OccurredAt time.Time `json:"occurred_at"`
 	InsertedAt time.Time `json:"inserted_at"`
-	Reason     string    `json:"reason"`
 	WeekStart  time.Time `json:"week_start"`
 }
 
@@ -29,14 +29,13 @@ type CreateXPEventDTO struct {
 //
 
 type LeaderboardWeeksProcessBatchDTO struct {
-	WorkerName         string `json:"worker_name"`
 	BatchSize          int64  `json:"batch_size"`
 	StatementTimeoutMS int64  `json:"statement_timeout_ms"`
 	LockTimeoutMS      int64  `json:"lock_timeout_ms"`
+	WorkerName         string `json:"worker_name"`
 }
 
 type LeaderboardWeeksProcessBatchResponse struct {
-	Processed      bool  `json:"processed"`
 	FromID         int64 `json:"from_id"`
 	ToID           int64 `json:"to_id"`
 	BatchCount     int64 `json:"batch_count"`
@@ -44,4 +43,40 @@ type LeaderboardWeeksProcessBatchResponse struct {
 	GroupsCount    int64 `json:"groups_count"`
 	AppliedXP      int64 `json:"applied_xp"`
 	NewLastEventID int64 `json:"new_last_event_id"`
+	Processed      bool  `json:"processed"`
+}
+
+//
+// GET LEADERBOARD TOP WEEK
+//
+
+type GetLeaderboardTopWeekDTO struct {
+	Limit int64  `json:"limit" validate:"required,gt=0,lte=30"`
+	TZ    string `json:"tz" validate:"required,oneof=Europe/Moscow"`
+}
+
+type GetLeaderboardTopWeekResponse struct {
+	Position    int64  `json:"position"`
+	XP          int64  `json:"xp"`
+	TelegramID  string `json:"telegram_id"`
+	DisplayName string `json:"display_name"`
+	Medal       string `json:"medal"`
+}
+
+//
+// GET LEADERBOARD TOP WEEK FOR USER
+//
+
+type GetLeaderboardTopWeekForUserDTO struct {
+	Limit      int64  `json:"limit" validate:"required,gt=0,lte=30"`
+	TelegramID string `json:"telegram_id" validate:"required,min=1"`
+	TZ         string `json:"tz" validate:"required,oneof=Europe/Moscow"`
+}
+
+type GetLeaderboardTopWeekForUserResponse struct {
+	Position    int64  `json:"position"`
+	XP          int64  `json:"xp"`
+	TelegramID  string `json:"telegram_id"`
+	DisplayName string `json:"display_name"`
+	Medal       string `json:"medal"`
 }

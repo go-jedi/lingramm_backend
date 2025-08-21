@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.leaderboard_weeks_top_week_for_user_get(TEXT, INTEGER, TEXT);
