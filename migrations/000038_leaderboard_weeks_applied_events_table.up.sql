@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS leaderboard_weeks_applied_events(
     id BIGSERIAL PRIMARY KEY, -- Уникальный идентификатор.
     event_id BIGINT NOT NULL, -- это xp_events.id.
-    applied_at TIMESTAMPTZ NOT NULL DEFAULT now() -- когда учли.
+    applied_at TIMESTAMPTZ NOT NULL DEFAULT now(), -- когда учли.
+    CONSTRAINT ux_leaderboard_weeks_applied_events_applied_event_id UNIQUE (event_id)
 );
 
 -- Делает обработку эффективно «ровно один раз». Если воркер по любой

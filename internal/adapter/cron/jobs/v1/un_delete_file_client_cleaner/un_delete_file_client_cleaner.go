@@ -49,9 +49,8 @@ func (c *UnDeleteFileClientCleaner) start(ctx context.Context) {
 		case <-ctx.Done():
 			c.logger.Info("cron un delete client file cleaner stopped", slog.String("reason", ctx.Err().Error()))
 			return
-
 		case <-ticker.C:
-			c.logger.Debug("[un delete client file cleaner] tick")
+			c.logger.Debug("[cron un delete client file cleaner] tick")
 
 			ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.timeout)*time.Second)
 

@@ -4,7 +4,7 @@ CREATE OR REPLACE FUNCTION public.get_level_info(_telegram_id TEXT) RETURNS JSON
 AS
 $$
 DECLARE
-    _response jsonb;
+    _response JSONB;
 BEGIN
     IF _telegram_id IS NULL THEN
         RAISE EXCEPTION 'telegram_id IS NULL';

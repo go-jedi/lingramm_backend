@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.leaderboard_weeks_process_batch(TEXT, INTEGER, INTEGER, INTEGER);

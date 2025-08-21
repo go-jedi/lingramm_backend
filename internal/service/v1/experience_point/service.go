@@ -6,12 +6,14 @@ import (
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	userstatsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_stats"
 	createxpevents "github.com/go-jedi/lingramm_backend/internal/service/v1/experience_point/create_xp_events"
+	leaderboardweeksprocessbatch "github.com/go-jedi/lingramm_backend/internal/service/v1/experience_point/leaderboard_weeks_process_batch"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 )
 
 type Service struct {
-	CreateXPEvents createxpevents.ICreateXPEvents
+	CreateXPEvents               createxpevents.ICreateXPEvents
+	LeaderboardWeeksProcessBatch leaderboardweeksprocessbatch.ILeaderboardWeeksProcessBatch
 }
 
 func New(
@@ -23,6 +25,7 @@ func New(
 	postgres *postgres.Postgres,
 ) *Service {
 	return &Service{
-		CreateXPEvents: createxpevents.New(experiencePointRepository, userRepository, userStatsRepository, levelRepository, logger, postgres),
+		CreateXPEvents:               createxpevents.New(experiencePointRepository, userRepository, userStatsRepository, levelRepository, logger, postgres),
+		LeaderboardWeeksProcessBatch: leaderboardweeksprocessbatch.New(experiencePointRepository, logger, postgres),
 	}
 }

@@ -275,6 +275,15 @@ type CronConfig struct {
 		SleepDuration int `yaml:"sleep_duration"`
 		Timeout       int `yaml:"timeout"`
 	} `yaml:"un_delete_file_award_cleaner"`
+	LeaderboardWeeksProcessBatch struct {
+		WorkerName         string `yaml:"worker_name"`
+		BatchSize          int64  `yaml:"batch_size"`
+		StatementTimeoutMS int64  `yaml:"statement_timeout_ms"`
+		LockTimeoutMS      int64  `yaml:"lock_timeout_ms"`
+		TimeoutReliefCPU   int64  `yaml:"timeout_relief_cpu"`
+		SleepDuration      int    `yaml:"sleep_duration"`
+		Timeout            int    `yaml:"timeout"`
+	} `yaml:"leaderboard_weeks_process_batch"`
 }
 
 type MiddlewareConfig struct {
