@@ -49,9 +49,8 @@ func (c *UnDeleteFileAwardCleaner) start(ctx context.Context) {
 		case <-ctx.Done():
 			c.logger.Info("cron un delete award file cleaner stopped", slog.String("reason", ctx.Err().Error()))
 			return
-
 		case <-ticker.C:
-			c.logger.Debug("[un delete award file cleaner] tick")
+			c.logger.Debug("[cron un delete award file cleaner] tick")
 
 			ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.timeout)*time.Second)
 

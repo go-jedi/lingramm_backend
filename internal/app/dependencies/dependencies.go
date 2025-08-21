@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/go-jedi/lingramm_backend/config"
+	leaderboardweeksprocessbatch "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/leaderboard_weeks_process_batch"
 	undeletefileachievementcleaner "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/un_delete_file_achievement_cleaner"
 	undeletefileawardcleaner "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/un_delete_file_award_cleaner"
 	undeletefileclientcleaner "github.com/go-jedi/lingramm_backend/internal/adapter/cron/jobs/v1/un_delete_file_client_cleaner"
@@ -144,6 +145,7 @@ type Dependencies struct {
 	unDeleteFileAchievementCleaner *undeletefileachievementcleaner.UnDeleteFileAchievementCleaner
 	unDeleteFileAwardCleaner       *undeletefileawardcleaner.UnDeleteFileAwardCleaner
 	unDeleteFileClientCleaner      *undeletefileclientcleaner.UnDeleteFileClientCleaner
+	leaderboardWeeksProcessBatch   *leaderboardweeksprocessbatch.LeaderboardWeeksProcessBatch
 }
 
 func New(
@@ -219,4 +221,5 @@ func (d *Dependencies) initCron(ctx context.Context) {
 	_ = d.UnDeleteFileAchievementCleanerCron(ctx)
 	_ = d.UnDeleteFileAwardCleanerCron(ctx)
 	_ = d.UnDeleteFileClientCleanerCron(ctx)
+	_ = d.LeaderboardWeeksProcessBatchCron(ctx)
 }

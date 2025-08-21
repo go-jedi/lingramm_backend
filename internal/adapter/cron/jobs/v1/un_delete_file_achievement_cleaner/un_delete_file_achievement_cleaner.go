@@ -49,9 +49,8 @@ func (c *UnDeleteFileAchievementCleaner) start(ctx context.Context) {
 		case <-ctx.Done():
 			c.logger.Info("cron un delete achievement file cleaner stopped", slog.String("reason", ctx.Err().Error()))
 			return
-
 		case <-ticker.C:
-			c.logger.Debug("[un delete achievement file cleaner] tick")
+			c.logger.Debug("[cron un delete achievement file cleaner] tick")
 
 			ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(c.timeout)*time.Second)
 
@@ -96,6 +95,7 @@ func (c *UnDeleteFileAchievementCleaner) cleanFiles(ctx context.Context) error {
 	if len(keysToDelete) > 0 {
 		if err := c.redis.UnDeleteFileAchievement.DeleteKeys(ctx, keysToDelete); err != nil {
 			c.logger.Error("failed to delete keys from redis", "error", err)
+			return err
 		}
 	}
 

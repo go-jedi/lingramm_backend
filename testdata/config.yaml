@@ -188,6 +188,14 @@ cron:
   un_delete_file_award_cleaner:
     sleep_duration: 60 # minutes
     timeout: 15 # second
+  leaderboard_weeks_process_batch:
+    worker_name: worker_1
+    batch_size: 200
+    statement_timeout_ms: 15000 # millisecond
+    lock_timeout_ms: 2000 # millisecond
+    timeout_relief_cpu: 5 # millisecond
+    sleep_duration: 20 # second
+    timeout: 17 # second
 
 middleware:
   content_length_limiter:
