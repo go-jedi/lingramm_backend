@@ -44,6 +44,8 @@
 - `migrate create -ext sql -dir migrations -seq leaderboard_weeks_worker_state_index`
 - `migrate create -ext sql -dir migrations -seq leaderboard_weeks_applied_events_table`
 - `migrate create -ext sql -dir migrations -seq leaderboard_weeks_process_batch_function`
+- `migrate create -ext sql -dir migrations -seq leaderboard_weeks_top_week_get_function`
+- `migrate create -ext sql -dir migrations -seq leaderboard_weeks_top_week_for_user_get_function`
 - `migrate create -ext sql -dir migrations -seq user_level_history_table`
 - `migrate create -ext sql -dir migrations -seq user_level_history_index`
 - `migrate create -ext sql -dir migrations -seq back_fill_missing_level_history_function`
