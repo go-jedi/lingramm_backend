@@ -95,6 +95,7 @@ func (c *UnDeleteFileClientCleaner) cleanFiles(ctx context.Context) error {
 	if len(keysToDelete) > 0 {
 		if err := c.redis.UnDeleteFileClient.DeleteKeys(ctx, keysToDelete); err != nil {
 			c.logger.Error("failed to delete keys from redis", "error", err)
+			return err
 		}
 	}
 
