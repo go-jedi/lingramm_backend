@@ -51,9 +51,10 @@ func (s *CreateXPEvents) Execute(ctx context.Context, dto experiencepoint.Create
 	s.logger.Debug("[create a new xp events] execute service")
 
 	var (
-		err             error
-		userExists      bool
-		userStatsExists bool
+		err                        error
+		userExists                 bool
+		userStatsExists            bool
+		isStreakDaysIncrementToday bool
 	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
@@ -109,6 +110,20 @@ func (s *CreateXPEvents) Execute(ctx context.Context, dto experiencepoint.Create
 	err = s.levelRepository.BackFillMissingLevelHistoryByTelegramID.Execute(ctx, tx, dto.TelegramID)
 	if err != nil {
 		return err
+	}
+
+	// check has streak days increment today by telegram id.
+	isStreakDaysIncrementToday, err = s.userStatsRepository.HasStreakDaysIncrementToday.Execute(ctx, tx, dto.TelegramID)
+	if err != nil {
+		return err
+	}
+
+	if !isStreakDaysIncrementToday { // has streak days is not increment today.
+		// ensure streak days increment today.
+		err = s.userStatsRepository.EnsureStreakDaysIncrementToday.Execute(ctx, tx, dto.TelegramID)
+		if err != nil {
+			return err
+		}
 	}
 
 	err = tx.Commit(ctx)

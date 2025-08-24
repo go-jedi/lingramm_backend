@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.ensure_streak_days_increment_today(TEXT);
