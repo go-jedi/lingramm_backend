@@ -18,6 +18,7 @@ import (
 	localizedtexthandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/localized_text"
 	notificationhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/notification"
 	subscriptionhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/subscription"
+	userhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user"
 	userstatshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_stats"
 	notificationwebsockethandler "github.com/go-jedi/lingramm_backend/internal/adapter/websocket/handlers/v1/notification"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
@@ -44,6 +45,7 @@ import (
 	localizedtextservice "github.com/go-jedi/lingramm_backend/internal/service/v1/localized_text"
 	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
 	subscriptionservice "github.com/go-jedi/lingramm_backend/internal/service/v1/subscription"
+	userservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user"
 	userstatsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingramm_backend/pkg/file_server"
@@ -79,6 +81,8 @@ type Dependencies struct {
 
 	// user.
 	userRepository *userrepository.Repository
+	userService    *userservice.Service
+	userHandler    *userhandler.Handler
 
 	// user stats.
 	userStatsRepository *userstatsrepository.Repository
@@ -198,6 +202,7 @@ func (d *Dependencies) initMiddleware() {
 
 // initHandler initialize handlers.
 func (d *Dependencies) initHandler() {
+	_ = d.UserHandler()
 	_ = d.AuthHandler()
 	_ = d.UserStatsHandler()
 	_ = d.ClientAssetsHandler()

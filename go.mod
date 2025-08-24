@@ -19,7 +19,7 @@ require (
 	github.com/redis/go-redis/v9 v9.12.1
 	github.com/rs/cors v1.11.1
 	github.com/shopspring/decimal v1.4.0
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.0
 	github.com/swaggo/http-swagger v1.3.4
 	github.com/swaggo/swag v1.16.6
 	github.com/valyala/fasthttp v1.65.0

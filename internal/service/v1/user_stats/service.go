@@ -3,6 +3,7 @@ package userstats
 import (
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	userstatsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_stats"
+	ensurestreakdaysincrementtoday "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats/ensure_streak_days_increment_today"
 	getlevelbytelegramid "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats/get_level_by_telegram_id"
 	getlevelinfobytelegramid "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats/get_level_info_by_telegram_id"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -10,8 +11,9 @@ import (
 )
 
 type Service struct {
-	GetLevelByTelegramID     getlevelbytelegramid.IGetLevelByTelegramID
-	GetLevelInfoByTelegramID getlevelinfobytelegramid.IGetLevelInfoByTelegramID
+	EnsureStreakDaysIncrementToday ensurestreakdaysincrementtoday.IEnsureStreakDaysIncrementToday
+	GetLevelByTelegramID           getlevelbytelegramid.IGetLevelByTelegramID
+	GetLevelInfoByTelegramID       getlevelinfobytelegramid.IGetLevelInfoByTelegramID
 }
 
 func New(
@@ -21,7 +23,8 @@ func New(
 	postgres *postgres.Postgres,
 ) *Service {
 	return &Service{
-		GetLevelByTelegramID:     getlevelbytelegramid.New(userStatsRepository, userRepository, logger, postgres),
-		GetLevelInfoByTelegramID: getlevelinfobytelegramid.New(userStatsRepository, userRepository, logger, postgres),
+		EnsureStreakDaysIncrementToday: ensurestreakdaysincrementtoday.New(userStatsRepository, userRepository, logger, postgres),
+		GetLevelByTelegramID:           getlevelbytelegramid.New(userStatsRepository, userRepository, logger, postgres),
+		GetLevelInfoByTelegramID:       getlevelinfobytelegramid.New(userStatsRepository, userRepository, logger, postgres),
 	}
 }

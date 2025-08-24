@@ -2,6 +2,7 @@ CREATE TABLE IF NOT EXISTS user_stats ( -- Хранение прогресса �
     id BIGSERIAL PRIMARY KEY, -- Уникальный идентификатор.
     telegram_id TEXT NOT NULL UNIQUE, -- Telegram id пользователя.
     streak_days BIGINT NOT NULL DEFAULT 0, -- Сколько дней подряд заходил.
+    last_streak_day DATE NOT NULL DEFAULT CURRENT_DATE, -- Дата последнего захода пользователя.
     words_learned BIGINT NOT NULL DEFAULT 0, -- Сколько слов выучено.
     tasks_completed BIGINT NOT NULL DEFAULT 0, -- Сколько заданий выполнено.
     lessons_finished BIGINT NOT NULL DEFAULT 0, -- Пройдено уроков.

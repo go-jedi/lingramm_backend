@@ -8,6 +8,7 @@ import (
 	"github.com/fasthttp/websocket"
 	"github.com/go-jedi/lingramm_backend/internal/domain/notification"
 	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
+	userstatsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/rabbitmq"
@@ -31,6 +32,7 @@ const (
 // Stream manages WebSocket connections and notification streaming.
 type Stream struct {
 	notificationService *notificationservice.Service
+	userStatsService    *userstatsservice.Service
 	logger              logger.ILogger
 	rabbitMQ            *rabbitmq.RabbitMQ
 	redis               *redis.Redis
@@ -40,6 +42,7 @@ type Stream struct {
 // New returns a new instance of Stream.
 func New(
 	notificationService *notificationservice.Service,
+	userStatsService *userstatsservice.Service,
 	logger logger.ILogger,
 	rabbitMQ *rabbitmq.RabbitMQ,
 	redis *redis.Redis,
@@ -47,6 +50,7 @@ func New(
 ) *Stream {
 	return &Stream{
 		notificationService: notificationService,
+		userStatsService:    userStatsService,
 		logger:              logger,
 		rabbitMQ:            rabbitMQ,
 		redis:               redis,
@@ -111,6 +115,7 @@ func (h *Stream) runSession(conn *websocket.Conn, telegramID string) {
 	// start background workers.
 	go h.consumeNotifications(ctx, telegramID, liveMsgCh, liveErrCh, liveDone) // RabbitMQ live feed.
 	go h.getAllPendingNotificationsFromDB(ctx, ce, telegramID, t0)             // pending notifications.
+	go h.ensureStreakDaysIncrementToday(ctx, telegramID)                       // ensure streak days increment today.
 	go h.startReadLoop(ctx, conn, telegramID, readErrCh)                       // client messages (ACK/PONG).
 
 	// main loop to handle pinging, sending live notifications, and errors.
@@ -271,6 +276,13 @@ func (h *Stream) consumeNotifications(
 		case liveErrCh <- err:
 		default:
 		}
+	}
+}
+
+// ensureStreakDaysIncrementToday ensure streak days increment today.
+func (h *Stream) ensureStreakDaysIncrementToday(ctx context.Context, telegramID string) {
+	if err := h.userStatsService.EnsureStreakDaysIncrementToday.Execute(ctx, telegramID); err != nil {
+		h.logger.Warn("ensure streak days increment today failed", "error", err)
 	}
 }
 

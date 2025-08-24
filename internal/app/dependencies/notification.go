@@ -51,6 +51,7 @@ func (d *Dependencies) NotificationWebSocket() *notificationwebsockethandler.Han
 	if d.notificationWebSocketHandler == nil {
 		d.notificationWebSocketHandler = notificationwebsockethandler.New(
 			d.NotificationService(),
+			d.UserStatsService(),
 			d.app,
 			d.logger,
 			d.rabbitMQ,

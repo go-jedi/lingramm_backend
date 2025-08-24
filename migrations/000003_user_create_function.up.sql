@@ -27,9 +27,11 @@ BEGIN
 
     INSERT INTO user_stats(
         telegram_id,
+        streak_days,
         last_active_at
     ) VALUES(
         _src->>'telegram_id',
+        1,
         NOW()
     );
 

@@ -50,6 +50,7 @@
 - `migrate create -ext sql -dir migrations -seq user_level_history_index`
 - `migrate create -ext sql -dir migrations -seq back_fill_missing_level_history_function`
 - `migrate create -ext sql -dir migrations -seq get_level_info_function`
+- `migrate create -ext sql -dir migrations -seq ensure_streak_days_increment_today_function`
 - `migrate create -ext sql -dir migrations -seq languages_table`
 
 #### execute:
