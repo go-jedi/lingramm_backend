@@ -3,17 +3,23 @@ package userstats
 import "time"
 
 type UserStats struct {
-	ID               int64     `json:"id"`
-	StreakDays       int64     `json:"streak_days"`
-	WordsLearned     int64     `json:"words_learned"`
-	TasksCompleted   int64     `json:"tasks_completed"`
-	LessonsFinished  int64     `json:"lessons_finished"`
-	ExperiencePoints int64     `json:"experience_points"`
-	Level            int64     `json:"level"`
-	TelegramID       string    `json:"telegram_id"`
-	LastActiveAt     time.Time `json:"last_active_at"`
-	CreatedAt        time.Time `json:"created_at"`
-	UpdatedAt        time.Time `json:"updated_at"`
+	ID                      int64      `json:"id"`
+	StreakDays              int64      `json:"streak_days"`
+	DailyTaskStreakDays     int64      `json:"daily_task_streak_days"`
+	WordsLearned            int64      `json:"words_learned"`
+	TasksCompleted          int64      `json:"tasks_completed"`
+	LessonsFinished         int64      `json:"lessons_finished"`
+	ExperienceScale         int64      `json:"experience_scale"`
+	WordsTranslate          int64      `json:"words_translate"`
+	DialoguesCompleted      int64      `json:"dialog_completed"`
+	ExperiencePoints        int64      `json:"experience_points"`
+	Level                   int64      `json:"level"`
+	TelegramID              string     `json:"telegram_id"`
+	LastStreakDay           time.Time  `json:"last_streak_day"`
+	LastDailyTaskStreakDays *time.Time `json:"last_daily_task_streak_days,omitempty"`
+	LastActiveAt            *time.Time `json:"last_active_at,omitempty"`
+	CreatedAt               time.Time  `json:"created_at"`
+	UpdatedAt               time.Time  `json:"updated_at"`
 }
 
 //
