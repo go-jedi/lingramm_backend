@@ -33,6 +33,6 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 		middleware.Auth.AuthMiddleware,
 	)
 	{
-		api.Get("/info/:telegramID", h.getByTelegramID.Execute)
+		api.Get("/telegram/:telegramID", h.getByTelegramID.Execute)
 	}
 }

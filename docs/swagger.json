@@ -9,6 +9,51 @@
     "host": "localhost:50050",
     "basePath": "/v1.",
     "paths": {
+        "/v1/achievement/all": {
+            "get": {
+                "description": "Returns a full list of achievements with their condition, achievement assets and award assets",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Achievements"
+                ],
+                "summary": "Get all achievement details (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.DetailSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/auth/check": {
             "post": {
                 "description": "Check if the provided Telegram ID and token are valid",
@@ -165,6 +210,186 @@
         }
     },
     "definitions": {
+        "achievement.Achievement": {
+            "type": "object",
+            "properties": {
+                "achievement_assets_id": {
+                    "type": "integer"
+                },
+                "award_assets_id": {
+                    "type": "integer"
+                },
+                "code": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "achievement.Condition": {
+            "type": "object",
+            "properties": {
+                "achievement_id": {
+                    "type": "integer"
+                },
+                "condition_type": {
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "operator": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "integer"
+                }
+            }
+        },
+        "achievement.DetailSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "achievement": {
+                                "$ref": "#/definitions/achievement.Achievement"
+                            },
+                            "achievement_assets": {
+                                "type": "object",
+                                "properties": {
+                                    "client_path_file": {
+                                        "type": "string"
+                                    },
+                                    "created_at": {
+                                        "type": "string"
+                                    },
+                                    "extension": {
+                                        "type": "string"
+                                    },
+                                    "id": {
+                                        "type": "integer"
+                                    },
+                                    "name_file": {
+                                        "type": "string"
+                                    },
+                                    "name_file_without_extension": {
+                                        "type": "string"
+                                    },
+                                    "old_extension": {
+                                        "type": "string"
+                                    },
+                                    "old_name_file": {
+                                        "type": "string"
+                                    },
+                                    "quality": {
+                                        "type": "integer"
+                                    },
+                                    "server_path_file": {
+                                        "type": "string"
+                                    },
+                                    "updated_at": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "award_assets": {
+                                "type": "object",
+                                "properties": {
+                                    "client_path_file": {
+                                        "type": "string"
+                                    },
+                                    "created_at": {
+                                        "type": "string"
+                                    },
+                                    "extension": {
+                                        "type": "string"
+                                    },
+                                    "id": {
+                                        "type": "integer"
+                                    },
+                                    "name_file": {
+                                        "type": "string"
+                                    },
+                                    "name_file_without_extension": {
+                                        "type": "string"
+                                    },
+                                    "old_extension": {
+                                        "type": "string"
+                                    },
+                                    "old_name_file": {
+                                        "type": "string"
+                                    },
+                                    "quality": {
+                                        "type": "integer"
+                                    },
+                                    "server_path_file": {
+                                        "type": "string"
+                                    },
+                                    "updated_at": {
+                                        "type": "string"
+                                    }
+                                }
+                            },
+                            "condition": {
+                                "$ref": "#/definitions/achievement.Condition"
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "achievement.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "auth.CheckDTO": {
             "type": "object",
             "required": [

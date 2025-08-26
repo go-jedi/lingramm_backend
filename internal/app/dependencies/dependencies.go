@@ -17,9 +17,11 @@ import (
 	internalcurrencyhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/internal_currency"
 	localizedtexthandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/localized_text"
 	notificationhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/notification"
+	studiedlanguagehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/studied_language"
 	subscriptionhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/subscription"
 	userhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user"
 	userstatshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_stats"
+	userstudiedlanguagehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_studied_language"
 	notificationwebsockethandler "github.com/go-jedi/lingramm_backend/internal/adapter/websocket/handlers/v1/notification"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
@@ -32,9 +34,11 @@ import (
 	levelrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/level"
 	localizedtextepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/localized_text"
 	notificationrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/notification"
+	studiedlanguagerepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/studied_language"
 	subscriptionrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/subscription"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	userstatsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_stats"
+	userstudiedlanguagerepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_studied_language"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/v1/auth"
@@ -44,9 +48,11 @@ import (
 	internalcurrencyservice "github.com/go-jedi/lingramm_backend/internal/service/v1/internal_currency"
 	localizedtextservice "github.com/go-jedi/lingramm_backend/internal/service/v1/localized_text"
 	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
+	studiedlanguageservice "github.com/go-jedi/lingramm_backend/internal/service/v1/studied_language"
 	subscriptionservice "github.com/go-jedi/lingramm_backend/internal/service/v1/subscription"
 	userservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user"
 	userstatsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats"
+	userstudiedlanguageservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_studied_language"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
 	fileserver "github.com/go-jedi/lingramm_backend/pkg/file_server"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
@@ -113,6 +119,16 @@ type Dependencies struct {
 	achievementRepository *achievementrepository.Repository
 	achievementService    *achievementservice.Service
 	achievementHandler    *achievementhandler.Handler
+
+	// studied language.
+	studiedLanguageRepository *studiedlanguagerepository.Repository
+	studiedLanguageService    *studiedlanguageservice.Service
+	studiedLanguageHandler    *studiedlanguagehandler.Handler
+
+	// user studied language.
+	userStudiedLanguageRepository *userstudiedlanguagerepository.Repository
+	userStudiedLanguageService    *userstudiedlanguageservice.Service
+	userStudiedLanguageHandler    *userstudiedlanguagehandler.Handler
 
 	// localized text.
 	localizedTextRepository *localizedtextepository.Repository
@@ -209,6 +225,8 @@ func (d *Dependencies) initHandler() {
 	_ = d.BigCacheHandler()
 	_ = d.InternalCurrencyHandler()
 	_ = d.AchievementHandler()
+	_ = d.StudiedLanguageHandler()
+	_ = d.UserStudiedLanguageHandler()
 	_ = d.LocalizedTextHandler()
 	_ = d.NotificationHandler()
 	_ = d.SubscriptionHandler()
