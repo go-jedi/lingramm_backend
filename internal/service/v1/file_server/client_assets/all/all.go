@@ -63,7 +63,7 @@ func (s *All) Execute(ctx context.Context) ([]clientassets.ClientAssets, error) 
 		return nil, err
 	}
 
-	// commit transaction
+	// commit transaction.
 	err = tx.Commit(ctx)
 	if err != nil {
 		return nil, err

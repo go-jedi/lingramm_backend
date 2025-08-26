@@ -1,5 +1,125 @@
 basePath: /v1.
 definitions:
+  achievement.Achievement:
+    properties:
+      achievement_assets_id:
+        type: integer
+      award_assets_id:
+        type: integer
+      code:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  achievement.Condition:
+    properties:
+      achievement_id:
+        type: integer
+      condition_type:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      operator:
+        type: string
+      updated_at:
+        type: string
+      value:
+        type: integer
+    type: object
+  achievement.DetailSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            achievement:
+              $ref: '#/definitions/achievement.Achievement'
+            achievement_assets:
+              properties:
+                client_path_file:
+                  type: string
+                created_at:
+                  type: string
+                extension:
+                  type: string
+                id:
+                  type: integer
+                name_file:
+                  type: string
+                name_file_without_extension:
+                  type: string
+                old_extension:
+                  type: string
+                old_name_file:
+                  type: string
+                quality:
+                  type: integer
+                server_path_file:
+                  type: string
+                updated_at:
+                  type: string
+              type: object
+            award_assets:
+              properties:
+                client_path_file:
+                  type: string
+                created_at:
+                  type: string
+                extension:
+                  type: string
+                id:
+                  type: integer
+                name_file:
+                  type: string
+                name_file_without_extension:
+                  type: string
+                old_extension:
+                  type: string
+                old_name_file:
+                  type: string
+                quality:
+                  type: integer
+                server_path_file:
+                  type: string
+                updated_at:
+                  type: string
+              type: object
+            condition:
+              $ref: '#/definitions/achievement.Condition'
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  achievement.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
   auth.CheckDTO:
     properties:
       telegram_id:
@@ -137,6 +257,37 @@ info:
   title: Lingramm API — Telegram Web App Backend
   version: "1.0"
 paths:
+  /v1/achievement/all:
+    get:
+      consumes:
+      - application/json
+      description: Returns a full list of achievements with their condition, achievement
+        assets and award assets
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/achievement.DetailSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/achievement.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/achievement.ErrorSwaggerResponse'
+      summary: Get all achievement details (admin)
+      tags:
+      - Achievements
   /v1/auth/check:
     post:
       consumes:

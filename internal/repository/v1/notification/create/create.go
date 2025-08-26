@@ -27,14 +27,14 @@ func New(
 	queryTimeout int64,
 	logger logger.ILogger,
 ) *Create {
-	c := &Create{
+	r := &Create{
 		queryTimeout: queryTimeout,
 		logger:       logger,
 	}
 
-	c.init()
+	r.init()
 
-	return c
+	return r
 }
 
 func (r *Create) init() {

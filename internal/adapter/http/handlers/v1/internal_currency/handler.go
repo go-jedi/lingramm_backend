@@ -32,6 +32,6 @@ func New(
 func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) {
 	api := app.Group("/v1/internal_currency", middleware.Auth.AuthMiddleware)
 	{
-		api.Get("/user/balance/:telegramID", h.getUserBalance.Execute)
+		api.Get("/user/balance/telegram/:telegramID", h.getUserBalance.Execute)
 	}
 }

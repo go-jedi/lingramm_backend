@@ -36,7 +36,7 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 		middleware.Auth.AuthMiddleware,
 	)
 	{
-		api.Get("/level/:telegramID", h.getLevelByTelegramID.Execute)
-		api.Get("/level_info/:telegramID", h.getLevelInfoByTelegramID.Execute)
+		api.Get("/level/telegram/:telegramID", h.getLevelByTelegramID.Execute)
+		api.Get("/level_info/telegram/:telegramID", h.getLevelInfoByTelegramID.Execute)
 	}
 }
