@@ -133,7 +133,7 @@ func (r *AddUserBalance) createBalanceTransaction(ctx context.Context, tx pgx.Tx
 
 	q := `
 		INSERT INTO balance_transactions(
-			event_id,
+			event_type_id,
 		    telegram_id,
 		    amount,
 		    description,
@@ -143,7 +143,7 @@ func (r *AddUserBalance) createBalanceTransaction(ctx context.Context, tx pgx.Tx
 
 	commandTag, err := tx.Exec(
 		ctxTimeout, q,
-		dto.EventID, dto.TelegramID,
+		dto.EventTypeID, dto.TelegramID,
 		dto.Amount, dto.Description, newBalance,
 	)
 	if err != nil {

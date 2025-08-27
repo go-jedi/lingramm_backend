@@ -12,6 +12,7 @@ import (
 	adminhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/admin"
 	authhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/auth"
 	bigcachehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/bigcache"
+	eventtypehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/event_type"
 	experiencepointhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/experience_point"
 	clientassetshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets"
 	internalcurrencyhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/internal_currency"
@@ -26,6 +27,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
 	adminrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/admin"
+	eventtyperepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/event_type"
 	experiencepointrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/experience_point"
 	achievementassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/achievement_assets"
 	awardassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/award_assets"
@@ -43,6 +45,7 @@ import (
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/v1/auth"
 	bigcacheservice "github.com/go-jedi/lingramm_backend/internal/service/v1/bigcache"
+	eventtypeservice "github.com/go-jedi/lingramm_backend/internal/service/v1/event_type"
 	experiencepointservice "github.com/go-jedi/lingramm_backend/internal/service/v1/experience_point"
 	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
 	internalcurrencyservice "github.com/go-jedi/lingramm_backend/internal/service/v1/internal_currency"
@@ -153,6 +156,11 @@ type Dependencies struct {
 	// level.
 	levelRepository *levelrepository.Repository
 
+	// event type.
+	eventTypeRepository *eventtyperepository.Repository
+	eventTypeService    *eventtypeservice.Service
+	eventTypeHandler    *eventtypehandler.Handler
+
 	// admin.
 	adminRepository *adminrepository.Repository
 	adminService    *adminservice.Service
@@ -231,6 +239,7 @@ func (d *Dependencies) initHandler() {
 	_ = d.NotificationHandler()
 	_ = d.SubscriptionHandler()
 	_ = d.ExperiencePointHandler()
+	_ = d.EventTypeHandler()
 	_ = d.AdminHandler()
 }
 

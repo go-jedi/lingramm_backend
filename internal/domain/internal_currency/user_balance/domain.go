@@ -20,7 +20,7 @@ type UserBalance struct {
 //
 
 type AddUserBalanceDTO struct {
-	EventID     int64           `json:"event_id"`
+	EventTypeID int64           `json:"event_type_id"`
 	Amount      decimal.Decimal `json:"amount"`
 	TelegramID  string          `json:"telegram_id"`
 	Description string          `json:"description"`
@@ -31,18 +31,7 @@ type AddUserBalanceDTO struct {
 //
 
 type ReduceUserBalanceDTO struct {
-	EventID     int64           `json:"event_id"`
-	Amount      decimal.Decimal `json:"amount"`
-	TelegramID  string          `json:"telegram_id"`
-	Description string          `json:"description"`
-}
-
-//
-// UPDATE USER BALANCE
-//
-
-type UpdateUserBalanceDTO struct {
-	EventID     int64           `json:"event_id"`
+	EventTypeID int64           `json:"event_type_id"`
 	Amount      decimal.Decimal `json:"amount"`
 	TelegramID  string          `json:"telegram_id"`
 	Description string          `json:"description"`

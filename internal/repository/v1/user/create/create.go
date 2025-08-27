@@ -68,11 +68,11 @@ func (r *Create) Execute(ctx context.Context, tx pgx.Tx, dto user.CreateDTO) (us
 		&nu.CreatedAt, &nu.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			r.logger.Error("request timed out while creating the user", "err", err)
+			r.logger.Error("request timed out while create a new user", "err", err)
 			return user.User{}, fmt.Errorf("the request timed out: %w", err)
 		}
-		r.logger.Error("failed to create user", "err", err)
-		return user.User{}, fmt.Errorf("could not create user: %w", err)
+		r.logger.Error("failed to create a new user", "err", err)
+		return user.User{}, fmt.Errorf("could not create a new user: %w", err)
 	}
 
 	return nu, nil

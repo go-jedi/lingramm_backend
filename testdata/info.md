@@ -8,7 +8,8 @@
 - `migrate create -ext sql -dir migrations -seq users_table`
 - `migrate create -ext sql -dir migrations -seq user_create_function`
 - `migrate create -ext sql -dir migrations -seq levels_table`
-- `migrate create -ext sql -dir migrations -seq events_table`
+- `migrate create -ext sql -dir migrations -seq event_types_table`
+- `migrate create -ext sql -dir migrations -seq event_codes_table`
 - `migrate create -ext sql -dir migrations -seq client_assets_table`
 - `migrate create -ext sql -dir migrations -seq user_balances_table`
 - `migrate create -ext sql -dir migrations -seq user_balances_index`
