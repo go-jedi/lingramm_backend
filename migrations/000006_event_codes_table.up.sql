@@ -1,8 +1,7 @@
-CREATE TABLE IF NOT EXISTS balance_transaction_events(
+CREATE TABLE IF NOT EXISTS event_codes( -- справочник кодов событий.
     id BIGSERIAL PRIMARY KEY, -- Уникальный идентификатор.
-    code VARCHAR(50) UNIQUE NOT NULL, -- 'daily_login', 'game_reward', 'holiday_bonus'.
+    name TEXT NOT NULL UNIQUE, -- Уникальное название кода.
     description TEXT, -- Описание.
-    amount NUMERIC(20,2) NOT NULL, -- Сумма бонуса.
     is_active BOOLEAN NOT NULL DEFAULT TRUE, -- Активно ли событие.
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW() -- Дата обновления записи.

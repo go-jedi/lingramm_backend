@@ -49,7 +49,7 @@ func (r *GetUserBalance) Execute(ctx context.Context, tx pgx.Tx, telegramID stri
 	defer cancel()
 
 	q := `
-		SELECT * 
+		SELECT *
 		FROM user_balances
 		WHERE telegram_id = $1;
 	`

@@ -38,7 +38,6 @@ type GetLevelByTelegramIDResponse struct {
 type GetLevelInfoByTelegramIDResponse struct {
 	XPTotal       int64   `json:"xp_total"`
 	Level         int64   `json:"level"`
-	LevelName     string  `json:"level_name"`
 	LevelFloorXP  int64   `json:"level_floor_xp"`
 	LevelCeilXP   int64   `json:"level_ceil_xp"`
 	NextLevel     int64   `json:"next_level"`
@@ -46,4 +45,5 @@ type GetLevelInfoByTelegramIDResponse struct {
 	XPLevelSize   int64   `json:"xp_level_size"`
 	XPToNext      int64   `json:"xp_to_next"`
 	ProgressRatio float64 `json:"progress_ratio"`
+	LevelName     string  `json:"level_name"`
 }
