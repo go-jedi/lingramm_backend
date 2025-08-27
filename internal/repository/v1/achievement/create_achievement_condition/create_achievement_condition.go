@@ -51,7 +51,7 @@ func (r *CreateAchievementCondition) Execute(ctx context.Context, tx pgx.Tx, dto
 	q := `
 		INSERT INTO achievement_conditions(
 		    achievement_id,
-		    condition_type,
+		    achievement_type_id,
 		    operator,
 		    value
 		) VALUES($1, $2, $3, $4)
@@ -62,11 +62,11 @@ func (r *CreateAchievementCondition) Execute(ctx context.Context, tx pgx.Tx, dto
 
 	if err := tx.QueryRow(
 		ctxTimeout, q,
-		dto.AchievementID, dto.ConditionType,
+		dto.AchievementID, dto.AchievementTypeID,
 		dto.Operator, dto.Value,
 	).Scan(
 		&nac.ID, &nac.AchievementID,
-		&nac.ConditionType, &nac.Operator,
+		&nac.AchievementTypeID, &nac.Operator,
 		&nac.Value, &nac.CreatedAt, &nac.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

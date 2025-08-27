@@ -9,7 +9,6 @@
 - `migrate create -ext sql -dir migrations -seq user_create_function`
 - `migrate create -ext sql -dir migrations -seq levels_table`
 - `migrate create -ext sql -dir migrations -seq event_types_table`
-- `migrate create -ext sql -dir migrations -seq event_codes_table`
 - `migrate create -ext sql -dir migrations -seq client_assets_table`
 - `migrate create -ext sql -dir migrations -seq user_balances_table`
 - `migrate create -ext sql -dir migrations -seq user_balances_index`
@@ -21,6 +20,7 @@
 - `migrate create -ext sql -dir migrations -seq admins_table`
 - `migrate create -ext sql -dir migrations -seq achievement_assets_table`
 - `migrate create -ext sql -dir migrations -seq award_assets_table`
+- `migrate create -ext sql -dir migrations -seq achievement_types_table`
 - `migrate create -ext sql -dir migrations -seq achievements_table`
 - `migrate create -ext sql -dir migrations -seq achievement_conditions_table`
 - `migrate create -ext sql -dir migrations -seq user_achievements_table`

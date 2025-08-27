@@ -23,6 +23,7 @@ func (d *Dependencies) AchievementService() *achievementservice.Service {
 			d.AchievementRepository(),
 			d.AchievementAssetsRepository(),
 			d.AwardAssetsRepository(),
+			d.AchievementTypeRepository(),
 			d.logger,
 			d.postgres,
 			d.redis,

@@ -52,7 +52,7 @@ func (r *CreateAchievement) Execute(ctx context.Context, tx pgx.Tx, dto achievem
 		INSERT INTO achievements(
 		    achievement_assets_id,
 		    award_assets_id,
-		    code,
+		    achievement_type_id,
 		    name,
 		    description
 		) VALUES($1, $2, $3, $4, $5)
@@ -64,10 +64,10 @@ func (r *CreateAchievement) Execute(ctx context.Context, tx pgx.Tx, dto achievem
 	if err := tx.QueryRow(
 		ctxTimeout, q,
 		dto.AchievementAssetsID, dto.AwardAssetsID,
-		dto.Code, dto.Name, dto.Description,
+		dto.AchievementTypeID, dto.Name, dto.Description,
 	).Scan(
 		&na.ID, &na.AchievementAssetsID,
-		&na.AwardAssetsID, &na.Code,
+		&na.AwardAssetsID, &na.AchievementTypeID,
 		&na.Name, &na.Description,
 		&na.CreatedAt, &na.UpdatedAt,
 	); err != nil {

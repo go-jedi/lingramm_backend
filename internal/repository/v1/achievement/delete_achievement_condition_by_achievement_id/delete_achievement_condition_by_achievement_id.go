@@ -57,7 +57,7 @@ func (r *DeleteAchievementConditionByAchievementID) Execute(ctx context.Context,
 	var dac achievement.Condition
 	if err := tx.QueryRow(ctxTimeout, q, achievementID).Scan(
 		&dac.ID, &dac.AchievementID,
-		&dac.ConditionType, &dac.Operator,
+		&dac.AchievementTypeID, &dac.Operator,
 		&dac.Value, &dac.CreatedAt, &dac.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

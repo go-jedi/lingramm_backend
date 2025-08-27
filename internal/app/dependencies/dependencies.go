@@ -26,6 +26,7 @@ import (
 	notificationwebsockethandler "github.com/go-jedi/lingramm_backend/internal/adapter/websocket/handlers/v1/notification"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
+	achievementtyperepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement_type"
 	adminrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/admin"
 	eventtyperepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/event_type"
 	experiencepointrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/experience_point"
@@ -117,6 +118,9 @@ type Dependencies struct {
 
 	// award assets.
 	awardAssetsRepository *awardassetsrepository.Repository
+
+	// achievement type.
+	achievementTypeRepository *achievementtyperepository.Repository
 
 	// achievement.
 	achievementRepository *achievementrepository.Repository

@@ -13,22 +13,22 @@ type Achievement struct {
 	ID                  int64     `json:"id"`
 	AchievementAssetsID int64     `json:"achievement_assets_id"`
 	AwardAssetsID       int64     `json:"award_assets_id"`
+	AchievementTypeID   int64     `json:"achievement_type_id"`
 	CreatedAt           time.Time `json:"created_at"`
 	UpdatedAt           time.Time `json:"updated_at"`
 	Description         *string   `json:"description,omitempty"`
-	Code                string    `json:"code"`
 	Name                string    `json:"name"`
 }
 
 // Condition represents achievement condition in the system.
 type Condition struct {
-	ID            int64     `json:"id"`
-	AchievementID int64     `json:"achievement_id"`
-	Value         int64     `json:"value"`
-	CreatedAt     time.Time `json:"created_at"`
-	UpdatedAt     time.Time `json:"updated_at"`
-	ConditionType string    `json:"condition_type"`
-	Operator      string    `json:"operator"`
+	ID                int64     `json:"id"`
+	AchievementID     int64     `json:"achievement_id"`
+	AchievementTypeID int64     `json:"achievement_type_id"`
+	Value             int64     `json:"value"`
+	CreatedAt         time.Time `json:"created_at"`
+	UpdatedAt         time.Time `json:"updated_at"`
+	Operator          string    `json:"operator"`
 }
 
 // Detail represents achievement detail in the system.
@@ -48,9 +48,8 @@ type CreateDTO struct {
 	FileAchievementHeader *multipart.FileHeader
 	FileAwardHeader       *multipart.FileHeader
 	Description           *string `json:"description" validate:"omitempty,min=1"`
-	Code                  string  `json:"code" validate:"required,min=1"`
 	Name                  string  `json:"name" validate:"required,min=1"`
-	ConditionType         string  `json:"condition_type" validate:"required,min=1"`
+	AchievementType       string  `json:"achievement_type" validate:"required,min=1"`
 	Operator              string  `json:"operator" validate:"required,min=1"`
 }
 
@@ -61,8 +60,8 @@ type CreateDTO struct {
 type CreateAchievementDTO struct {
 	AchievementAssetsID int64   `json:"achievement_assets_id"`
 	AwardAssetsID       int64   `json:"award_assets_id"`
+	AchievementTypeID   int64   `json:"achievement_type_id"`
 	Description         *string `json:"description,omitempty"`
-	Code                string  `json:"code"`
 	Name                string  `json:"name"`
 }
 
@@ -71,10 +70,10 @@ type CreateAchievementDTO struct {
 //
 
 type CreateAchievementConditionDTO struct {
-	AchievementID int64  `json:"achievement_id"`
-	Value         int64  `json:"value"`
-	ConditionType string `json:"condition_type"`
-	Operator      string `json:"operator"`
+	AchievementID     int64  `json:"achievement_id"`
+	AchievementTypeID int64  `json:"achievement_type_id"`
+	Value             int64  `json:"value"`
+	Operator          string `json:"operator"`
 }
 
 //

@@ -42,12 +42,11 @@ func (h *Create) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a achievement] execute handler")
 
 	var (
-		valueStr      = c.FormValue("value")
-		description   = c.FormValue("description")
-		code          = c.FormValue("code")
-		name          = c.FormValue("name")
-		conditionType = c.FormValue("condition_type")
-		operator      = c.FormValue("operator")
+		valueStr        = c.FormValue("value")
+		description     = c.FormValue("description")
+		name            = c.FormValue("name")
+		achievementType = c.FormValue("achievement_type")
+		operator        = c.FormValue("operator")
 	)
 
 	value, err := strconv.ParseInt(valueStr, 10, 64)
@@ -90,9 +89,8 @@ func (h *Create) Execute(c fiber.Ctx) error {
 		FileAchievementHeader: fileAchievementHeader,
 		FileAwardHeader:       fileAwardHeader,
 		Description:           &description,
-		Code:                  code,
 		Name:                  name,
-		ConditionType:         conditionType,
+		AchievementType:       achievementType,
 		Operator:              operator,
 	}
 

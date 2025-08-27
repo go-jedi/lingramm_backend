@@ -61,7 +61,7 @@ func (r *DeleteAchievementConditionByID) Execute(ctx context.Context, tx pgx.Tx,
 		id,
 	).Scan(
 		&dac.ID, &dac.AchievementID,
-		&dac.ConditionType, &dac.Operator,
+		&dac.AchievementTypeID, &dac.Operator,
 		&dac.Value, &dac.CreatedAt, &dac.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

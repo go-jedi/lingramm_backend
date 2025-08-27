@@ -85,7 +85,7 @@ func (s *DeleteDetailByAchievementID) Execute(ctx context.Context, achievementID
 		return achievement.Detail{}, err
 	}
 
-	if !existsAchievementByID {
+	if !existsAchievementByID { // if achievement does not exist.
 		err = apperrors.ErrAchievementDoesNotExist
 		return achievement.Detail{}, err
 	}

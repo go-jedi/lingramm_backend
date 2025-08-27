@@ -55,7 +55,7 @@ func (r *GetDetailByAchievementID) Execute(ctx context.Context, tx pgx.Tx, achie
 					'id', a.id,
 					'achievement_assets_id', a.achievement_assets_id,
 					'award_assets_id', a.award_assets_id,
-					'code', a.code,
+					'achievement_type_id', a.achievement_type_id,
 					'name', a.name,
 					'description', a.description,
 					'created_at', a.created_at,
@@ -64,7 +64,7 @@ func (r *GetDetailByAchievementID) Execute(ctx context.Context, tx pgx.Tx, achie
 				'condition', JSONB_BUILD_OBJECT(
 					'id', ac.id,
 					'achievement_id', ac.achievement_id,
-					'condition_type', ac.condition_type,
+					'achievement_type_id', ac.achievement_type_id,
 					'operator', ac.operator,
 					'value', ac.value,
 					'created_at', ac.created_at,

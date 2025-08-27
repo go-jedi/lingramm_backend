@@ -6,9 +6,11 @@ import (
 	"os"
 
 	"github.com/go-jedi/lingramm_backend/internal/domain/achievement"
+	achievementtype "github.com/go-jedi/lingramm_backend/internal/domain/achievement_type"
 	achievementassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/achievement_assets"
 	awardassets "github.com/go-jedi/lingramm_backend/internal/domain/file_server/award_assets"
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
+	achievementtyperepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement_type"
 	achievementassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/achievement_assets"
 	awardassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/award_assets"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
@@ -28,6 +30,7 @@ type Create struct {
 	achievementRepository       *achievementrepository.Repository
 	achievementAssetsRepository *achievementassetsrepository.Repository
 	awardAssetsRepository       *awardassetsrepository.Repository
+	achievementTypeRepository   *achievementtyperepository.Repository
 	logger                      logger.ILogger
 	postgres                    *postgres.Postgres
 	redis                       *redis.Redis
@@ -38,6 +41,7 @@ func New(
 	achievementRepository *achievementrepository.Repository,
 	achievementAssetsRepository *achievementassetsrepository.Repository,
 	awardAssetsRepository *awardassetsrepository.Repository,
+	achievementTypeRepository *achievementtyperepository.Repository,
 	logger logger.ILogger,
 	postgres *postgres.Postgres,
 	redis *redis.Redis,
@@ -47,6 +51,7 @@ func New(
 		achievementRepository:       achievementRepository,
 		achievementAssetsRepository: achievementAssetsRepository,
 		awardAssetsRepository:       awardAssetsRepository,
+		achievementTypeRepository:   achievementTypeRepository,
 		logger:                      logger,
 		postgres:                    postgres,
 		redis:                       redis,
@@ -58,15 +63,17 @@ func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achiev
 	s.logger.Debug("[create a achievement] execute service")
 
 	var (
-		err                                       error
-		imageAchievementData                      achievementassets.UploadAndConvertToWebpResponse
-		resultAchievementAsset                    achievementassets.AchievementAssets
-		imageAwardData                            awardassets.UploadAndConvertToWebpResponse
-		resultAwardAsset                          awardassets.AwardAssets
-		resultAchievement                         achievement.Achievement
-		resultAchievementCondition                achievement.Condition
-		existsAchievementByCode                   bool
-		existsAchievementConditionByConditionType bool
+		err                        error
+		imageAchievementData       achievementassets.UploadAndConvertToWebpResponse
+		achievementAsset           achievementassets.AchievementAssets
+		imageAwardData             awardassets.UploadAndConvertToWebpResponse
+		awardAsset                 awardassets.AwardAssets
+		achievementTypeData        achievementtype.AchievementType
+		resultAchievement          achievement.Achievement
+		resultAchievementCondition achievement.Condition
+		existsAchievement          bool
+		existsAchievementCondition bool
+		existsAchievementType      bool
 	)
 
 	tx, err := s.postgres.Pool.BeginTx(ctx, pgx.TxOptions{
@@ -86,24 +93,24 @@ func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achiev
 		}
 	}()
 
-	// check achievement exists by code.
-	existsAchievementByCode, err = s.achievementRepository.ExistsAchievementByCode.Execute(ctx, tx, dto.Code)
+	// check achievement exists by event type.
+	existsAchievement, err = s.achievementRepository.ExistsAchievementByAchievementType.Execute(ctx, tx, dto.AchievementType)
 	if err != nil {
 		return achievement.Detail{}, err
 	}
 
-	if existsAchievementByCode {
+	if existsAchievement { // if achievement already exist.
 		err = apperrors.ErrAchievementAlreadyExists
 		return achievement.Detail{}, err
 	}
 
-	// check achievement condition exists by condition type.
-	existsAchievementConditionByConditionType, err = s.achievementRepository.ExistsAchievementConditionByConditionType.Execute(ctx, tx, dto.ConditionType)
+	// check achievement condition exists by event type.
+	existsAchievementCondition, err = s.achievementRepository.ExistsAchievementConditionByAchievementType.Execute(ctx, tx, dto.AchievementType)
 	if err != nil {
 		return achievement.Detail{}, err
 	}
 
-	if existsAchievementConditionByConditionType {
+	if existsAchievementCondition { // if achievement condition already exist.
 		err = apperrors.ErrAchievementConditionAlreadyExists
 		return achievement.Detail{}, err
 	}
@@ -115,7 +122,7 @@ func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achiev
 	}
 
 	// create achievement asset.
-	resultAchievementAsset, err = s.createAchievementAsset(ctx, tx, imageAchievementData)
+	achievementAsset, err = s.createAchievementAsset(ctx, tx, imageAchievementData)
 	if err != nil {
 		return achievement.Detail{}, err
 	}
@@ -127,19 +134,36 @@ func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achiev
 	}
 
 	// create award asset.
-	resultAwardAsset, err = s.createAwardAsset(ctx, tx, imageAwardData)
+	awardAsset, err = s.createAwardAsset(ctx, tx, imageAwardData)
+	if err != nil {
+		return achievement.Detail{}, err
+	}
+
+	// check achievement type exists by name.
+	existsAchievementType, err = s.achievementTypeRepository.ExistsByName.Execute(ctx, tx, dto.AchievementType)
+	if err != nil {
+		return achievement.Detail{}, err
+	}
+
+	if !existsAchievementType { // if achievement type does not exist.
+		err = apperrors.ErrAchievementTypeDoesNotExist
+		return achievement.Detail{}, err
+	}
+
+	// get achievement type by name.
+	achievementTypeData, err = s.achievementTypeRepository.GetByName.Execute(ctx, tx, dto.AchievementType)
 	if err != nil {
 		return achievement.Detail{}, err
 	}
 
 	// create achievement.
-	resultAchievement, err = s.createAchievement(ctx, tx, dto, resultAchievementAsset.ID, resultAwardAsset.ID)
+	resultAchievement, err = s.createAchievement(ctx, tx, dto, achievementAsset.ID, awardAsset.ID, achievementTypeData.ID)
 	if err != nil {
 		return achievement.Detail{}, err
 	}
 
 	// create achievement condition.
-	resultAchievementCondition, err = s.createAchievementCondition(ctx, tx, dto, resultAchievement.ID)
+	resultAchievementCondition, err = s.createAchievementCondition(ctx, tx, dto, resultAchievement.ID, achievementTypeData.ID)
 	if err != nil {
 		return achievement.Detail{}, err
 	}
@@ -152,8 +176,8 @@ func (s *Create) Execute(ctx context.Context, dto achievement.CreateDTO) (achiev
 	return achievement.Detail{
 		Achievement:       resultAchievement,
 		Condition:         resultAchievementCondition,
-		AchievementAssets: resultAchievementAsset,
-		AwardAssets:       resultAwardAsset,
+		AchievementAssets: achievementAsset,
+		AwardAssets:       awardAsset,
 	}, nil
 }
 
@@ -180,12 +204,12 @@ func (s *Create) createAwardAsset(ctx context.Context, tx pgx.Tx, imageData awar
 }
 
 // createAchievement create achievement.
-func (s *Create) createAchievement(ctx context.Context, tx pgx.Tx, dto achievement.CreateDTO, achievementAssetsID int64, awardAssetsID int64) (achievement.Achievement, error) {
+func (s *Create) createAchievement(ctx context.Context, tx pgx.Tx, dto achievement.CreateDTO, achievementAssetsID int64, awardAssetsID int64, achievementTypeID int64) (achievement.Achievement, error) {
 	createAchievementDTO := achievement.CreateAchievementDTO{
 		AchievementAssetsID: achievementAssetsID,
 		AwardAssetsID:       awardAssetsID,
+		AchievementTypeID:   achievementTypeID,
 		Description:         dto.Description,
-		Code:                dto.Code,
 		Name:                dto.Name,
 	}
 
@@ -199,12 +223,12 @@ func (s *Create) createAchievement(ctx context.Context, tx pgx.Tx, dto achieveme
 }
 
 // createAchievementCondition create achievement condition.
-func (s *Create) createAchievementCondition(ctx context.Context, tx pgx.Tx, dto achievement.CreateDTO, achievementID int64) (achievement.Condition, error) {
+func (s *Create) createAchievementCondition(ctx context.Context, tx pgx.Tx, dto achievement.CreateDTO, achievementID int64, achievementTypeID int64) (achievement.Condition, error) {
 	createAchievementConditionDTO := achievement.CreateAchievementConditionDTO{
-		AchievementID: achievementID,
-		Value:         dto.Value,
-		ConditionType: dto.ConditionType,
-		Operator:      dto.Operator,
+		AchievementID:     achievementID,
+		AchievementTypeID: achievementTypeID,
+		Value:             dto.Value,
+		Operator:          dto.Operator,
 	}
 
 	// create achievement condition.

@@ -61,7 +61,7 @@ func (r *DeleteAchievementByID) Execute(ctx context.Context, tx pgx.Tx, id int64
 		id,
 	).Scan(
 		&da.ID, &da.AchievementAssetsID,
-		&da.AwardAssetsID, &da.Code,
+		&da.AwardAssetsID, &da.AchievementTypeID,
 		&da.Name, &da.Description,
 		&da.CreatedAt, &da.UpdatedAt,
 	); err != nil {
