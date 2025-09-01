@@ -22,8 +22,12 @@ func (d *Dependencies) UserStatsService() *userstatsservice.Service {
 		d.userStatsService = userstatsservice.New(
 			d.UserStatsRepository(),
 			d.UserRepository(),
+			d.UserAchievementRepository(),
+			d.NotificationRepository(),
 			d.logger,
+			d.rabbitMQ,
 			d.postgres,
+			d.redis,
 		)
 	}
 
