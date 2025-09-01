@@ -1,15 +1,17 @@
 package experiencepoint
 
-import "time"
+import (
+	"time"
+)
 
 type XPEvents struct {
-	ID         int64     `json:"id"`
-	TelegramID string    `json:"telegram_id"`
-	DeltaXP    int       `json:"delta_xp"`
-	Reason     string    `json:"reason"`
-	OccurredAt time.Time `json:"occurred_at"`
-	InsertedAt time.Time `json:"inserted_at"`
-	WeekStart  time.Time `json:"week_start"`
+	ID          int64     `json:"id"`
+	EventTypeID int64     `json:"event_type_id"`
+	TelegramID  string    `json:"telegram_id"`
+	DeltaXP     int       `json:"delta_xp"`
+	OccurredAt  time.Time `json:"occurred_at"`
+	InsertedAt  time.Time `json:"inserted_at"`
+	WeekStart   time.Time `json:"week_start"`
 }
 
 //
@@ -17,11 +19,9 @@ type XPEvents struct {
 //
 
 type CreateXPEventDTO struct {
-	TelegramID string `json:"telegram_id" validate:"required,min=1"`
-	Events     []struct {
-		DeltaXP int    `json:"delta_xp" validate:"required,gte=-500,lte=500"`
-		Reason  string `json:"reason" validate:"required,min=1,max=50"`
-	} `json:"events" validate:"required,min=1,max=250"`
+	TelegramID string `json:"telegram_id"`
+	EventType  string `json:"event_type"`
+	DeltaXP    int64  `json:"delta_xp"`
 }
 
 //

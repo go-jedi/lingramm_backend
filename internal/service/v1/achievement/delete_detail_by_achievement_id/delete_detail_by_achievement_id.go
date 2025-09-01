@@ -55,7 +55,6 @@ func (s *DeleteDetailByAchievementID) Execute(ctx context.Context, achievementID
 
 	var (
 		err                         error
-		resultAchievementCondition  achievement.Condition
 		resultAchievement           achievement.Achievement
 		resultAchievementAsset      achievementassets.AchievementAssets
 		resultAwardAssets           awardassets.AwardAssets
@@ -87,12 +86,6 @@ func (s *DeleteDetailByAchievementID) Execute(ctx context.Context, achievementID
 
 	if !existsAchievementByID { // if achievement does not exist.
 		err = apperrors.ErrAchievementDoesNotExist
-		return achievement.Detail{}, err
-	}
-
-	// delete achievement condition by achievement id.
-	resultAchievementCondition, err = s.achievementRepository.DeleteAchievementConditionByAchievementID.Execute(ctx, tx, achievementID)
-	if err != nil {
 		return achievement.Detail{}, err
 	}
 
@@ -148,7 +141,6 @@ func (s *DeleteDetailByAchievementID) Execute(ctx context.Context, achievementID
 
 	return achievement.Detail{
 		Achievement:       resultAchievement,
-		Condition:         resultAchievementCondition,
 		AchievementAssets: resultAchievementAsset,
 		AwardAssets:       resultAwardAssets,
 	}, nil

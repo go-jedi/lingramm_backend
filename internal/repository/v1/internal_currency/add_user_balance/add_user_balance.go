@@ -10,6 +10,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
+	"github.com/go-jedi/lingramm_backend/pkg/utils/nullify"
 	"github.com/jackc/pgx/v5"
 	"github.com/shopspring/decimal"
 )
@@ -144,7 +145,7 @@ func (r *AddUserBalance) createBalanceTransaction(ctx context.Context, tx pgx.Tx
 	commandTag, err := tx.Exec(
 		ctxTimeout, q,
 		dto.EventTypeID, dto.TelegramID,
-		dto.Amount, dto.Description, newBalance,
+		dto.Amount, nullify.Empty(dto.Description), newBalance,
 	)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

@@ -8,6 +8,13 @@ const (
 	FailedStatus  = "FAILED"
 )
 
+const (
+	AchievementType      = "achievement"
+	InternalCurrencyType = "internal_currency"
+	LevelType            = "level"
+	MiniGameType         = "mini_game"
+)
+
 // Notification represents notification in the system.
 type Notification struct {
 	ID         int64      `json:"id"`

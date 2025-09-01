@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.unlock_available_achievements(TEXT);

@@ -61,7 +61,11 @@ func (r *GetByName) Execute(ctx context.Context, tx pgx.Tx, name string) (achiev
 		name,
 	).Scan(
 		&at.ID, &at.Name, &at.Description,
-		&at.IsActive, &at.CreatedAt, &at.UpdatedAt,
+		&at.StreakDaysNeed, &at.DailyTaskStreakDaysNeed,
+		&at.WordsLearnedNeed, &at.TasksCompletedNeed,
+		&at.LessonsFinishedNeed, &at.WordsTranslateNeed,
+		&at.DialogCompletedNeed, &at.ExperiencePointsNeed,
+		&at.LevelNeed, &at.IsActive, &at.CreatedAt, &at.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			r.logger.Error("request timed out while get achievement type by name", "err", err)

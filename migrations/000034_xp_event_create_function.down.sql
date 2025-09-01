@@ -1,1 +1,0 @@
-DROP FUNCTION IF EXISTS public.xp_event_create(TEXT, JSONB);

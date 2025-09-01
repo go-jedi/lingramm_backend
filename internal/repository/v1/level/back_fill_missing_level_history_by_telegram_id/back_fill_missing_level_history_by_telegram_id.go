@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
+	"github.com/go-jedi/lingramm_backend/internal/domain/level"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/jackc/pgx/v5"
@@ -14,7 +14,7 @@ import (
 
 //go:generate mockery --name=IBackFillMissingLevelHistoryByTelegramID --output=mocks --case=underscore
 type IBackFillMissingLevelHistoryByTelegramID interface {
-	Execute(ctx context.Context, tx pgx.Tx, telegramID string) error
+	Execute(ctx context.Context, tx pgx.Tx, telegramID string) (level.BackFillMissingLevelHistoryByTelegramIDResponse, error)
 }
 
 type BackFillMissingLevelHistoryByTelegramID struct {
@@ -42,7 +42,7 @@ func (r *BackFillMissingLevelHistoryByTelegramID) init() {
 	}
 }
 
-func (r *BackFillMissingLevelHistoryByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID string) error {
+func (r *BackFillMissingLevelHistoryByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID string) (level.BackFillMissingLevelHistoryByTelegramIDResponse, error) {
 	r.logger.Debug("[back fill missing level history by telegram id] execute repository")
 
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
@@ -50,19 +50,19 @@ func (r *BackFillMissingLevelHistoryByTelegramID) Execute(ctx context.Context, t
 
 	q := `SELECT * FROM public.back_fill_missing_level_history($1);`
 
-	commandTag, err := tx.Exec(ctxTimeout, q, telegramID)
-	if err != nil {
+	var response level.BackFillMissingLevelHistoryByTelegramIDResponse
+
+	if err := tx.QueryRow(
+		ctxTimeout, q,
+		telegramID,
+	).Scan(&response); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			r.logger.Error("request timed out while back fill missing level history by telegram id", "err", err)
-			return fmt.Errorf("the request timed out: %w", err)
+			return level.BackFillMissingLevelHistoryByTelegramIDResponse{}, fmt.Errorf("the request timed out: %w", err)
 		}
 		r.logger.Error("failed to back fill missing level history by telegram id", "err", err)
-		return fmt.Errorf("could not back fill missing level history by telegram id: %w", err)
+		return level.BackFillMissingLevelHistoryByTelegramIDResponse{}, fmt.Errorf("could not back fill missing level history by telegram id: %w", err)
 	}
 
-	if commandTag.RowsAffected() == 0 {
-		return apperrors.ErrNoRowsWereAffected
-	}
-
-	return nil
+	return response, nil
 }

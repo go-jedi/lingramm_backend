@@ -23,7 +23,7 @@ type AddUserBalanceDTO struct {
 	EventTypeID int64           `json:"event_type_id"`
 	Amount      decimal.Decimal `json:"amount"`
 	TelegramID  string          `json:"telegram_id"`
-	Description string          `json:"description"`
+	Description *string         `json:"description,omitempty"`
 }
 
 //

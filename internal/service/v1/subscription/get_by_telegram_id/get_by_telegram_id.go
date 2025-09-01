@@ -92,6 +92,7 @@ func (s *GetByTelegramID) Execute(ctx context.Context, telegramID string) (subsc
 		return subscription.Subscription{}, err
 	}
 
+	// commit transaction.
 	err = tx.Commit(ctx)
 	if err != nil {
 		return subscription.Subscription{}, err

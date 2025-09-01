@@ -11,7 +11,6 @@ import (
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
 	"github.com/jackc/pgx/v5"
-	jsoniter "github.com/json-iterator/go"
 )
 
 //go:generate mockery --name=ICreateXPEvents --output=mocks --case=underscore
@@ -50,17 +49,11 @@ func (r *CreateXPEvents) Execute(ctx context.Context, tx pgx.Tx, dto experiencep
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
-	rawData, err := jsoniter.Marshal(dto.Events)
-	if err != nil {
-		r.logger.Error("failed to marshal experience point events data", "err", err)
-		return err
-	}
-
-	q := `SELECT * FROM public.xp_event_create($1, $2);`
+	q := `SELECT * FROM public.xp_event_create($1, $2, $3);`
 
 	commandTag, err := tx.Exec(
 		ctxTimeout, q,
-		dto.TelegramID, rawData,
+		dto.TelegramID, dto.EventType, dto.DeltaXP,
 	)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

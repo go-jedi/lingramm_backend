@@ -21,9 +21,6 @@ func (d *Dependencies) ExperiencePointService() *experiencepointservice.Service 
 	if d.experiencePointService == nil {
 		d.experiencePointService = experiencepointservice.New(
 			d.ExperiencePointRepository(),
-			d.UserRepository(),
-			d.UserStatsRepository(),
-			d.LevelRepository(),
 			d.logger,
 			d.postgres,
 		)

@@ -50,7 +50,7 @@ func (r *GetDetailByAchievementID) Execute(ctx context.Context, tx pgx.Tx, achie
 
 	q := `
 		SELECT
-			JSON_BUILD_OBJECT(
+			JSONB_BUILD_OBJECT(
 				'achievement', JSONB_BUILD_OBJECT(
 					'id', a.id,
 					'achievement_assets_id', a.achievement_assets_id,
@@ -60,15 +60,6 @@ func (r *GetDetailByAchievementID) Execute(ctx context.Context, tx pgx.Tx, achie
 					'description', a.description,
 					'created_at', a.created_at,
 					'updated_at', a.updated_at
-				),
-				'condition', JSONB_BUILD_OBJECT(
-					'id', ac.id,
-					'achievement_id', ac.achievement_id,
-					'achievement_type_id', ac.achievement_type_id,
-					'operator', ac.operator,
-					'value', ac.value,
-					'created_at', ac.created_at,
-					'updated_at', ac.updated_at
 				),
 				'achievement_assets', JSONB_BUILD_OBJECT(
 					'id', aa.id,
@@ -98,7 +89,6 @@ func (r *GetDetailByAchievementID) Execute(ctx context.Context, tx pgx.Tx, achie
 				)
 			)
 		FROM achievements a
-		INNER JOIN achievement_conditions ac ON a.id = ac.achievement_id
 		INNER JOIN achievement_assets aa ON a.achievement_assets_id = aa.id
 		INNER JOIN award_assets awa ON a.award_assets_id = awa.id
 		WHERE a.id = $1;
