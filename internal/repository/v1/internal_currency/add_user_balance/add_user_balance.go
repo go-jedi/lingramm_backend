@@ -145,7 +145,7 @@ func (r *AddUserBalance) createBalanceTransaction(ctx context.Context, tx pgx.Tx
 	commandTag, err := tx.Exec(
 		ctxTimeout, q,
 		dto.EventTypeID, dto.TelegramID,
-		dto.Amount, nullify.Empty(dto.Description), newBalance,
+		dto.Amount, nullify.EmptyString(dto.Description), newBalance,
 	)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

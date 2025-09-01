@@ -85,13 +85,14 @@ func (r *Create) Execute(ctx context.Context, tx pgx.Tx, dto eventtype.CreateDTO
 	return newEventType, nil
 }
 
+// getArgs get args.
 func (r *Create) getArgs(dto eventtype.CreateDTO) []interface{} {
 	return []interface{}{
 		dto.Name,
-		nullify.Empty(dto.Description),
+		nullify.EmptyString(dto.Description),
 		dto.XP,
 		nullify.EmptyDecimalWithDefault(dto.Amount),
-		nullify.Empty(dto.NotificationMessage),
+		nullify.EmptyString(dto.NotificationMessage),
 		dto.IsSendNotification,
 		dto.IsActive,
 	}
