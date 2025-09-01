@@ -22,3 +22,13 @@ type CreateUserLevelHistoryDTO struct {
 	XPEventID   *int64 `json:"xp_event_id,omitempty"`
 	TelegramID  string `json:"telegram_id"`
 }
+
+//
+// BACKFILL MISSING LEVEL HISTORY BY TELEGRAM ID
+//
+
+type BackFillMissingLevelHistoryByTelegramIDResponse struct {
+	IsLevelUp bool  `json:"is_level_up"`
+	OldLevel  int64 `json:"old_level"`
+	NewLevel  int64 `json:"new_level"`
+}

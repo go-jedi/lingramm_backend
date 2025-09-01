@@ -1,7 +1,6 @@
 package experiencepoint
 
 import (
-	createxpevents "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/experience_point/create_xp_events"
 	getleaderboardtopweek "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/experience_point/get_leaderboard_top_week"
 	getleaderboardtopweekforuser "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/experience_point/get_leaderboard_top_week_for_user"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
@@ -12,7 +11,6 @@ import (
 )
 
 type Handler struct {
-	createXPEvents               *createxpevents.CreateXPEvents
 	getLeaderboardTopWeek        *getleaderboardtopweek.GetLeaderboardTopWeek
 	getLeaderboardTopWeekForUser *getleaderboardtopweekforuser.GetLeaderboardTopWeekForUser
 }
@@ -25,7 +23,6 @@ func New(
 	middleware *middleware.Middleware,
 ) *Handler {
 	h := &Handler{
-		createXPEvents:               createxpevents.New(experiencePointService, logger, validator),
 		getLeaderboardTopWeek:        getleaderboardtopweek.New(experiencePointService, logger, validator),
 		getLeaderboardTopWeekForUser: getleaderboardtopweekforuser.New(experiencePointService, logger, validator),
 	}
@@ -41,7 +38,6 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 		middleware.Auth.AuthMiddleware,
 	)
 	{
-		api.Post("/events", h.createXPEvents.Execute)
 		api.Post("/leaderboard/week_top", h.getLeaderboardTopWeek.Execute)
 		api.Post("/leaderboard/week_top/user", h.getLeaderboardTopWeekForUser.Execute)
 	}

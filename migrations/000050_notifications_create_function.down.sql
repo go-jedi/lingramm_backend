@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.notifications_create(JSONB);

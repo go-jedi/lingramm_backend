@@ -12,6 +12,7 @@ import (
 	adminhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/admin"
 	authhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/auth"
 	bigcachehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/bigcache"
+	eventhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/event"
 	eventtypehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/event_type"
 	experiencepointhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/experience_point"
 	clientassetshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/file_server/client_assets"
@@ -21,6 +22,7 @@ import (
 	studiedlanguagehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/studied_language"
 	subscriptionhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/subscription"
 	userhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user"
+	userachievementhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_achievement"
 	userstatshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_stats"
 	userstudiedlanguagehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_studied_language"
 	notificationwebsockethandler "github.com/go-jedi/lingramm_backend/internal/adapter/websocket/handlers/v1/notification"
@@ -40,12 +42,14 @@ import (
 	studiedlanguagerepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/studied_language"
 	subscriptionrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/subscription"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
+	userachievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_achievement"
 	userstatsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_stats"
 	userstudiedlanguagerepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_studied_language"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/v1/auth"
 	bigcacheservice "github.com/go-jedi/lingramm_backend/internal/service/v1/bigcache"
+	eventservice "github.com/go-jedi/lingramm_backend/internal/service/v1/event"
 	eventtypeservice "github.com/go-jedi/lingramm_backend/internal/service/v1/event_type"
 	experiencepointservice "github.com/go-jedi/lingramm_backend/internal/service/v1/experience_point"
 	clientassetsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/file_server/client_assets"
@@ -55,6 +59,7 @@ import (
 	studiedlanguageservice "github.com/go-jedi/lingramm_backend/internal/service/v1/studied_language"
 	subscriptionservice "github.com/go-jedi/lingramm_backend/internal/service/v1/subscription"
 	userservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user"
+	userachievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_achievement"
 	userstatsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats"
 	userstudiedlanguageservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_studied_language"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
@@ -127,6 +132,11 @@ type Dependencies struct {
 	achievementService    *achievementservice.Service
 	achievementHandler    *achievementhandler.Handler
 
+	// user achievement.
+	userAchievementRepository *userachievementrepository.Repository
+	userAchievementService    *userachievementservice.Service
+	userAchievementHandler    *userachievementhandler.Handler
+
 	// studied language.
 	studiedLanguageRepository *studiedlanguagerepository.Repository
 	studiedLanguageService    *studiedlanguageservice.Service
@@ -156,6 +166,10 @@ type Dependencies struct {
 	experiencePointRepository *experiencepointrepository.Repository
 	experiencePointService    *experiencepointservice.Service
 	experiencePointHandler    *experiencepointhandler.Handler
+
+	// event.
+	eventService *eventservice.Service
+	eventHandler *eventhandler.Handler
 
 	// level.
 	levelRepository *levelrepository.Repository
@@ -237,12 +251,14 @@ func (d *Dependencies) initHandler() {
 	_ = d.BigCacheHandler()
 	_ = d.InternalCurrencyHandler()
 	_ = d.AchievementHandler()
+	_ = d.UserAchievementHandler()
 	_ = d.StudiedLanguageHandler()
 	_ = d.UserStudiedLanguageHandler()
 	_ = d.LocalizedTextHandler()
 	_ = d.NotificationHandler()
 	_ = d.SubscriptionHandler()
 	_ = d.ExperiencePointHandler()
+	_ = d.EventHandler()
 	_ = d.EventTypeHandler()
 	_ = d.AdminHandler()
 }

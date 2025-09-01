@@ -20,21 +20,9 @@ type Achievement struct {
 	Name                string    `json:"name"`
 }
 
-// Condition represents achievement condition in the system.
-type Condition struct {
-	ID                int64     `json:"id"`
-	AchievementID     int64     `json:"achievement_id"`
-	AchievementTypeID int64     `json:"achievement_type_id"`
-	Value             int64     `json:"value"`
-	CreatedAt         time.Time `json:"created_at"`
-	UpdatedAt         time.Time `json:"updated_at"`
-	Operator          string    `json:"operator"`
-}
-
 // Detail represents achievement detail in the system.
 type Detail struct {
 	Achievement       Achievement                         `json:"achievement"`
-	Condition         Condition                           `json:"condition"`
 	AchievementAssets achievementassets.AchievementAssets `json:"achievement_assets"`
 	AwardAssets       awardassets.AwardAssets             `json:"award_assets"`
 }
@@ -44,13 +32,11 @@ type Detail struct {
 //
 
 type CreateDTO struct {
-	Value                 int64 `json:"value" validate:"required,gt=0"`
 	FileAchievementHeader *multipart.FileHeader
 	FileAwardHeader       *multipart.FileHeader
 	Description           *string `json:"description" validate:"omitempty,min=1"`
 	Name                  string  `json:"name" validate:"required,min=1"`
 	AchievementType       string  `json:"achievement_type" validate:"required,min=1"`
-	Operator              string  `json:"operator" validate:"required,min=1"`
 }
 
 //
@@ -66,17 +52,6 @@ type CreateAchievementDTO struct {
 }
 
 //
-// CREATE ACHIEVEMENT CONDITION
-//
-
-type CreateAchievementConditionDTO struct {
-	AchievementID     int64  `json:"achievement_id"`
-	AchievementTypeID int64  `json:"achievement_type_id"`
-	Value             int64  `json:"value"`
-	Operator          string `json:"operator"`
-}
-
-//
 // SWAGGER
 //
 
@@ -86,7 +61,6 @@ type DetailSwaggerResponse struct {
 	Error   string `json:"error" example:""`
 	Data    []struct {
 		Achievement       Achievement `json:"achievement"`
-		Condition         Condition   `json:"condition"`
 		AchievementAssets struct {
 			ID                       int64     `json:"id"`
 			Quality                  int       `json:"quality"`

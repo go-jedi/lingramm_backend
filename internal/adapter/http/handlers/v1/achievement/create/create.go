@@ -3,7 +3,6 @@ package create
 import (
 	"context"
 	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -42,19 +41,10 @@ func (h *Create) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a achievement] execute handler")
 
 	var (
-		valueStr        = c.FormValue("value")
 		description     = c.FormValue("description")
 		name            = c.FormValue("name")
 		achievementType = c.FormValue("achievement_type")
-		operator        = c.FormValue("operator")
 	)
-
-	value, err := strconv.ParseInt(valueStr, 10, 64)
-	if err != nil {
-		h.logger.Error("failed parse string to int64", "error", err)
-		c.Status(fiber.StatusBadRequest)
-		return c.JSON(response.New[any](false, "failed parse string to int64", err.Error(), nil))
-	}
 
 	fileAchievementHeader, err := c.FormFile("file_achievement")
 	if err != nil {
@@ -85,13 +75,11 @@ func (h *Create) Execute(c fiber.Ctx) error {
 	}
 
 	dto := achievement.CreateDTO{
-		Value:                 value,
 		FileAchievementHeader: fileAchievementHeader,
 		FileAwardHeader:       fileAwardHeader,
 		Description:           &description,
 		Name:                  name,
 		AchievementType:       achievementType,
-		Operator:              operator,
 	}
 
 	if err := h.validator.StructCtx(c.RequestCtx(), dto); err != nil {

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/go-jedi/lingramm_backend/internal/domain/event"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/postgres"
@@ -14,7 +15,7 @@ import (
 
 //go:generate mockery --name=ISyncUserStatsFromXPEventsByTelegramID --output=mocks --case=underscore
 type ISyncUserStatsFromXPEventsByTelegramID interface {
-	Execute(ctx context.Context, tx pgx.Tx, telegramID string) error
+	Execute(ctx context.Context, tx pgx.Tx, telegramID string, actions event.Actions) error
 }
 
 type SyncUserStatsFromXPEventsByTelegramID struct {
@@ -42,15 +43,18 @@ func (r *SyncUserStatsFromXPEventsByTelegramID) init() {
 	}
 }
 
-func (r *SyncUserStatsFromXPEventsByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID string) error {
+func (r *SyncUserStatsFromXPEventsByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID string, actions event.Actions) error {
 	r.logger.Debug("[sync user stats from xp events by telegram id] execute repository")
 
 	ctxTimeout, cancel := context.WithTimeout(ctx, time.Duration(r.queryTimeout)*time.Second)
 	defer cancel()
 
-	q := `SELECT * FROM public.sync_user_stats_from_xp_events($1);`
+	q := `SELECT * FROM public.sync_user_stats_from_xp_events($1, $2);`
 
-	commandTag, err := tx.Exec(ctxTimeout, q, telegramID)
+	commandTag, err := tx.Exec(
+		ctxTimeout, q,
+		telegramID, actions,
+	)
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			r.logger.Error("request timed out while sync user stats from xp events by telegram id", "err", err)

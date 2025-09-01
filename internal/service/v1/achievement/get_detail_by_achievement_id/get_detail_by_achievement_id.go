@@ -62,6 +62,7 @@ func (s *GetDetailByAchievementID) Execute(ctx context.Context, achievementID in
 		return achievement.Detail{}, err
 	}
 
+	// commit transaction.
 	err = tx.Commit(ctx)
 	if err != nil {
 		return achievement.Detail{}, err
