@@ -12,6 +12,7 @@ import (
 	adminhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/admin"
 	authhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/auth"
 	bigcachehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/bigcache"
+	dailytaskhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/daily_task"
 	eventhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/event"
 	eventtypehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/event_type"
 	experiencepointhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/experience_point"
@@ -30,6 +31,7 @@ import (
 	achievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement"
 	achievementtyperepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/achievement_type"
 	adminrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/admin"
+	dailytaskrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/daily_task"
 	eventtyperepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/event_type"
 	experiencepointrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/experience_point"
 	achievementassetsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/file_server/achievement_assets"
@@ -49,6 +51,7 @@ import (
 	adminservice "github.com/go-jedi/lingramm_backend/internal/service/v1/admin"
 	authservice "github.com/go-jedi/lingramm_backend/internal/service/v1/auth"
 	bigcacheservice "github.com/go-jedi/lingramm_backend/internal/service/v1/bigcache"
+	dailytaskservice "github.com/go-jedi/lingramm_backend/internal/service/v1/daily_task"
 	eventservice "github.com/go-jedi/lingramm_backend/internal/service/v1/event"
 	eventtypeservice "github.com/go-jedi/lingramm_backend/internal/service/v1/event_type"
 	experiencepointservice "github.com/go-jedi/lingramm_backend/internal/service/v1/experience_point"
@@ -179,6 +182,11 @@ type Dependencies struct {
 	eventTypeService    *eventtypeservice.Service
 	eventTypeHandler    *eventtypehandler.Handler
 
+	// daily task.
+	dailyTaskRepository *dailytaskrepository.Repository
+	dailyTaskService    *dailytaskservice.Service
+	dailyTaskHandler    *dailytaskhandler.Handler
+
 	// admin.
 	adminRepository *adminrepository.Repository
 	adminService    *adminservice.Service
@@ -260,6 +268,7 @@ func (d *Dependencies) initHandler() {
 	_ = d.ExperiencePointHandler()
 	_ = d.EventHandler()
 	_ = d.EventTypeHandler()
+	_ = d.DailyTaskHandler()
 	_ = d.AdminHandler()
 }
 
