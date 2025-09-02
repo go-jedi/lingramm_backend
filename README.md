@@ -40,7 +40,7 @@ cd lingvogramm_backend
    Create a <b>.env</b> file in the root directory of the project and add the necessary environment variables:
 
 ```
-POSTGRES_DB=lingvogramm_db
+POSTGRES_DB=lingramm_db
 POSTGRES_USER=admin
 POSTGRES_PASSWORD=test
 ```

@@ -104,7 +104,7 @@ postgres:
   host: postgres
   user: admin
   password: test
-  dbname: lingvogramm_db
+  dbname: lingramm_db
   port: 5432
   sslmode: disable
   pool_max_conns: 10
