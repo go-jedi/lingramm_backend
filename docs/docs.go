@@ -1881,6 +1881,216 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/user_studied_language": {
+            "put": {
+                "description": "Updates the link between a user (by Telegram ID) and a studied language. Both fields are required.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User studied language"
+                ],
+                "summary": "Update user studied language",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Update data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.UpdateDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.UpdateSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Links a user (by Telegram ID) to a studied language. Rules:\n• ` + "`" + `studied_languages_id` + "`" + ` is required and must be \u003e 0\n• ` + "`" + `telegram_id` + "`" + ` is required",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User studied language"
+                ],
+                "summary": "Create user studied language",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "User studied language data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.CreateDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.CreateSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user_studied_language/exists/{telegramID}": {
+            "get": {
+                "description": "Returns true if the specified Telegram ID has at least one studied language, false otherwise.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User studied language"
+                ],
+                "summary": "Check user studied language by Telegram ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.ExistsByTelegramIDSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user_studied_language/telegram/{telegramID}": {
+            "get": {
+                "description": "Returns the studied language record linked to the specified Telegram ID, including language metadata.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User studied language"
+                ],
+                "summary": "Get user studied language by Telegram ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.GetByTelegramIDSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userstudiedlanguage.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -3377,7 +3587,7 @@ const docTemplate = `{
                         },
                         "lang": {
                             "type": "string",
-                            "example": "eu"
+                            "example": "en"
                         },
                         "value": {
                             "type": "string",
@@ -3643,7 +3853,7 @@ const docTemplate = `{
                             },
                             "lang": {
                                 "type": "string",
-                                "example": "eu"
+                                "example": "en"
                             },
                             "name": {
                                 "type": "string",
@@ -3711,7 +3921,7 @@ const docTemplate = `{
                         },
                         "lang": {
                             "type": "string",
-                            "example": "eu"
+                            "example": "en"
                         },
                         "name": {
                             "type": "string",
@@ -4304,6 +4514,215 @@ const docTemplate = `{
                         "xp_total": {
                             "type": "integer",
                             "example": 0
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userstudiedlanguage.CreateDTO": {
+            "type": "object",
+            "required": [
+                "studied_languages_id",
+                "telegram_id"
+            ],
+            "properties": {
+                "studied_languages_id": {
+                    "type": "integer"
+                },
+                "telegram_id": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "userstudiedlanguage.CreateSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "studied_languages_id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "telegram_id": {
+                            "type": "string",
+                            "example": "1"
+                        },
+                        "updated_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userstudiedlanguage.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "userstudiedlanguage.ExistsByTelegramIDSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userstudiedlanguage.GetByTelegramIDSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "description": {
+                            "type": "string",
+                            "example": "some description"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "lang": {
+                            "type": "string",
+                            "example": "en"
+                        },
+                        "name": {
+                            "type": "string",
+                            "example": "some name"
+                        },
+                        "studied_languages_id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "telegram_id": {
+                            "type": "string",
+                            "example": "1"
+                        },
+                        "updated_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userstudiedlanguage.UpdateDTO": {
+            "type": "object",
+            "required": [
+                "studied_languages_id",
+                "telegram_id"
+            ],
+            "properties": {
+                "studied_languages_id": {
+                    "type": "integer"
+                },
+                "telegram_id": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "userstudiedlanguage.UpdateSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "studied_languages_id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "telegram_id": {
+                            "type": "string",
+                            "example": "1"
+                        },
+                        "updated_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
                         }
                     }
                 },

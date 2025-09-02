@@ -28,6 +28,18 @@ func New(
 	}
 }
 
+// Execute checks if a user has any studied language by Telegram ID.
+// @Summary Check user studied language by Telegram ID
+// @Description Returns true if the specified Telegram ID has at least one studied language, false otherwise.
+// @Tags User studied language
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} userstudiedlanguage.ExistsByTelegramIDSwaggerResponse "Successful response"
+// @Failure 400 {object} userstudiedlanguage.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userstudiedlanguage.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user_studied_language/exists/{telegramID} [get]
 func (h *ExistsByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[check user studied language exists by telegram id] execute handler")
 

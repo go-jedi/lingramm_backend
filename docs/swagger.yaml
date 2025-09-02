@@ -1070,7 +1070,7 @@ definitions:
             example: 1
             type: integer
           lang:
-            example: eu
+            example: en
             type: string
           value:
             example: some value
@@ -1257,7 +1257,7 @@ definitions:
               example: 1
               type: integer
             lang:
-              example: eu
+              example: en
               type: string
             name:
               example: some name
@@ -1306,7 +1306,7 @@ definitions:
             example: 1
             type: integer
           lang:
-            example: eu
+            example: en
             type: string
           name:
             example: some name
@@ -1733,6 +1733,155 @@ definitions:
           xp_total:
             example: 0
             type: integer
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  userstudiedlanguage.CreateDTO:
+    properties:
+      studied_languages_id:
+        type: integer
+      telegram_id:
+        minLength: 1
+        type: string
+    required:
+    - studied_languages_id
+    - telegram_id
+    type: object
+  userstudiedlanguage.CreateSwaggerResponse:
+    properties:
+      data:
+        properties:
+          created_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          id:
+            example: 1
+            type: integer
+          studied_languages_id:
+            example: 1
+            type: integer
+          telegram_id:
+            example: "1"
+            type: string
+          updated_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  userstudiedlanguage.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  userstudiedlanguage.ExistsByTelegramIDSwaggerResponse:
+    properties:
+      data:
+        example: true
+        type: boolean
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  userstudiedlanguage.GetByTelegramIDSwaggerResponse:
+    properties:
+      data:
+        properties:
+          created_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          description:
+            example: some description
+            type: string
+          id:
+            example: 1
+            type: integer
+          lang:
+            example: en
+            type: string
+          name:
+            example: some name
+            type: string
+          studied_languages_id:
+            example: 1
+            type: integer
+          telegram_id:
+            example: "1"
+            type: string
+          updated_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  userstudiedlanguage.UpdateDTO:
+    properties:
+      studied_languages_id:
+        type: integer
+      telegram_id:
+        minLength: 1
+        type: string
+    required:
+    - studied_languages_id
+    - telegram_id
+    type: object
+  userstudiedlanguage.UpdateSwaggerResponse:
+    properties:
+      data:
+        properties:
+          created_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          id:
+            example: 1
+            type: integer
+          studied_languages_id:
+            example: 1
+            type: integer
+          telegram_id:
+            example: "1"
+            type: string
+          updated_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
         type: object
       error:
         example: ""
@@ -3051,4 +3200,151 @@ paths:
       summary: Get level info by Telegram ID
       tags:
       - User stats
+  /v1/user_studied_language:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Links a user (by Telegram ID) to a studied language. Rules:
+        • `studied_languages_id` is required and must be > 0
+        • `telegram_id` is required
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: User studied language data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/userstudiedlanguage.CreateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.CreateSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.ErrorSwaggerResponse'
+      summary: Create user studied language
+      tags:
+      - User studied language
+    put:
+      consumes:
+      - application/json
+      description: Updates the link between a user (by Telegram ID) and a studied
+        language. Both fields are required.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Update data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/userstudiedlanguage.UpdateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.UpdateSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.ErrorSwaggerResponse'
+      summary: Update user studied language
+      tags:
+      - User studied language
+  /v1/user_studied_language/exists/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns true if the specified Telegram ID has at least one studied
+        language, false otherwise.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.ExistsByTelegramIDSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.ErrorSwaggerResponse'
+      summary: Check user studied language by Telegram ID
+      tags:
+      - User studied language
+  /v1/user_studied_language/telegram/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns the studied language record linked to the specified Telegram
+        ID, including language metadata.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.GetByTelegramIDSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/userstudiedlanguage.ErrorSwaggerResponse'
+      summary: Get user studied language by Telegram ID
+      tags:
+      - User studied language
 swagger: "2.0"

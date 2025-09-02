@@ -32,6 +32,20 @@ func New(
 	}
 }
 
+// Execute creates a new user–studied-language relation.
+// @Summary Create user studied language
+// @Description Links a user (by Telegram ID) to a studied language. Rules:
+// @Description • `studied_languages_id` is required and must be > 0
+// @Description • `telegram_id` is required
+// @Tags User studied language
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body userstudiedlanguage.CreateDTO true "User studied language data"
+// @Success 200 {object} userstudiedlanguage.CreateSwaggerResponse "Successful response"
+// @Failure 400 {object} userstudiedlanguage.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userstudiedlanguage.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user_studied_language [post]
 func (h *Create) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a new user studied language] execute handler")
 
