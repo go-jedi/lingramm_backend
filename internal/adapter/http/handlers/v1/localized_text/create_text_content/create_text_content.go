@@ -32,6 +32,18 @@ func New(
 	}
 }
 
+// Execute creates a localized text content record (admin).
+// @Summary Create text content (admin)
+// @Description Creates a localized text content entry with required `code` and `page`, and optional `description`.
+// @Tags Localized text
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body localizedtext.CreateTextContentDTO true "Text content data"
+// @Success 200 {object} localizedtext.CreateTextContentSwaggerResponse "Successful response"
+// @Failure 400 {object} localizedtext.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} localizedtext.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/localized_text/content [post]
 func (h *CreateTextContent) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create text content] execute handler")
 

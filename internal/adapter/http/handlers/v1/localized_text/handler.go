@@ -36,10 +36,13 @@ func New(
 }
 
 func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) {
-	api := app.Group("/v1/localized_text")
+	api := app.Group(
+		"/v1/localized_text",
+		middleware.Auth.AuthMiddleware,
+	)
 	{
-		api.Post("/content", middleware.Auth.AuthMiddleware, h.createTextContent.Execute)
-		api.Post("/translation", middleware.Auth.AuthMiddleware, h.createTextTranslation.Execute)
-		api.Get("/texts/language/:language", middleware.Auth.AuthMiddleware, h.getTextsByLanguage.Execute)
+		api.Post("/content", middleware.AdminGuard.AdminGuardMiddleware, h.createTextContent.Execute)
+		api.Post("/translation", middleware.AdminGuard.AdminGuardMiddleware, h.createTextTranslation.Execute)
+		api.Get("/texts/language/:language", h.getTextsByLanguage.Execute)
 	}
 }

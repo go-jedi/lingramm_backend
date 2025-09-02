@@ -32,6 +32,22 @@ func New(
 	}
 }
 
+// Execute creates a localized text translation (admin).
+// @Summary Create text translation (admin)
+// @Description Creates a translation for a text content entry.
+// @Description Rules:
+// @Description • `content_id` is required and must be > 0
+// @Description • `lang` must be a 2-letter code (e.g., "en", "ru")
+// @Description • `value` is required
+// @Tags Localized text
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body localizedtext.CreateTextTranslationDTO true "Text translation data"
+// @Success 200 {object} localizedtext.CreateTextTranslationSwaggerResponse "Successful response"
+// @Failure 400 {object} localizedtext.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} localizedtext.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/localized_text/translation [post]
 func (h *CreateTextTranslation) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create text translation] execute handler")
 
