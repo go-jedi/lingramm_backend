@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns an event type by name (admin).
+// @Summary Get event type by name (admin)
+// @Description Returns a single event type matched by the provided `name` query parameter.
+// @Tags Event type
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param name query string true "Event type name"
+// @Success 200 {object} eventtype.GetByNameSwaggerResponse "Successful response"
+// @Failure 400 {object} eventtype.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} eventtype.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/event_type/name [get]
 func (h *GetByName) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get event type by name] execute handler")
 

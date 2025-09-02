@@ -649,6 +649,151 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/event_type": {
+            "post": {
+                "description": "Creates an event type with XP reward and optional amount/notification. Rules:\n• ` + "`" + `xp` + "`" + ` is required and must be \u003e 0\n• if ` + "`" + `amount` + "`" + ` is provided, it must be \u003e 0\n• if ` + "`" + `is_send_notification` + "`" + ` is true, ` + "`" + `notification_message` + "`" + ` must be provided",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Event type"
+                ],
+                "summary": "Create event type (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Event type data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/eventtype.CreateDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/eventtype.CreateSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/eventtype.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/eventtype.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/event_type/all": {
+            "get": {
+                "description": "Returns a full list of event types with XP reward, optional amount, and notification settings.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Event type"
+                ],
+                "summary": "Get all event types (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/eventtype.AllSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/eventtype.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/event_type/name": {
+            "get": {
+                "description": "Returns a single event type matched by the provided ` + "`" + `name` + "`" + ` query parameter.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Event type"
+                ],
+                "summary": "Get event type by name (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Event type name",
+                        "name": "name",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/eventtype.GetByNameSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/eventtype.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/eventtype.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1431,6 +1576,249 @@ const docTemplate = `{
                 "status": {
                     "type": "boolean",
                     "example": false
+                }
+            }
+        },
+        "eventtype.AllSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "integer",
+                                "example": 10
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "example": "2025-09-02T12:48:06.37622+03:00"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "some description"
+                            },
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_send_notification": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "some name"
+                            },
+                            "notification_message": {
+                                "type": "string",
+                                "example": "some message"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "example": "2025-09-02T12:48:06.37622+03:00"
+                            },
+                            "xp": {
+                                "type": "integer",
+                                "example": 20
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "eventtype.CreateDTO": {
+            "type": "object",
+            "required": [
+                "name",
+                "xp"
+            ],
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "description": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "is_send_notification": {
+                    "type": "boolean"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "notification_message": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "xp": {
+                    "type": "integer"
+                }
+            }
+        },
+        "eventtype.CreateSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "amount": {
+                            "type": "integer",
+                            "example": 10
+                        },
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
+                        },
+                        "description": {
+                            "type": "string",
+                            "example": "some description"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "is_active": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "is_send_notification": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "name": {
+                            "type": "string",
+                            "example": "some name"
+                        },
+                        "notification_message": {
+                            "type": "string",
+                            "example": "some message"
+                        },
+                        "updated_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
+                        },
+                        "xp": {
+                            "type": "integer",
+                            "example": 20
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "eventtype.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "eventtype.GetByNameSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "amount": {
+                                "type": "integer",
+                                "example": 10
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "example": "2025-09-02T12:48:06.37622+03:00"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "some description"
+                            },
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "is_active": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "is_send_notification": {
+                                "type": "boolean",
+                                "example": true
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "some name"
+                            },
+                            "notification_message": {
+                                "type": "string",
+                                "example": "some message"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "example": "2025-09-02T12:48:06.37622+03:00"
+                            },
+                            "xp": {
+                                "type": "integer",
+                                "example": 20
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
                 }
             }
         }

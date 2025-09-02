@@ -28,6 +28,16 @@ func New(
 	}
 }
 
+// Execute returns all event types (admin).
+// @Summary Get all event types (admin)
+// @Description Returns a full list of event types with XP reward, optional amount, and notification settings.
+// @Tags Event type
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Success 200 {object} eventtype.AllSwaggerResponse "Successful response"
+// @Failure 500 {object} eventtype.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/event_type/all [get]
 func (h *All) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get all event types] execute handler")
 

@@ -560,6 +560,181 @@ definitions:
         example: false
         type: boolean
     type: object
+  eventtype.AllSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            amount:
+              example: 10
+              type: integer
+            created_at:
+              example: "2025-09-02T12:48:06.37622+03:00"
+              type: string
+            description:
+              example: some description
+              type: string
+            id:
+              example: 1
+              type: integer
+            is_active:
+              example: true
+              type: boolean
+            is_send_notification:
+              example: true
+              type: boolean
+            name:
+              example: some name
+              type: string
+            notification_message:
+              example: some message
+              type: string
+            updated_at:
+              example: "2025-09-02T12:48:06.37622+03:00"
+              type: string
+            xp:
+              example: 20
+              type: integer
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  eventtype.CreateDTO:
+    properties:
+      amount:
+        type: number
+      description:
+        minLength: 1
+        type: string
+      is_active:
+        type: boolean
+      is_send_notification:
+        type: boolean
+      name:
+        minLength: 1
+        type: string
+      notification_message:
+        minLength: 1
+        type: string
+      xp:
+        type: integer
+    required:
+    - name
+    - xp
+    type: object
+  eventtype.CreateSwaggerResponse:
+    properties:
+      data:
+        properties:
+          amount:
+            example: 10
+            type: integer
+          created_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+          description:
+            example: some description
+            type: string
+          id:
+            example: 1
+            type: integer
+          is_active:
+            example: true
+            type: boolean
+          is_send_notification:
+            example: true
+            type: boolean
+          name:
+            example: some name
+            type: string
+          notification_message:
+            example: some message
+            type: string
+          updated_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+          xp:
+            example: 20
+            type: integer
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  eventtype.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  eventtype.GetByNameSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            amount:
+              example: 10
+              type: integer
+            created_at:
+              example: "2025-09-02T12:48:06.37622+03:00"
+              type: string
+            description:
+              example: some description
+              type: string
+            id:
+              example: 1
+              type: integer
+            is_active:
+              example: true
+              type: boolean
+            is_send_notification:
+              example: true
+              type: boolean
+            name:
+              example: some name
+              type: string
+            notification_message:
+              example: some message
+              type: string
+            updated_at:
+              example: "2025-09-02T12:48:06.37622+03:00"
+              type: string
+            xp:
+              example: 20
+              type: integer
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
 host: localhost:50050
 info:
   contact: {}
@@ -1008,4 +1183,107 @@ paths:
       summary: Create events
       tags:
       - Event
+  /v1/event_type:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Creates an event type with XP reward and optional amount/notification. Rules:
+        • `xp` is required and must be > 0
+        • if `amount` is provided, it must be > 0
+        • if `is_send_notification` is true, `notification_message` must be provided
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Event type data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/eventtype.CreateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/eventtype.CreateSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/eventtype.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/eventtype.ErrorSwaggerResponse'
+      summary: Create event type (admin)
+      tags:
+      - Event type
+  /v1/event_type/all:
+    get:
+      consumes:
+      - application/json
+      description: Returns a full list of event types with XP reward, optional amount,
+        and notification settings.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/eventtype.AllSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/eventtype.ErrorSwaggerResponse'
+      summary: Get all event types (admin)
+      tags:
+      - Event type
+  /v1/event_type/name:
+    get:
+      consumes:
+      - application/json
+      description: Returns a single event type matched by the provided `name` query
+        parameter.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Event type name
+        in: query
+        name: name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/eventtype.GetByNameSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/eventtype.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/eventtype.ErrorSwaggerResponse'
+      summary: Get event type by name (admin)
+      tags:
+      - Event type
 swagger: "2.0"

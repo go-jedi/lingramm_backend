@@ -32,6 +32,21 @@ func New(
 	}
 }
 
+// Execute creates a new event type (admin).
+// @Summary Create event type (admin)
+// @Description Creates an event type with XP reward and optional amount/notification. Rules:
+// @Description • `xp` is required and must be > 0
+// @Description • if `amount` is provided, it must be > 0
+// @Description • if `is_send_notification` is true, `notification_message` must be provided
+// @Tags Event type
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body eventtype.CreateDTO true "Event type data"
+// @Success 200 {object} eventtype.CreateSwaggerResponse "Successful response"
+// @Failure 400 {object} eventtype.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} eventtype.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/event_type [post]
 func (h *Create) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a new event type] execute handler")
 
