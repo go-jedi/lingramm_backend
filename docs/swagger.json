@@ -788,6 +788,114 @@
                     }
                 }
             }
+        },
+        "/v1/experience_point/leaderboard/week_top": {
+            "post": {
+                "description": "Returns the top users by XP for the current week in the given timezone.\nRules:\n• `limit` is required, must be \u003e 0 and ≤ 30\n• `tz` is required and must be `Europe/Moscow`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Experience point"
+                ],
+                "summary": "Get weekly leaderboard (XP)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Leaderboard request",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/experiencepoint.GetLeaderboardTopWeekDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/experiencepoint.GetLeaderboardTopWeekSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/experiencepoint.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/experiencepoint.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/experience_point/leaderboard/week_top/user": {
+            "post": {
+                "description": "Returns the weekly XP leaderboard centered around the specified user (by Telegram ID).\nRules:\n• `limit` is required, must be \u003e 0 and ≤ 30\n• `telegram_id` is required\n• `tz` is required and must be `Europe/Moscow`",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Experience point"
+                ],
+                "summary": "Get weekly leaderboard for user (XP)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Leaderboard request for user",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/experiencepoint.GetLeaderboardTopWeekForUserDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/experiencepoint.GetLeaderboardTopWeekForUserSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/experiencepoint.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/experiencepoint.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1794,6 +1902,157 @@
                             "updated_at": {
                                 "type": "string",
                                 "example": "2025-09-02T12:48:06.37622+03:00"
+                            },
+                            "xp": {
+                                "type": "integer",
+                                "example": 20
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "experiencepoint.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "experiencepoint.GetLeaderboardTopWeekDTO": {
+            "type": "object",
+            "required": [
+                "limit",
+                "tz"
+            ],
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "maximum": 30
+                },
+                "tz": {
+                    "type": "string",
+                    "enum": [
+                        "Europe/Moscow"
+                    ]
+                }
+            }
+        },
+        "experiencepoint.GetLeaderboardTopWeekForUserDTO": {
+            "type": "object",
+            "required": [
+                "limit",
+                "telegram_id",
+                "tz"
+            ],
+            "properties": {
+                "limit": {
+                    "type": "integer",
+                    "maximum": 30
+                },
+                "telegram_id": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "tz": {
+                    "type": "string",
+                    "enum": [
+                        "Europe/Moscow"
+                    ]
+                }
+            }
+        },
+        "experiencepoint.GetLeaderboardTopWeekForUserSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "display_name": {
+                                "type": "string",
+                                "example": "some name"
+                            },
+                            "medal": {
+                                "type": "string",
+                                "example": "some medal"
+                            },
+                            "position": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "telegram_id": {
+                                "type": "string",
+                                "example": "1"
+                            },
+                            "xp": {
+                                "type": "integer",
+                                "example": 20
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "experiencepoint.GetLeaderboardTopWeekSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "display_name": {
+                                "type": "string",
+                                "example": "some name"
+                            },
+                            "medal": {
+                                "type": "string",
+                                "example": "some medal"
+                            },
+                            "position": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "telegram_id": {
+                                "type": "string",
+                                "example": "1"
                             },
                             "xp": {
                                 "type": "integer",

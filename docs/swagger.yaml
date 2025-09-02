@@ -735,6 +735,113 @@ definitions:
         example: true
         type: boolean
     type: object
+  experiencepoint.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  experiencepoint.GetLeaderboardTopWeekDTO:
+    properties:
+      limit:
+        maximum: 30
+        type: integer
+      tz:
+        enum:
+        - Europe/Moscow
+        type: string
+    required:
+    - limit
+    - tz
+    type: object
+  experiencepoint.GetLeaderboardTopWeekForUserDTO:
+    properties:
+      limit:
+        maximum: 30
+        type: integer
+      telegram_id:
+        minLength: 1
+        type: string
+      tz:
+        enum:
+        - Europe/Moscow
+        type: string
+    required:
+    - limit
+    - telegram_id
+    - tz
+    type: object
+  experiencepoint.GetLeaderboardTopWeekForUserSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            display_name:
+              example: some name
+              type: string
+            medal:
+              example: some medal
+              type: string
+            position:
+              example: 1
+              type: integer
+            telegram_id:
+              example: "1"
+              type: string
+            xp:
+              example: 20
+              type: integer
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  experiencepoint.GetLeaderboardTopWeekSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            display_name:
+              example: some name
+              type: string
+            medal:
+              example: some medal
+              type: string
+            position:
+              example: 1
+              type: integer
+            telegram_id:
+              example: "1"
+              type: string
+            xp:
+              example: 20
+              type: integer
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
 host: localhost:50050
 info:
   contact: {}
@@ -1286,4 +1393,85 @@ paths:
       summary: Get event type by name (admin)
       tags:
       - Event type
+  /v1/experience_point/leaderboard/week_top:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns the top users by XP for the current week in the given timezone.
+        Rules:
+        • `limit` is required, must be > 0 and ≤ 30
+        • `tz` is required and must be `Europe/Moscow`
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Leaderboard request
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/experiencepoint.GetLeaderboardTopWeekDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/experiencepoint.GetLeaderboardTopWeekSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/experiencepoint.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/experiencepoint.ErrorSwaggerResponse'
+      summary: Get weekly leaderboard (XP)
+      tags:
+      - Experience point
+  /v1/experience_point/leaderboard/week_top/user:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Returns the weekly XP leaderboard centered around the specified user (by Telegram ID).
+        Rules:
+        • `limit` is required, must be > 0 and ≤ 30
+        • `telegram_id` is required
+        • `tz` is required and must be `Europe/Moscow`
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Leaderboard request for user
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/experiencepoint.GetLeaderboardTopWeekForUserDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/experiencepoint.GetLeaderboardTopWeekForUserSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/experiencepoint.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/experiencepoint.ErrorSwaggerResponse'
+      summary: Get weekly leaderboard for user (XP)
+      tags:
+      - Experience point
 swagger: "2.0"

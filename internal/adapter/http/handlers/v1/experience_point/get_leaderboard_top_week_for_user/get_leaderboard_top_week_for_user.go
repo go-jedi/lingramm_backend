@@ -32,6 +32,22 @@ func New(
 	}
 }
 
+// Execute returns weekly XP leaderboard scoped around a user.
+// @Summary Get weekly leaderboard for user (XP)
+// @Description Returns the weekly XP leaderboard centered around the specified user (by Telegram ID).
+// @Description Rules:
+// @Description • `limit` is required, must be > 0 and ≤ 30
+// @Description • `telegram_id` is required
+// @Description • `tz` is required and must be `Europe/Moscow`
+// @Tags Experience point
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body experiencepoint.GetLeaderboardTopWeekForUserDTO true "Leaderboard request for user"
+// @Success 200 {object} experiencepoint.GetLeaderboardTopWeekForUserSwaggerResponse "Successful response"
+// @Failure 400 {object} experiencepoint.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} experiencepoint.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/experience_point/leaderboard/week_top/user [post]
 func (h *GetLeaderboardTopWeekForUser) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get leaderboard top week for user] execute handler")
 
