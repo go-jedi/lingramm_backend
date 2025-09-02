@@ -32,6 +32,21 @@ func New(
 	}
 }
 
+// Execute returns weekly XP leaderboard.
+// @Summary Get weekly leaderboard (XP)
+// @Description Returns the top users by XP for the current week in the given timezone.
+// @Description Rules:
+// @Description • `limit` is required, must be > 0 and ≤ 30
+// @Description • `tz` is required and must be `Europe/Moscow`
+// @Tags Experience point
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body experiencepoint.GetLeaderboardTopWeekDTO true "Leaderboard request"
+// @Success 200 {object} experiencepoint.GetLeaderboardTopWeekSwaggerResponse "Successful response"
+// @Failure 400 {object} experiencepoint.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} experiencepoint.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/experience_point/leaderboard/week_top [post]
 func (h *GetLeaderboardTopWeek) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get leaderboard top week] execute handler")
 

@@ -80,3 +80,40 @@ type GetLeaderboardTopWeekForUserResponse struct {
 	DisplayName string `json:"display_name"`
 	Medal       string `json:"medal"`
 }
+
+//
+// SWAGGER
+//
+
+type GetLeaderboardTopWeekSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    []struct {
+		Position    int64  `json:"position" example:"1"`
+		XP          int64  `json:"xp" example:"20"`
+		TelegramID  string `json:"telegram_id" example:"1"`
+		DisplayName string `json:"display_name" example:"some name"`
+		Medal       string `json:"medal" example:"some medal"`
+	} `json:"data"`
+}
+
+type GetLeaderboardTopWeekForUserSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    []struct {
+		Position    int64  `json:"position" example:"1"`
+		XP          int64  `json:"xp" example:"20"`
+		TelegramID  string `json:"telegram_id" example:"1"`
+		DisplayName string `json:"display_name" example:"some name"`
+		Medal       string `json:"medal" example:"some medal"`
+	} `json:"data"`
+}
+
+type ErrorSwaggerResponse struct {
+	Status  bool        `json:"status" example:"false"`
+	Message string      `json:"message" example:"some error"`
+	Error   string      `json:"error" example:"some error"`
+	Data    interface{} `json:"data"`
+}
