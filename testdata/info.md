@@ -28,7 +28,9 @@
 - `migrate create -ext sql -dir migrations -seq text_contents_table`
 - `migrate create -ext sql -dir migrations -seq text_translations_table`
 - `migrate create -ext sql -dir migrations -seq daily_tasks_table`
+- `migrate create -ext sql -dir migrations -seq daily_tasks_index`
 - `migrate create -ext sql -dir migrations -seq user_daily_tasks_table`
+- `migrate create -ext sql -dir migrations -seq user_daily_tasks_index`
 - `migrate create -ext sql -dir migrations -seq notifications_type`
 - `migrate create -ext sql -dir migrations -seq notifications_table`
 - `migrate create -ext sql -dir migrations -seq notifications_index`
@@ -57,6 +59,9 @@
 - `migrate create -ext sql -dir migrations -seq studied_languages_table`
 - `migrate create -ext sql -dir migrations -seq user_studied_languages_table`
 - `migrate create -ext sql -dir migrations -seq unlock_available_achievements_function`
+- `migrate create -ext sql -dir migrations -seq assign_daily_task_function`
+- `migrate create -ext sql -dir migrations -seq daily_task_current_get_function`
+- `migrate create -ext sql -dir migrations -seq sync_user_daily_task_progress_function`
 
 #### execute:
 - `migrate -database postgresql://admin:test@localhost:54320/lingvogramm_db?sslmode=disable -path migrations up`

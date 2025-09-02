@@ -24,6 +24,7 @@ import (
 	subscriptionhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/subscription"
 	userhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user"
 	userachievementhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_achievement"
+	userdailytaskhandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_daily_task"
 	userstatshandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_stats"
 	userstudiedlanguagehandler "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_studied_language"
 	notificationwebsockethandler "github.com/go-jedi/lingramm_backend/internal/adapter/websocket/handlers/v1/notification"
@@ -45,6 +46,7 @@ import (
 	subscriptionrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/subscription"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	userachievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_achievement"
+	userdailytaskrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_daily_task"
 	userstatsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_stats"
 	userstudiedlanguagerepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_studied_language"
 	achievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/achievement"
@@ -63,6 +65,7 @@ import (
 	subscriptionservice "github.com/go-jedi/lingramm_backend/internal/service/v1/subscription"
 	userservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user"
 	userachievementservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_achievement"
+	userdailytaskservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_daily_task"
 	userstatsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats"
 	userstudiedlanguageservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_studied_language"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
@@ -187,6 +190,11 @@ type Dependencies struct {
 	dailyTaskService    *dailytaskservice.Service
 	dailyTaskHandler    *dailytaskhandler.Handler
 
+	// user daily task.
+	userDailyTaskRepository *userdailytaskrepository.Repository
+	userDailyTaskService    *userdailytaskservice.Service
+	userDailyTaskHandler    *userdailytaskhandler.Handler
+
 	// admin.
 	adminRepository *adminrepository.Repository
 	adminService    *adminservice.Service
@@ -269,6 +277,7 @@ func (d *Dependencies) initHandler() {
 	_ = d.EventHandler()
 	_ = d.EventTypeHandler()
 	_ = d.DailyTaskHandler()
+	_ = d.UserDailyTaskHandler()
 	_ = d.AdminHandler()
 }
 

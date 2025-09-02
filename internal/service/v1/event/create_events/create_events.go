@@ -12,6 +12,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/internal/domain/level"
 	"github.com/go-jedi/lingramm_backend/internal/domain/notification"
 	userachievement "github.com/go-jedi/lingramm_backend/internal/domain/user_achievement"
+	userdailytask "github.com/go-jedi/lingramm_backend/internal/domain/user_daily_task"
 	eventtyperepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/event_type"
 	experiencepointrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/experience_point"
 	internalcurrency "github.com/go-jedi/lingramm_backend/internal/repository/v1/internal_currency"
@@ -19,6 +20,7 @@ import (
 	notificationrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/notification"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	userachievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_achievement"
+	userdailytaskrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_daily_task"
 	userstatsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_stats"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -42,6 +44,7 @@ type CreateEvents struct {
 	levelRepository            *levelrepository.Repository
 	internalCurrencyRepository *internalcurrency.Repository
 	userAchievementRepository  *userachievementrepository.Repository
+	userDailyTaskRepository    *userdailytaskrepository.Repository
 	notificationRepository     *notificationrepository.Repository
 	logger                     logger.ILogger
 	rabbitMQ                   *rabbitmq.RabbitMQ
@@ -57,6 +60,7 @@ func New(
 	levelRepository *levelrepository.Repository,
 	internalCurrencyRepository *internalcurrency.Repository,
 	userAchievementRepository *userachievementrepository.Repository,
+	userDailyTaskRepository *userdailytaskrepository.Repository,
 	notificationRepository *notificationrepository.Repository,
 	logger logger.ILogger,
 	rabbitMQ *rabbitmq.RabbitMQ,
@@ -71,6 +75,7 @@ func New(
 		levelRepository:            levelRepository,
 		internalCurrencyRepository: internalCurrencyRepository,
 		userAchievementRepository:  userAchievementRepository,
+		userDailyTaskRepository:    userDailyTaskRepository,
 		notificationRepository:     notificationRepository,
 		logger:                     logger,
 		rabbitMQ:                   rabbitMQ,
@@ -134,6 +139,12 @@ func (s *CreateEvents) Execute(ctx context.Context, dto event.CreateEventsDTO) e
 
 	// sync user stats from xp events by telegram id.
 	err = s.userStatsRepository.SyncUserStatsFromXPEventsByTelegramID.Execute(ctx, tx, dto.TelegramID, dto.Actions)
+	if err != nil {
+		return err
+	}
+
+	// sync user daily task progress.
+	err = s.syncUserDailyTaskProgress(ctx, tx, dto.TelegramID, dto.Actions, eventTypeData.XP)
 	if err != nil {
 		return err
 	}
@@ -271,6 +282,43 @@ func (s *CreateEvents) createXPEvents(
 	}
 
 	return nil
+}
+
+// syncUserDailyTaskProgress sync user daily task progress.
+func (s *CreateEvents) syncUserDailyTaskProgress(
+	ctx context.Context,
+	tx pgx.Tx,
+	telegramID string,
+	actions event.Actions,
+	deltaXP int64,
+) error {
+	// check assign daily task exists by telegram id.
+	ie, err := s.userDailyTaskRepository.ExistsAssignDailyTaskByTelegramID.Execute(ctx, tx, telegramID)
+	if err != nil {
+		return err
+	}
+
+	if !ie {
+		// assign daily task by telegram id.
+		if _, err := s.userDailyTaskRepository.AssignDailyTaskByTelegramID.Execute(ctx, tx, telegramID); err != nil {
+			return err
+		}
+	}
+
+	dto := userdailytask.SyncUserDailyTaskProgressDTO{
+		TelegramID: telegramID,
+		Actions: userdailytask.Actions{
+			WordsLearned:     actions.WordsLearned,
+			TasksCompleted:   actions.TasksCompleted,
+			LessonsFinished:  actions.LessonsFinished,
+			WordsTranslate:   actions.WordsTranslate,
+			DialogCompleted:  actions.DialogCompleted,
+			ExperiencePoints: &deltaXP,
+		},
+	}
+
+	// sync user daily task progress.
+	return s.userDailyTaskRepository.SyncUserDailyTaskProgress.Execute(ctx, tx, dto)
 }
 
 // checkAndAccrualInternalCurrency check and accrual internal currency.

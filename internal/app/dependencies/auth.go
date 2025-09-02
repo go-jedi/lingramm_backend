@@ -10,6 +10,7 @@ func (d *Dependencies) AuthService() *authservice.Service {
 		d.authService = authservice.New(
 			d.UserRepository(),
 			d.LevelRepository(),
+			d.UserDailyTaskRepository(),
 			d.logger,
 			d.postgres,
 			d.redis,

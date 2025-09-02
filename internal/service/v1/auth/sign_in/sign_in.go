@@ -11,6 +11,7 @@ import (
 	"github.com/go-jedi/lingramm_backend/internal/domain/user"
 	levelrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/level"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
+	userdailytaskrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_daily_task"
 	bigcachepkg "github.com/go-jedi/lingramm_backend/pkg/bigcache"
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -25,18 +26,20 @@ type ISignIn interface {
 }
 
 type SignIn struct {
-	userRepository  *userrepository.Repository
-	levelRepository *levelrepository.Repository
-	logger          logger.ILogger
-	postgres        *postgres.Postgres
-	redis           *redis.Redis
-	bigCache        *bigcachepkg.BigCache
-	jwt             jwt.IJWT
+	userRepository          *userrepository.Repository
+	levelRepository         *levelrepository.Repository
+	userDailyTaskRepository *userdailytaskrepository.Repository
+	logger                  logger.ILogger
+	postgres                *postgres.Postgres
+	redis                   *redis.Redis
+	bigCache                *bigcachepkg.BigCache
+	jwt                     jwt.IJWT
 }
 
 func New(
 	userRepository *userrepository.Repository,
 	levelRepository *levelrepository.Repository,
+	userDailyTaskRepository *userdailytaskrepository.Repository,
 	logger logger.ILogger,
 	postgres *postgres.Postgres,
 	redis *redis.Redis,
@@ -44,13 +47,14 @@ func New(
 	jwt jwt.IJWT,
 ) *SignIn {
 	return &SignIn{
-		userRepository:  userRepository,
-		levelRepository: levelRepository,
-		logger:          logger,
-		postgres:        postgres,
-		redis:           redis,
-		bigCache:        bigCache,
-		jwt:             jwt,
+		userRepository:          userRepository,
+		levelRepository:         levelRepository,
+		userDailyTaskRepository: userDailyTaskRepository,
+		logger:                  logger,
+		postgres:                postgres,
+		redis:                   redis,
+		bigCache:                bigCache,
+		jwt:                     jwt,
 	}
 }
 
@@ -142,6 +146,11 @@ func (s *SignIn) createUser(ctx context.Context, tx pgx.Tx, dto auth.SignInDTO) 
 
 	// create user level history (set 1 level for new user).
 	if err := s.createUserLevelHistory(ctx, tx, nu.TelegramID); err != nil {
+		return auth.SignInResp{}, err
+	}
+
+	// assign daily task by telegram id.
+	if _, err := s.userDailyTaskRepository.AssignDailyTaskByTelegramID.Execute(ctx, tx, nu.TelegramID); err != nil {
 		return auth.SignInResp{}, err
 	}
 

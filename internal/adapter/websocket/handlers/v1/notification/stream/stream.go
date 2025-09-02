@@ -8,6 +8,7 @@ import (
 	"github.com/fasthttp/websocket"
 	"github.com/go-jedi/lingramm_backend/internal/domain/notification"
 	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
+	userdailytaskservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_daily_task"
 	userstatsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats"
 	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -31,30 +32,33 @@ const (
 
 // Stream manages WebSocket connections and notification streaming.
 type Stream struct {
-	notificationService *notificationservice.Service
-	userStatsService    *userstatsservice.Service
-	logger              logger.ILogger
-	rabbitMQ            *rabbitmq.RabbitMQ
-	redis               *redis.Redis
-	hub                 *notificationhub.Hub
+	notificationService  *notificationservice.Service
+	userStatsService     *userstatsservice.Service
+	userDailyTaskService *userdailytaskservice.Service
+	logger               logger.ILogger
+	rabbitMQ             *rabbitmq.RabbitMQ
+	redis                *redis.Redis
+	hub                  *notificationhub.Hub
 }
 
 // New returns a new instance of Stream.
 func New(
 	notificationService *notificationservice.Service,
 	userStatsService *userstatsservice.Service,
+	userDailyTaskService *userdailytaskservice.Service,
 	logger logger.ILogger,
 	rabbitMQ *rabbitmq.RabbitMQ,
 	redis *redis.Redis,
 	hub *notificationhub.Hub,
 ) *Stream {
 	return &Stream{
-		notificationService: notificationService,
-		userStatsService:    userStatsService,
-		logger:              logger,
-		rabbitMQ:            rabbitMQ,
-		redis:               redis,
-		hub:                 hub,
+		notificationService:  notificationService,
+		userStatsService:     userStatsService,
+		userDailyTaskService: userDailyTaskService,
+		logger:               logger,
+		rabbitMQ:             rabbitMQ,
+		redis:                redis,
+		hub:                  hub,
 	}
 }
 
@@ -116,6 +120,7 @@ func (h *Stream) runSession(conn *websocket.Conn, telegramID string) {
 	go h.consumeNotifications(ctx, telegramID, liveMsgCh, liveErrCh, liveDone) // RabbitMQ live feed.
 	go h.getAllPendingNotificationsFromDB(ctx, ce, telegramID, t0)             // pending notifications.
 	go h.ensureStreakDaysIncrementToday(ctx, telegramID)                       // ensure streak days increment today.
+	go h.assignDailyTask(ctx, telegramID)                                      // assign daily task.
 	go h.startReadLoop(ctx, conn, telegramID, readErrCh)                       // client messages (ACK/PONG).
 
 	// main loop to handle pinging, sending live notifications, and errors.
@@ -281,8 +286,25 @@ func (h *Stream) consumeNotifications(
 
 // ensureStreakDaysIncrementToday ensure streak days increment today.
 func (h *Stream) ensureStreakDaysIncrementToday(ctx context.Context, telegramID string) {
+	// ensure streak days increment.
 	if err := h.userStatsService.EnsureStreakDaysIncrementToday.Execute(ctx, telegramID); err != nil {
 		h.logger.Warn("ensure streak days increment today failed", "error", err)
+	}
+}
+
+// assignDailyTask assign daily task.
+func (h *Stream) assignDailyTask(ctx context.Context, telegramID string) {
+	// check assign daily task exists by telegram id.
+	isAssignDailyTask, err := h.userDailyTaskService.ExistsAssignDailyTaskByTelegramID.Execute(ctx, telegramID)
+	if err != nil {
+		h.logger.Warn("check assign daily task exists failed", "error", err)
+	}
+
+	if !isAssignDailyTask { // if daily task does not assign.
+		// assign daily task by telegram id.
+		if _, err := h.userDailyTaskService.AssignDailyTaskByTelegramID.Execute(ctx, telegramID); err != nil {
+			h.logger.Warn("assign daily task failed", "error", err)
+		}
 	}
 }
 
