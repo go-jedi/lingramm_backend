@@ -1091,6 +1091,172 @@
                     }
                 }
             }
+        },
+        "/v1/localized_text/content": {
+            "post": {
+                "description": "Creates a localized text content entry with required `code` and `page`, and optional `description`.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localized text"
+                ],
+                "summary": "Create text content (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Text content data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.CreateTextContentDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.CreateTextContentSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/localized_text/texts/language/{language}": {
+            "get": {
+                "description": "Returns a map where keys are page codes and values are arrays of localized texts for the specified 2-letter language code.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localized text"
+                ],
+                "summary": "Get texts by language",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "2-letter language code (e.g., en, ru)",
+                        "name": "language",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/definitions/localizedtext.GetTextsByLanguageSwaggerResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/localized_text/translation": {
+            "post": {
+                "description": "Creates a translation for a text content entry.\nRules:\n• `content_id` is required and must be \u003e 0\n• `lang` must be a 2-letter code (e.g., \"en\", \"ru\")\n• `value` is required",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Localized text"
+                ],
+                "summary": "Create text translation (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Text translation data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.CreateTextTranslationDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.CreateTextTranslationSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/localizedtext.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2474,6 +2640,181 @@
                             "xp": {
                                 "type": "integer",
                                 "example": 20
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "localizedtext.CreateTextContentDTO": {
+            "type": "object",
+            "required": [
+                "code",
+                "page"
+            ],
+            "properties": {
+                "code": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "description": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "page": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "localizedtext.CreateTextContentSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "code": {
+                            "type": "string",
+                            "example": "some code"
+                        },
+                        "description": {
+                            "type": "string",
+                            "example": "some description"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "page": {
+                            "type": "string",
+                            "example": "some page"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "localizedtext.CreateTextTranslationDTO": {
+            "type": "object",
+            "required": [
+                "content_id",
+                "lang",
+                "value"
+            ],
+            "properties": {
+                "content_id": {
+                    "type": "integer"
+                },
+                "lang": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "localizedtext.CreateTextTranslationSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "content_id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "lang": {
+                            "type": "string",
+                            "example": "eu"
+                        },
+                        "value": {
+                            "type": "string",
+                            "example": "some value"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "localizedtext.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "localizedtext.GetTextsByLanguageSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "code": {
+                                    "type": "string",
+                                    "example": "some code"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "some description"
+                                },
+                                "value": {
+                                    "type": "string",
+                                    "example": "some value"
+                                }
                             }
                         }
                     }

@@ -1003,6 +1003,130 @@ definitions:
         example: true
         type: boolean
     type: object
+  localizedtext.CreateTextContentDTO:
+    properties:
+      code:
+        minLength: 1
+        type: string
+      description:
+        minLength: 1
+        type: string
+      page:
+        minLength: 1
+        type: string
+    required:
+    - code
+    - page
+    type: object
+  localizedtext.CreateTextContentSwaggerResponse:
+    properties:
+      data:
+        properties:
+          code:
+            example: some code
+            type: string
+          description:
+            example: some description
+            type: string
+          id:
+            example: 1
+            type: integer
+          page:
+            example: some page
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  localizedtext.CreateTextTranslationDTO:
+    properties:
+      content_id:
+        type: integer
+      lang:
+        type: string
+      value:
+        minLength: 1
+        type: string
+    required:
+    - content_id
+    - lang
+    - value
+    type: object
+  localizedtext.CreateTextTranslationSwaggerResponse:
+    properties:
+      data:
+        properties:
+          content_id:
+            example: 1
+            type: integer
+          id:
+            example: 1
+            type: integer
+          lang:
+            example: eu
+            type: string
+          value:
+            example: some value
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  localizedtext.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  localizedtext.GetTextsByLanguageSwaggerResponse:
+    properties:
+      data:
+        additionalProperties:
+          items:
+            properties:
+              code:
+                example: some code
+                type: string
+              description:
+                example: some description
+                type: string
+              value:
+                example: some value
+                type: string
+            type: object
+          type: array
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
   userbalance.ErrorSwaggerResponse:
     properties:
       data: {}
@@ -1812,4 +1936,122 @@ paths:
       summary: Get user balance
       tags:
       - Internal currency
+  /v1/localized_text/content:
+    post:
+      consumes:
+      - application/json
+      description: Creates a localized text content entry with required `code` and
+        `page`, and optional `description`.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Text content data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/localizedtext.CreateTextContentDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/localizedtext.CreateTextContentSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/localizedtext.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/localizedtext.ErrorSwaggerResponse'
+      summary: Create text content (admin)
+      tags:
+      - Localized text
+  /v1/localized_text/texts/language/{language}:
+    get:
+      consumes:
+      - application/json
+      description: Returns a map where keys are page codes and values are arrays of
+        localized texts for the specified 2-letter language code.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: 2-letter language code (e.g., en, ru)
+        in: path
+        name: language
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            additionalProperties:
+              items:
+                $ref: '#/definitions/localizedtext.GetTextsByLanguageSwaggerResponse'
+              type: array
+            type: object
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/localizedtext.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/localizedtext.ErrorSwaggerResponse'
+      summary: Get texts by language
+      tags:
+      - Localized text
+  /v1/localized_text/translation:
+    post:
+      consumes:
+      - application/json
+      description: |-
+        Creates a translation for a text content entry.
+        Rules:
+        • `content_id` is required and must be > 0
+        • `lang` must be a 2-letter code (e.g., "en", "ru")
+        • `value` is required
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Text translation data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/localizedtext.CreateTextTranslationDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/localizedtext.CreateTextTranslationSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/localizedtext.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/localizedtext.ErrorSwaggerResponse'
+      summary: Create text translation (admin)
+      tags:
+      - Localized text
 swagger: "2.0"

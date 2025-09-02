@@ -36,6 +36,18 @@ func New(
 	}
 }
 
+// Execute returns localized texts grouped by code for a given language.
+// @Summary Get texts by language
+// @Description Returns a map where keys are page codes and values are arrays of localized texts for the specified 2-letter language code.
+// @Tags Localized text
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param language path string true "2-letter language code (e.g., en, ru)"
+// @Success 200 {object} map[string][]localizedtext.GetTextsByLanguageSwaggerResponse "Successful response"
+// @Failure 400 {object} localizedtext.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} localizedtext.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/localized_text/texts/language/{language} [get]
 func (h *GetTextsByLanguage) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get texts by language] execute handler")
 
