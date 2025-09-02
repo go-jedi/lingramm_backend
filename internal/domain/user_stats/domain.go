@@ -47,3 +47,42 @@ type GetLevelInfoByTelegramIDResponse struct {
 	ProgressRatio float64 `json:"progress_ratio"`
 	LevelName     string  `json:"level_name"`
 }
+
+//
+// SWAGGER
+//
+
+type GetLevelByTelegramIDSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		Level      int64  `json:"level" example:"1"`
+		TelegramID string `json:"telegram_id" example:"1"`
+	} `json:"data"`
+}
+
+type GetLevelInfoByTelegramIDSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		XPTotal       int64   `json:"xp_total" example:"0"`
+		Level         int64   `json:"level" example:"1"`
+		LevelFloorXP  int64   `json:"level_floor_xp" example:"0"`
+		LevelCeilXP   int64   `json:"level_ceil_xp" example:"100"`
+		NextLevel     int64   `json:"next_level" example:"2"`
+		XPInLevel     int64   `json:"xp_in_level" example:"0"`
+		XPLevelSize   int64   `json:"xp_level_size" example:"100"`
+		XPToNext      int64   `json:"xp_to_next" example:"100"`
+		ProgressRatio float64 `json:"progress_ratio" example:"0"`
+		LevelName     string  `json:"level_name" example:"level 1"`
+	} `json:"data"`
+}
+
+type ErrorSwaggerResponse struct {
+	Status  bool        `json:"status" example:"false"`
+	Message string      `json:"message" example:"some error"`
+	Error   string      `json:"error" example:"some error"`
+	Data    interface{} `json:"data"`
+}

@@ -1771,6 +1771,110 @@
                     }
                 }
             }
+        },
+        "/v1/user_stats/level/telegram/{telegramID}": {
+            "get": {
+                "description": "Returns the current level for the specified Telegram ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User stats"
+                ],
+                "summary": "Get user level by Telegram ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/userstats.GetLevelByTelegramIDSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userstats.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userstats.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user_stats/level_info/telegram/{telegramID}": {
+            "get": {
+                "description": "Returns detailed level progress data: total XP, current level, level floor/ceil XP, next level, XP within level, XP to next level, progress ratio, and level name.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User stats"
+                ],
+                "summary": "Get level info by Telegram ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/userstats.GetLevelInfoByTelegramIDSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userstats.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userstats.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -4084,6 +4188,116 @@
                                 "type": "boolean",
                                 "example": true
                             }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userstats.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "userstats.GetLevelByTelegramIDSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "level": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "telegram_id": {
+                            "type": "string",
+                            "example": "1"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userstats.GetLevelInfoByTelegramIDSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "level": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "level_ceil_xp": {
+                            "type": "integer",
+                            "example": 100
+                        },
+                        "level_floor_xp": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "level_name": {
+                            "type": "string",
+                            "example": "level 1"
+                        },
+                        "next_level": {
+                            "type": "integer",
+                            "example": 2
+                        },
+                        "progress_ratio": {
+                            "type": "number",
+                            "example": 0
+                        },
+                        "xp_in_level": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "xp_level_size": {
+                            "type": "integer",
+                            "example": 100
+                        },
+                        "xp_to_next": {
+                            "type": "integer",
+                            "example": 100
+                        },
+                        "xp_total": {
+                            "type": "integer",
+                            "example": 0
                         }
                     }
                 },

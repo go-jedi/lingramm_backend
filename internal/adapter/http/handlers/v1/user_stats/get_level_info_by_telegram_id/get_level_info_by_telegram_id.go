@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns detailed level/XP info for a user by Telegram ID.
+// @Summary Get level info by Telegram ID
+// @Description Returns detailed level progress data: total XP, current level, level floor/ceil XP, next level, XP within level, XP to next level, progress ratio, and level name.
+// @Tags User stats
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} userstats.GetLevelInfoByTelegramIDSwaggerResponse "Successful response"
+// @Failure 400 {object} userstats.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userstats.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user_stats/level_info/telegram/{telegramID} [get]
 func (h *GetLevelInfoByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get level info by telegram id] execute handler")
 
