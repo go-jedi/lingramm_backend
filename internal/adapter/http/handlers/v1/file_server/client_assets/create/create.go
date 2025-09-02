@@ -34,6 +34,18 @@ func New(
 	}
 }
 
+// Execute uploads a client asset image (admin).
+// @Summary Upload client asset (admin)
+// @Description Uploads a single image file (multipart/form-data) to create a client asset. Only supported image content types are accepted.
+// @Tags Client asset
+// @Accept multipart/form-data
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param file formData file true "Image file to upload"
+// @Success 200 {object} clientassets.CreateSwaggerResponse "Successful response"
+// @Failure 400 {object} clientassets.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} clientassets.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/fs/client_assets [post]
 func (h *Create) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a client assets] execute handler")
 

@@ -32,6 +32,16 @@ func New(
 	}
 }
 
+// Execute returns all client assets (admin).
+// @Summary Get all client assets (admin)
+// @Description Returns a full list of uploaded client asset images and their metadata.
+// @Tags Client asset
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Success 200 {object} clientassets.AllSwaggerResponse "Successful response"
+// @Failure 500 {object} clientassets.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/fs/client_assets/all [get]
 func (h *All) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get all client assets] execute handler")
 

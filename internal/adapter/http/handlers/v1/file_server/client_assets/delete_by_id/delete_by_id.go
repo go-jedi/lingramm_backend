@@ -30,6 +30,18 @@ func New(
 	}
 }
 
+// Execute deletes a client asset by ID (admin).
+// @Summary Delete client asset by ID (admin)
+// @Description Deletes the client asset with the given ID and returns the deleted record.
+// @Tags Client asset
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param id path int true "Client asset ID"
+// @Success 200 {object} clientassets.DeleteByIDSwaggerResponse "Successful response"
+// @Failure 400 {object} clientassets.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} clientassets.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/fs/client_assets/id/{id} [delete]
 func (h *DeleteByID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[delete client assets by id] execute handler")
 
