@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns all notifications for a user by Telegram ID.
+// @Summary Get all notifications by Telegram ID
+// @Description Returns a list of notifications for the specified Telegram ID.
+// @Tags Notification
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} notification.AllSwaggerResponse "Successful response"
+// @Failure 400 {object} notification.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} notification.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/notification/all/telegram/{telegramID} [get]
 func (h *AllByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get all notifications by telegram id] execute handler")
 

@@ -32,6 +32,18 @@ func New(
 	}
 }
 
+// Execute creates a new notification (admin).
+// @Summary Create notification (admin)
+// @Description Creates a notification with type and message (title/text) for the specified Telegram ID.
+// @Tags Notification
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body notification.CreateDTO true "Notification payload"
+// @Success 200 {object} notification.CreateSwaggerResponse "Successful response"
+// @Failure 400 {object} notification.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} notification.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/notification [post]
 func (h *Create) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a new notification] execute handler")
 

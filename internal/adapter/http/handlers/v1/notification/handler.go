@@ -38,7 +38,7 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 		middleware.Auth.AuthMiddleware,
 	)
 	{
-		api.Post("", h.create.Execute)
+		api.Post("", middleware.AdminGuard.AdminGuardMiddleware, h.create.Execute)
 		api.Get("/all/telegram/:telegramID", h.allByTelegramID.Execute)
 	}
 }
