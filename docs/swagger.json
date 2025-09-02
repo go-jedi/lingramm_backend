@@ -1039,6 +1039,58 @@
                     }
                 }
             }
+        },
+        "/v1/internal_currency/user/balance/telegram/{telegramID}": {
+            "get": {
+                "description": "Returns the current internal currency balance for the user identified by Telegram ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Internal currency"
+                ],
+                "summary": "Get user balance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/userbalance.GetUserBalanceSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userbalance.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userbalance.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2423,6 +2475,66 @@
                                 "type": "integer",
                                 "example": 20
                             }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userbalance.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "userbalance.GetUserBalanceSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "balance": {
+                            "type": "number",
+                            "example": 100
+                        },
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "telegram_id": {
+                            "type": "string",
+                            "example": "1"
+                        },
+                        "updated_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
                         }
                     }
                 },

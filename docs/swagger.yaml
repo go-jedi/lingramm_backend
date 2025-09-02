@@ -1003,6 +1003,49 @@ definitions:
         example: true
         type: boolean
     type: object
+  userbalance.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  userbalance.GetUserBalanceSwaggerResponse:
+    properties:
+      data:
+        properties:
+          balance:
+            example: 100
+            type: number
+          created_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+          id:
+            example: 1
+            type: integer
+          telegram_id:
+            example: "1"
+            type: string
+          updated_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
 host: localhost:50050
 info:
   contact: {}
@@ -1733,4 +1776,40 @@ paths:
       summary: Delete client asset by ID (admin)
       tags:
       - Client asset
+  /v1/internal_currency/user/balance/telegram/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns the current internal currency balance for the user identified
+        by Telegram ID.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/userbalance.GetUserBalanceSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/userbalance.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/userbalance.ErrorSwaggerResponse'
+      summary: Get user balance
+      tags:
+      - Internal currency
 swagger: "2.0"

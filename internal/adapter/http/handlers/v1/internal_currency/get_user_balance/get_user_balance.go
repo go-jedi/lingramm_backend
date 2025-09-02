@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns a user's internal currency balance.
+// @Summary Get user balance
+// @Description Returns the current internal currency balance for the user identified by Telegram ID.
+// @Tags Internal currency
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} userbalance.GetUserBalanceSwaggerResponse "Successful response"
+// @Failure 400 {object} userbalance.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userbalance.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/internal_currency/user/balance/telegram/{telegramID} [get]
 func (h *GetUserBalance) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get user balance] execute handler")
 
