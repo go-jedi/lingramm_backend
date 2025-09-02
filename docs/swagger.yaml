@@ -505,6 +505,61 @@ definitions:
         example: false
         type: boolean
     type: object
+  event.Actions:
+    properties:
+      dialog_completed:
+        type: integer
+      lessons_finished:
+        type: integer
+      tasks_completed:
+        type: integer
+      words_learned:
+        type: integer
+      words_translate:
+        type: integer
+    type: object
+  event.CreateEventsDTO:
+    properties:
+      actions:
+        $ref: '#/definitions/event.Actions'
+      event_type:
+        maxLength: 50
+        minLength: 1
+        type: string
+      telegram_id:
+        minLength: 1
+        type: string
+    required:
+    - actions
+    - event_type
+    - telegram_id
+    type: object
+  event.CreateSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  event.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
 host: localhost:50050
 info:
   contact: {}
@@ -877,7 +932,7 @@ paths:
             type: object
       summary: Iterate BigCache (admin)
       tags:
-      - BigCache
+      - Big cache
   /v1/daily_task:
     post:
       consumes:
@@ -914,5 +969,43 @@ paths:
             $ref: '#/definitions/dailytask.ErrorSwaggerResponse'
       summary: Create daily task (admin)
       tags:
-      - DailyTask
+      - Daily task
+  /v1/event:
+    post:
+      consumes:
+      - application/json
+      description: 'Creates an events payload for a user: specify `telegram_id`, an
+        `event_type`, and optional action counters (each provided value must be >
+        0).'
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Events payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/event.CreateEventsDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/event.CreateSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/event.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/event.ErrorSwaggerResponse'
+      summary: Create events
+      tags:
+      - Event
 swagger: "2.0"

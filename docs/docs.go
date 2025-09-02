@@ -509,7 +509,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "BigCache"
+                    "Big cache"
                 ],
                 "summary": "Iterate BigCache (admin)",
                 "parameters": [
@@ -552,7 +552,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "DailyTask"
+                    "Daily task"
                 ],
                 "summary": "Create daily task (admin)",
                 "parameters": [
@@ -591,6 +591,60 @@ const docTemplate = `{
                         "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/dailytask.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/event": {
+            "post": {
+                "description": "Creates an events payload for a user: specify ` + "`" + `telegram_id` + "`" + `, an ` + "`" + `event_type` + "`" + `, and optional action counters (each provided value must be \u003e 0).",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Event"
+                ],
+                "summary": "Create events",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Events payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/event.CreateEventsDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/event.CreateSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/event.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/event.ErrorSwaggerResponse"
                         }
                     }
                 }
@@ -1285,6 +1339,84 @@ const docTemplate = `{
             }
         },
         "dailytask.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "event.Actions": {
+            "type": "object",
+            "properties": {
+                "dialog_completed": {
+                    "type": "integer"
+                },
+                "lessons_finished": {
+                    "type": "integer"
+                },
+                "tasks_completed": {
+                    "type": "integer"
+                },
+                "words_learned": {
+                    "type": "integer"
+                },
+                "words_translate": {
+                    "type": "integer"
+                }
+            }
+        },
+        "event.CreateEventsDTO": {
+            "type": "object",
+            "required": [
+                "actions",
+                "event_type",
+                "telegram_id"
+            ],
+            "properties": {
+                "actions": {
+                    "$ref": "#/definitions/event.Actions"
+                },
+                "event_type": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 1
+                },
+                "telegram_id": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "event.CreateSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "event.ErrorSwaggerResponse": {
             "type": "object",
             "properties": {
                 "data": {},

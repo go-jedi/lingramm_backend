@@ -30,7 +30,7 @@ func New(
 // Execute lists entries from BigCache (admin).
 // @Summary Iterate BigCache (admin)
 // @Description Iterates over BigCache and returns a map of entries (keys/values) for inspection.
-// @Tags BigCache
+// @Tags Big cache
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Authorization token" default(Bearer <token>)

@@ -32,6 +32,18 @@ func New(
 	}
 }
 
+// Execute creates user events.
+// @Summary Create events
+// @Description Creates an events payload for a user: specify `telegram_id`, an `event_type`, and optional action counters (each provided value must be > 0).
+// @Tags Event
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body event.CreateEventsDTO true "Events payload"
+// @Success 200 {object} event.CreateSwaggerResponse "Successful response"
+// @Failure 400 {object} event.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} event.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/event [post]
 func (h *CreateEvents) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a new events] execute handler")
 
