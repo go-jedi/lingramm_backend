@@ -1,102 +1,225 @@
 basePath: /v1.
 definitions:
-  achievement.Achievement:
-    properties:
-      achievement_assets_id:
-        type: integer
-      award_assets_id:
-        type: integer
-      code:
-        type: string
-      created_at:
-        type: string
-      description:
-        type: string
-      id:
-        type: integer
-      name:
-        type: string
-      updated_at:
-        type: string
-    type: object
-  achievement.Condition:
-    properties:
-      achievement_id:
-        type: integer
-      condition_type:
-        type: string
-      created_at:
-        type: string
-      id:
-        type: integer
-      operator:
-        type: string
-      updated_at:
-        type: string
-      value:
-        type: integer
-    type: object
-  achievement.DetailSwaggerResponse:
+  achievement.AllDetailSwaggerResponse:
     properties:
       data:
         items:
           properties:
             achievement:
-              $ref: '#/definitions/achievement.Achievement'
+              properties:
+                achievement_assets_id:
+                  example: 1
+                  type: integer
+                achievement_type_id:
+                  example: 3
+                  type: integer
+                award_assets_id:
+                  example: 1
+                  type: integer
+                created_at:
+                  example: "2025-09-02T12:48:06.37622+03:00"
+                  type: string
+                description:
+                  example: description
+                  type: string
+                id:
+                  example: 1
+                  type: integer
+                name:
+                  example: two dialogs
+                  type: string
+                updated_at:
+                  example: "2025-09-02T12:48:06.37622+03:00"
+                  type: string
+              type: object
             achievement_assets:
               properties:
                 client_path_file:
+                  example: /images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp
                   type: string
                 created_at:
+                  example: "2025-09-02T12:48:06.37622+03:00"
                   type: string
                 extension:
+                  example: .webp
                   type: string
                 id:
+                  example: 1
                   type: integer
                 name_file:
+                  example: 01K44X76FBXJYK4D153WHZFXH7.webp
                   type: string
                 name_file_without_extension:
+                  example: 01K44X76FBXJYK4D153WHZFXH7
                   type: string
                 old_extension:
+                  example: .png
                   type: string
                 old_name_file:
+                  example: img.png
                   type: string
                 quality:
+                  example: 30
                   type: integer
                 server_path_file:
+                  example: testdata/file_server/images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp
                   type: string
                 updated_at:
+                  example: "2025-09-02T12:48:06.37622+03:00"
                   type: string
               type: object
             award_assets:
               properties:
                 client_path_file:
+                  example: /images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp
                   type: string
                 created_at:
+                  example: "2025-09-02T12:48:06.37622+03:00"
                   type: string
                 extension:
+                  example: .webp
                   type: string
                 id:
+                  example: 1
                   type: integer
                 name_file:
+                  example: 01K44X76GAFBZBJ1W1WX4NSJT4.webp
                   type: string
                 name_file_without_extension:
+                  example: 01K44X76GAFBZBJ1W1WX4NSJT4
                   type: string
                 old_extension:
+                  example: .jpg
                   type: string
                 old_name_file:
+                  example: img.jpg
                   type: string
                 quality:
+                  example: 30
                   type: integer
                 server_path_file:
+                  example: testdata/file_server/images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp
                   type: string
                 updated_at:
+                  example: "2025-09-02T12:48:06.37622+03:00"
                   type: string
               type: object
-            condition:
-              $ref: '#/definitions/achievement.Condition'
           type: object
         type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  achievement.DetailSwaggerResponse:
+    properties:
+      data:
+        properties:
+          achievement:
+            properties:
+              achievement_assets_id:
+                example: 1
+                type: integer
+              achievement_type_id:
+                example: 3
+                type: integer
+              award_assets_id:
+                example: 1
+                type: integer
+              created_at:
+                example: "2025-09-02T12:48:06.37622+03:00"
+                type: string
+              description:
+                example: description
+                type: string
+              id:
+                example: 1
+                type: integer
+              name:
+                example: two dialogs
+                type: string
+              updated_at:
+                example: "2025-09-02T12:48:06.37622+03:00"
+                type: string
+            type: object
+          achievement_assets:
+            properties:
+              client_path_file:
+                example: /images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp
+                type: string
+              created_at:
+                example: "2025-09-02T12:48:06.37622+03:00"
+                type: string
+              extension:
+                example: .webp
+                type: string
+              id:
+                example: 1
+                type: integer
+              name_file:
+                example: 01K44X76FBXJYK4D153WHZFXH7.webp
+                type: string
+              name_file_without_extension:
+                example: 01K44X76FBXJYK4D153WHZFXH7
+                type: string
+              old_extension:
+                example: .png
+                type: string
+              old_name_file:
+                example: img.png
+                type: string
+              quality:
+                example: 30
+                type: integer
+              server_path_file:
+                example: testdata/file_server/images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp
+                type: string
+              updated_at:
+                example: "2025-09-02T12:48:06.37622+03:00"
+                type: string
+            type: object
+          award_assets:
+            properties:
+              client_path_file:
+                example: /images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp
+                type: string
+              created_at:
+                example: "2025-09-02T12:48:06.37622+03:00"
+                type: string
+              extension:
+                example: .webp
+                type: string
+              id:
+                example: 1
+                type: integer
+              name_file:
+                example: 01K44X76GAFBZBJ1W1WX4NSJT4.webp
+                type: string
+              name_file_without_extension:
+                example: 01K44X76GAFBZBJ1W1WX4NSJT4
+                type: string
+              old_extension:
+                example: .jpg
+                type: string
+              old_name_file:
+                example: img.jpg
+                type: string
+              quality:
+                example: 30
+                type: integer
+              server_path_file:
+                example: testdata/file_server/images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp
+                type: string
+              updated_at:
+                example: "2025-09-02T12:48:06.37622+03:00"
+                type: string
+            type: object
+        type: object
       error:
         example: ""
         type: string
@@ -120,6 +243,61 @@ definitions:
         example: false
         type: boolean
     type: object
+  admin.AddAdminUserSwaggerResponse:
+    properties:
+      data:
+        properties:
+          created_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+          id:
+            example: 1
+            type: integer
+          telegram_id:
+            example: "1"
+            type: string
+          updated_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  admin.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  admin.ExistsSwaggerResponse:
+    properties:
+      data:
+        example: true
+        type: boolean
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
   auth.CheckDTO:
     properties:
       telegram_id:
@@ -132,19 +310,20 @@ definitions:
     - telegram_id
     - token
     type: object
-  auth.CheckResponse:
-    properties:
-      exp_at:
-        type: string
-      telegram_id:
-        type: string
-      token:
-        type: string
-    type: object
   auth.CheckSwaggerResponse:
     properties:
       data:
-        $ref: '#/definitions/auth.CheckResponse'
+        properties:
+          exp_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          telegram_id:
+            example: "1"
+            type: string
+          token:
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTY4MTYyMjAsImlhdCI6MTc1NjgxMjYyMH0.F39iYi6QaEEeQ9pTBO4HL_sOyfaAjRJs7IQiCSQihGE
+            type: string
+        type: object
       error:
         example: ""
         type: string
@@ -180,21 +359,23 @@ definitions:
     - refresh_token
     - telegram_id
     type: object
-  auth.RefreshResponse:
-    properties:
-      access_exp_at:
-        type: string
-      access_token:
-        type: string
-      refresh_exp_at:
-        type: string
-      refresh_token:
-        type: string
-    type: object
   auth.RefreshSwaggerResponse:
     properties:
       data:
-        $ref: '#/definitions/auth.RefreshResponse'
+        properties:
+          access_exp_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          access_token:
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTY4MTYyMjAsImlhdCI6MTc1NjgxMjYyMH0.F39iYi6QaEEeQ9pTBO4HL_sOyfaAjRJs7IQiCSQihGE
+            type: string
+          refresh_exp_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          refresh_token:
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTc0MTc0MjAsImlhdCI6MTc1NjgxMjYyMH0.BTdkTO_6gMG_zmGi1kse2bXoTJ9iU5SZUSl6Pp4upYk
+            type: string
+        type: object
       error:
         example: ""
         type: string
@@ -222,21 +403,23 @@ definitions:
     required:
     - telegram_id
     type: object
-  auth.SignInResp:
-    properties:
-      access_exp_at:
-        type: string
-      access_token:
-        type: string
-      refresh_exp_at:
-        type: string
-      refresh_token:
-        type: string
-    type: object
   auth.SignInSwaggerResponse:
     properties:
       data:
-        $ref: '#/definitions/auth.SignInResp'
+        properties:
+          access_exp_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          access_token:
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTY4MTYyMjAsImlhdCI6MTc1NjgxMjYyMH0.F39iYi6QaEEeQ9pTBO4HL_sOyfaAjRJs7IQiCSQihGE
+            type: string
+          refresh_exp_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          refresh_token:
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTc0MTc0MjAsImlhdCI6MTc1NjgxMjYyMH0.BTdkTO_6gMG_zmGi1kse2bXoTJ9iU5SZUSl6Pp4upYk
+            type: string
+        type: object
       error:
         example: ""
         type: string
@@ -257,6 +440,61 @@ info:
   title: Lingramm API — Telegram Web App Backend
   version: "1.0"
 paths:
+  /v1/achievement:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Creates an achievement with name, type, optional description, and
+        uploads for achievement & award images (multipart/form-data).
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Achievement name
+        in: formData
+        name: name
+        required: true
+        type: string
+      - description: Achievement type identifier
+        in: formData
+        name: achievement_type
+        required: true
+        type: string
+      - description: Optional description
+        in: formData
+        name: description
+        type: string
+      - description: Achievement image file
+        in: formData
+        name: file_achievement
+        required: true
+        type: file
+      - description: Award image file
+        in: formData
+        name: file_award
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/achievement.DetailSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/achievement.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/achievement.ErrorSwaggerResponse'
+      summary: Create achievement (admin)
+      tags:
+      - Achievement
   /v1/achievement/all:
     get:
       consumes:
@@ -276,7 +514,7 @@ paths:
         "200":
           description: Successful response
           schema:
-            $ref: '#/definitions/achievement.DetailSwaggerResponse'
+            $ref: '#/definitions/achievement.AllDetailSwaggerResponse'
         "400":
           description: Bad request error
           schema:
@@ -287,7 +525,150 @@ paths:
             $ref: '#/definitions/achievement.ErrorSwaggerResponse'
       summary: Get all achievement details (admin)
       tags:
-      - Achievements
+      - Achievement
+  /v1/achievement/id/{achievementID}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the achievement and its related assets by the given achievementID.
+        Returns the deleted record.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Achievement ID
+        in: path
+        name: achievementID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/achievement.DetailSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/achievement.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/achievement.ErrorSwaggerResponse'
+      summary: Delete achievement detail by ID (admin)
+      tags:
+      - Achievement
+    get:
+      consumes:
+      - application/json
+      description: Returns the achievement and its related assets (achievement & award)
+        by the given achievementID.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Achievement ID
+        in: path
+        name: achievementID
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/achievement.DetailSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/achievement.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/achievement.ErrorSwaggerResponse'
+      summary: Get achievement detail by ID (admin)
+      tags:
+      - Achievement
+  /v1/admin/add/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Grants admin role to the user with the given Telegram ID and returns
+        the created admin record.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/admin.AddAdminUserSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/admin.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/admin.ErrorSwaggerResponse'
+      summary: Add admin user (admin)
+      tags:
+      - Admin
+  /v1/admin/exists/{telegramID}/exists:
+    get:
+      consumes:
+      - application/json
+      description: Returns true if a user with the given Telegram ID is an admin,
+        false otherwise.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/admin.ExistsSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/admin.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/admin.ErrorSwaggerResponse'
+      summary: Check admin existence by Telegram ID (admin)
+      tags:
+      - Admin
   /v1/auth/check:
     post:
       consumes:

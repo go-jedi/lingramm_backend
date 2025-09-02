@@ -31,11 +31,11 @@ func New(
 // Execute returns all achievements with their conditions and assets.
 // @Summary Get all achievement details (admin)
 // @Description Returns a full list of achievements with their condition, achievement assets and award assets
-// @Tags Achievements
+// @Tags Achievement
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Authorization token" default(Bearer <token>)
-// @Success 200 {object} achievement.DetailSwaggerResponse "Successful response"
+// @Success 200 {object} achievement.AllDetailSwaggerResponse "Successful response"
 // @Failure 400 {object} achievement.ErrorSwaggerResponse "Bad request error"
 // @Failure 500 {object} achievement.ErrorSwaggerResponse "Internal server error"
 // @Router /v1/achievement/all [get]
