@@ -1127,6 +1127,121 @@ definitions:
         example: true
         type: boolean
     type: object
+  notification.AllSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            created_at:
+              example: "2025-09-02T15:30:20.095307198+03:00"
+              type: string
+            id:
+              example: 1
+              type: integer
+            message:
+              properties:
+                text:
+                  example: some text
+                  type: string
+                title:
+                  example: some title
+                  type: string
+              type: object
+            sent_at:
+              example: "2025-09-02T15:30:20.095307198+03:00"
+              type: string
+            status:
+              example: PENDING
+              type: string
+            telegram_id:
+              example: "1"
+              type: string
+            type:
+              example: some type
+              type: string
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  notification.CreateDTO:
+    properties:
+      message:
+        $ref: '#/definitions/notification.Message'
+      telegram_id:
+        type: string
+      type:
+        type: string
+    type: object
+  notification.CreateSwaggerResponse:
+    properties:
+      data:
+        properties:
+          created_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          id:
+            example: 1
+            type: integer
+          message:
+            properties:
+              text:
+                example: some text
+                type: string
+              title:
+                example: some title
+                type: string
+            type: object
+          sent_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          status:
+            example: PENDING
+            type: string
+          telegram_id:
+            example: "1"
+            type: string
+          type:
+            example: some type
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  notification.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  notification.Message:
+    properties:
+      text:
+        type: string
+      title:
+        type: string
+    type: object
   userbalance.ErrorSwaggerResponse:
     properties:
       data: {}
@@ -2054,4 +2169,76 @@ paths:
       summary: Create text translation (admin)
       tags:
       - Localized text
+  /v1/notification:
+    post:
+      consumes:
+      - application/json
+      description: Creates a notification with type and message (title/text) for the
+        specified Telegram ID.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Notification payload
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/notification.CreateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/notification.CreateSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/notification.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/notification.ErrorSwaggerResponse'
+      summary: Create notification (admin)
+      tags:
+      - Notification
+  /v1/notification/all/telegram/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of notifications for the specified Telegram ID.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/notification.AllSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/notification.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/notification.ErrorSwaggerResponse'
+      summary: Get all notifications by Telegram ID
+      tags:
+      - Notification
 swagger: "2.0"

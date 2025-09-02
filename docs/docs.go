@@ -1263,6 +1263,112 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/notification": {
+            "post": {
+                "description": "Creates a notification with type and message (title/text) for the specified Telegram ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Create notification (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Notification payload",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/notification.CreateDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/notification.CreateSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/notification.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/notification.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/notification/all/telegram/{telegramID}": {
+            "get": {
+                "description": "Returns a list of notifications for the specified Telegram ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Get all notifications by Telegram ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/notification.AllSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/notification.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/notification.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -2836,6 +2942,170 @@ const docTemplate = `{
                 "status": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "notification.AllSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "created_at": {
+                                "type": "string",
+                                "example": "2025-09-02T15:30:20.095307198+03:00"
+                            },
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "message": {
+                                "type": "object",
+                                "properties": {
+                                    "text": {
+                                        "type": "string",
+                                        "example": "some text"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "some title"
+                                    }
+                                }
+                            },
+                            "sent_at": {
+                                "type": "string",
+                                "example": "2025-09-02T15:30:20.095307198+03:00"
+                            },
+                            "status": {
+                                "type": "string",
+                                "example": "PENDING"
+                            },
+                            "telegram_id": {
+                                "type": "string",
+                                "example": "1"
+                            },
+                            "type": {
+                                "type": "string",
+                                "example": "some type"
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "notification.CreateDTO": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "$ref": "#/definitions/notification.Message"
+                },
+                "telegram_id": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "notification.CreateSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "message": {
+                            "type": "object",
+                            "properties": {
+                                "text": {
+                                    "type": "string",
+                                    "example": "some text"
+                                },
+                                "title": {
+                                    "type": "string",
+                                    "example": "some title"
+                                }
+                            }
+                        },
+                        "sent_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "status": {
+                            "type": "string",
+                            "example": "PENDING"
+                        },
+                        "telegram_id": {
+                            "type": "string",
+                            "example": "1"
+                        },
+                        "type": {
+                            "type": "string",
+                            "example": "some type"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "notification.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "notification.Message": {
+            "type": "object",
+            "properties": {
+                "text": {
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string"
                 }
             }
         },
