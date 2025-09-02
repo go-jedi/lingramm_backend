@@ -66,7 +66,7 @@ type CreateTextTranslationSwaggerResponse struct {
 	Data    struct {
 		ID        int64  `json:"id" example:"1"`
 		ContentID int64  `json:"content_id" example:"1"`
-		Lang      string `json:"lang" example:"eu"`
+		Lang      string `json:"lang" example:"en"`
 		Value     string `json:"value" example:"some value"`
 	} `json:"data"`
 }

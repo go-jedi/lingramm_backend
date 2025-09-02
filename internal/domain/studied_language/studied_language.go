@@ -33,7 +33,7 @@ type CreateSwaggerResponse struct {
 		ID          int64     `json:"id" example:"1"`
 		Name        string    `json:"name" example:"some name"`
 		Description string    `json:"description" example:"some description"`
-		Lang        string    `json:"lang" example:"eu"`
+		Lang        string    `json:"lang" example:"en"`
 		CreatedAt   time.Time `json:"created_at" example:"2025-09-02T15:30:20.095307198+03:00"`
 		UpdatedAt   time.Time `json:"updated_at" example:"2025-09-02T15:30:20.095307198+03:00"`
 	} `json:"data"`
@@ -47,7 +47,7 @@ type AllSwaggerResponse struct {
 		ID          int64     `json:"id" example:"1"`
 		Name        string    `json:"name" example:"some name"`
 		Description string    `json:"description" example:"some description"`
-		Lang        string    `json:"lang" example:"eu"`
+		Lang        string    `json:"lang" example:"en"`
 		CreatedAt   time.Time `json:"created_at" example:"2025-09-02T15:30:20.095307198+03:00"`
 		UpdatedAt   time.Time `json:"updated_at" example:"2025-09-02T15:30:20.095307198+03:00"`
 	} `json:"data"`

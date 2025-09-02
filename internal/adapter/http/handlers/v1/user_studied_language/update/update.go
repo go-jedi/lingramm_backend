@@ -32,6 +32,18 @@ func New(
 	}
 }
 
+// Execute updates a user's studied language.
+// @Summary Update user studied language
+// @Description Updates the link between a user (by Telegram ID) and a studied language. Both fields are required.
+// @Tags User studied language
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body userstudiedlanguage.UpdateDTO true "Update data"
+// @Success 200 {object} userstudiedlanguage.UpdateSwaggerResponse "Successful response"
+// @Failure 400 {object} userstudiedlanguage.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userstudiedlanguage.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user_studied_language [put]
 func (h *Update) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[update user studied language] execute handler")
 

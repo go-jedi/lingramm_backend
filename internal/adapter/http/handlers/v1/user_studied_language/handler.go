@@ -47,5 +47,6 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 		api.Post("", h.create.Execute)
 		api.Get("/exists/:telegramID", h.existsByTelegramID.Execute)
 		api.Get("/telegram/:telegramID", h.getByTelegramID.Execute)
+		api.Put("", h.update.Execute)
 	}
 }

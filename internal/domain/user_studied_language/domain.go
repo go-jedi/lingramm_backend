@@ -42,3 +42,63 @@ type GetByTelegramIDResponse struct {
 	CreatedAt          time.Time `json:"created_at"`
 	UpdatedAt          time.Time `json:"updated_at"`
 }
+
+//
+// SWAGGER
+//
+
+type CreateSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		ID                 int64     `json:"id" example:"1"`
+		StudiedLanguagesID int64     `json:"studied_languages_id" example:"1"`
+		TelegramID         string    `json:"telegram_id" example:"1"`
+		CreatedAt          time.Time `json:"created_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+		UpdatedAt          time.Time `json:"updated_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+	} `json:"data"`
+}
+
+type ExistsByTelegramIDSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    bool   `json:"data" example:"true"`
+}
+
+type GetByTelegramIDSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		ID                 int64     `json:"id" example:"1"`
+		StudiedLanguagesID int64     `json:"studied_languages_id" example:"1"`
+		TelegramID         string    `json:"telegram_id" example:"1"`
+		Name               string    `json:"name" example:"some name"`
+		Description        string    `json:"description" example:"some description"`
+		Lang               string    `json:"lang" example:"en"`
+		CreatedAt          time.Time `json:"created_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+		UpdatedAt          time.Time `json:"updated_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+	} `json:"data"`
+}
+
+type UpdateSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		ID                 int64     `json:"id" example:"1"`
+		StudiedLanguagesID int64     `json:"studied_languages_id" example:"1"`
+		TelegramID         string    `json:"telegram_id" example:"1"`
+		CreatedAt          time.Time `json:"created_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+		UpdatedAt          time.Time `json:"updated_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+	} `json:"data"`
+}
+
+type ErrorSwaggerResponse struct {
+	Status  bool        `json:"status" example:"false"`
+	Message string      `json:"message" example:"some error"`
+	Error   string      `json:"error" example:"some error"`
+	Data    interface{} `json:"data"`
+}

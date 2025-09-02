@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns a user's studied language by Telegram ID.
+// @Summary Get user studied language by Telegram ID
+// @Description Returns the studied language record linked to the specified Telegram ID, including language metadata.
+// @Tags User studied language
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} userstudiedlanguage.GetByTelegramIDSwaggerResponse "Successful response"
+// @Failure 400 {object} userstudiedlanguage.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userstudiedlanguage.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user_studied_language/telegram/{telegramID} [get]
 func (h *GetByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get user studied language by telegram id] execute handler")
 
