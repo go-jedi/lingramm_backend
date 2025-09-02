@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns the user's level by Telegram ID.
+// @Summary Get user level by Telegram ID
+// @Description Returns the current level for the specified Telegram ID.
+// @Tags User stats
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} userstats.GetLevelByTelegramIDSwaggerResponse "Successful response"
+// @Failure 400 {object} userstats.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userstats.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user_stats/level/telegram/{telegramID} [get]
 func (h *GetLevelByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get level user by telegram id] execute handler")
 
