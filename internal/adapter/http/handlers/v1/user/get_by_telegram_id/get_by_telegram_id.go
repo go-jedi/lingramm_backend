@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns a user by Telegram ID.
+// @Summary Get user by Telegram ID
+// @Description Returns the user record for the specified Telegram ID.
+// @Tags User
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} user.CreateDailyTaskSwaggerResponse "Successful response"
+// @Failure 400 {object} user.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} user.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user/telegram/{telegramID} [get]
 func (h *GetByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get user by telegram id] execute handler")
 
