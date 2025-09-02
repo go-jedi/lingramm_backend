@@ -27,6 +27,16 @@ func New(
 	}
 }
 
+// Execute lists entries from BigCache (admin).
+// @Summary Iterate BigCache (admin)
+// @Description Iterates over BigCache and returns a map of entries (keys/values) for inspection.
+// @Tags BigCache
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Success 200 {object} map[string]interface{} "Successful response with BigCache entries"
+// @Failure 500 {object} map[string]string "Internal server error"
+// @Router /v1/bigcache/info [get]
 func (h *Iterator) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[iterator for show data in bigcache] execute handler")
 
