@@ -32,6 +32,18 @@ func New(
 	}
 }
 
+// Execute creates a new studied language (admin).
+// @Summary Create studied language (admin)
+// @Description Creates a studied language with required `name`, `description`, and a 2-letter `lang` code.
+// @Tags Studied language
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body studiedlanguage.CreateDTO true "Studied language data"
+// @Success 200 {object} studiedlanguage.CreateSwaggerResponse "Successful response"
+// @Failure 400 {object} studiedlanguage.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} studiedlanguage.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/studied_language [post]
 func (h *Create) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a new studied language] execute handler")
 

@@ -1242,6 +1242,102 @@ definitions:
       title:
         type: string
     type: object
+  studiedlanguage.AllSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            created_at:
+              example: "2025-09-02T15:30:20.095307198+03:00"
+              type: string
+            description:
+              example: some description
+              type: string
+            id:
+              example: 1
+              type: integer
+            lang:
+              example: eu
+              type: string
+            name:
+              example: some name
+              type: string
+            updated_at:
+              example: "2025-09-02T15:30:20.095307198+03:00"
+              type: string
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  studiedlanguage.CreateDTO:
+    properties:
+      description:
+        minLength: 1
+        type: string
+      lang:
+        type: string
+      name:
+        minLength: 1
+        type: string
+    required:
+    - description
+    - lang
+    - name
+    type: object
+  studiedlanguage.CreateSwaggerResponse:
+    properties:
+      data:
+        properties:
+          created_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          description:
+            example: some description
+            type: string
+          id:
+            example: 1
+            type: integer
+          lang:
+            example: eu
+            type: string
+          name:
+            example: some name
+            type: string
+          updated_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  studiedlanguage.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
   userbalance.ErrorSwaggerResponse:
     properties:
       data: {}
@@ -2241,4 +2337,67 @@ paths:
       summary: Get all notifications by Telegram ID
       tags:
       - Notification
+  /v1/studied_language:
+    post:
+      consumes:
+      - application/json
+      description: Creates a studied language with required `name`, `description`,
+        and a 2-letter `lang` code.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Studied language data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/studiedlanguage.CreateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/studiedlanguage.CreateSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/studiedlanguage.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/studiedlanguage.ErrorSwaggerResponse'
+      summary: Create studied language (admin)
+      tags:
+      - Studied language
+  /v1/studied_language/all:
+    get:
+      consumes:
+      - application/json
+      description: Returns a full list of studied languages.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/studiedlanguage.AllSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/studiedlanguage.ErrorSwaggerResponse'
+      summary: Get all studied languages (admin)
+      tags:
+      - Studied language
 swagger: "2.0"
