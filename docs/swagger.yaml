@@ -1338,6 +1338,70 @@ definitions:
         example: false
         type: boolean
     type: object
+  subscription.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  subscription.ExistsByTelegramIDSwaggerResponse:
+    properties:
+      data:
+        example: true
+        type: boolean
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  subscription.GetByTelegramIDSwaggerResponse:
+    properties:
+      data:
+        properties:
+          created_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          expires_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          id:
+            example: 1
+            type: integer
+          is_active:
+            example: true
+            type: boolean
+          subscribed_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          telegram_id:
+            example: "1"
+            type: string
+          updated_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
   userbalance.ErrorSwaggerResponse:
     properties:
       data: {}
@@ -2400,4 +2464,75 @@ paths:
       summary: Get all studied languages (admin)
       tags:
       - Studied language
+  /v1/subscription/exists/telegram/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns true if the specified Telegram ID has an active subscription,
+        false otherwise.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/subscription.ExistsByTelegramIDSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/subscription.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/subscription.ErrorSwaggerResponse'
+      summary: Check subscription existence by Telegram ID
+      tags:
+      - Subscription
+  /v1/subscription/telegram/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns the subscription record for the specified Telegram ID.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/subscription.GetByTelegramIDSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/subscription.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/subscription.ErrorSwaggerResponse'
+      summary: Get subscription by Telegram ID
+      tags:
+      - Subscription
 swagger: "2.0"
