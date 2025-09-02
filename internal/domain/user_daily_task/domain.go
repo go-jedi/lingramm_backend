@@ -95,3 +95,59 @@ type GetDailyTaskWeekSummaryByTelegramIDResponse struct {
 	Date        time.Time `json:"date"`
 	IsCompleted bool      `json:"is_completed"`
 }
+
+//
+// SWAGGER
+//
+
+type GetCurrentDailyTaskByTelegramIDSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		ID           int64     `json:"id" example:"1"`
+		Date         time.Time `json:"date" example:"2025-09-02T00:00:00Z"`
+		IsCompleted  bool      `json:"is_completed" example:"true"`
+		Requirements struct {
+			WordsLearnedNeed     *int64 `json:"words_learned_need,omitempty" example:"1"`
+			TasksCompletedNeed   *int64 `json:"tasks_completed_need,omitempty" example:"1"`
+			LessonsFinishedNeed  *int64 `json:"lessons_finished_need,omitempty" example:"1"`
+			WordsTranslateNeed   *int64 `json:"words_translate_need,omitempty" example:"1"`
+			DialogCompletedNeed  *int64 `json:"dialog_completed_need,omitempty" example:"1"`
+			ExperiencePointsNeed *int64 `json:"experience_points_need,omitempty" example:"10"`
+		} `json:"requirements"`
+		Progress struct {
+			WordsLearned     *int64 `json:"words_learned,omitempty" example:"1"`
+			TasksCompleted   *int64 `json:"tasks_completed,omitempty" example:"1"`
+			LessonsFinished  *int64 `json:"lessons_finished,omitempty" example:"1"`
+			WordsTranslate   *int64 `json:"words_translate,omitempty" example:"1"`
+			DialogCompleted  *int64 `json:"dialog_completed,omitempty" example:"1"`
+			ExperiencePoints *int64 `json:"experience_points,omitempty" example:"10"`
+		} `json:"progress"`
+		ProgressPercent struct {
+			WordsLearned     *int64 `json:"words_learned,omitempty" example:"1"`
+			TasksCompleted   *int64 `json:"tasks_completed,omitempty" example:"1"`
+			LessonsFinished  *int64 `json:"lessons_finished,omitempty" example:"1"`
+			WordsTranslate   *int64 `json:"words_translate,omitempty" example:"1"`
+			DialogCompleted  *int64 `json:"dialog_completed,omitempty" example:"1"`
+			ExperiencePoints *int64 `json:"experience_points,omitempty" example:"10"`
+		} `json:"progress_percent"`
+	} `json:"data"`
+}
+
+type GetDailyTaskWeekSummaryByTelegramIDSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    []struct {
+		Date        time.Time `json:"date" example:"2025-09-01T00:00:00Z"`
+		IsCompleted bool      `json:"is_completed" example:"true"`
+	} `json:"data"`
+}
+
+type ErrorSwaggerResponse struct {
+	Status  bool        `json:"status" example:"false"`
+	Message string      `json:"message" example:"some error"`
+	Error   string      `json:"error" example:"some error"`
+	Data    interface{} `json:"data"`
+}

@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns all user achievements with details by Telegram ID (admin).
+// @Summary Get all user achievements detail by Telegram ID (admin)
+// @Description Returns a list of user's achievements with name, description, and asset paths for the specified Telegram ID.
+// @Tags User achievement
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} userachievement.AllDetailByTelegramIDSwaggerResponse "Successful response"
+// @Failure 400 {object} userachievement.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userachievement.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user_achievement/all/telegram/{telegramID} [get]
 func (h *AllDetailByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get all user achievements detail] execute handler")
 

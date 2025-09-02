@@ -1618,6 +1618,165 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/user_achievement/all/telegram/{telegramID}": {
+            "get": {
+                "description": "Returns a list of user's achievements with name, description, and asset paths for the specified Telegram ID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User achievement"
+                ],
+                "summary": "Get all user achievements detail by Telegram ID (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/userachievement.AllDetailByTelegramIDSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userachievement.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userachievement.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user_daily_task/telegram/{telegramID}": {
+            "get": {
+                "description": "Returns the current day's daily task for the specified Telegram ID, including requirements, progress, and percentage completion.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User daily task"
+                ],
+                "summary": "Get current daily task by Telegram ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/userdailytask.GetCurrentDailyTaskByTelegramIDSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userdailytask.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userdailytask.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/user_daily_task/week_summary/telegram/{telegramID}": {
+            "get": {
+                "description": "Returns an array of 7 entries for the current week, each with the date and whether the daily task was completed.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "User daily task"
+                ],
+                "summary": "Get daily task week summary by Telegram ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/userdailytask.GetDailyTaskWeekSummaryByTelegramIDSwaggerResponse"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/userdailytask.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/userdailytask.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -3649,6 +3808,73 @@ const docTemplate = `{
                 }
             }
         },
+        "userachievement.AllDetailByTelegramIDSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "achievement_path_file": {
+                                "type": "string",
+                                "example": "/images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp"
+                            },
+                            "award_path_file": {
+                                "type": "string",
+                                "example": "/images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "some description"
+                            },
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "some name"
+                            },
+                            "telegram_id": {
+                                "type": "string",
+                                "example": "1"
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userachievement.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
         "userbalance.ErrorSwaggerResponse": {
             "type": "object",
             "properties": {
@@ -3692,6 +3918,178 @@ const docTemplate = `{
                         "updated_at": {
                             "type": "string",
                             "example": "2025-09-02T12:48:06.37622+03:00"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userdailytask.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "userdailytask.GetCurrentDailyTaskByTelegramIDSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "date": {
+                            "type": "string",
+                            "example": "2025-09-02T00:00:00Z"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "is_completed": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "progress": {
+                            "type": "object",
+                            "properties": {
+                                "dialog_completed": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "experience_points": {
+                                    "type": "integer",
+                                    "example": 10
+                                },
+                                "lessons_finished": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "tasks_completed": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "words_learned": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "words_translate": {
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            }
+                        },
+                        "progress_percent": {
+                            "type": "object",
+                            "properties": {
+                                "dialog_completed": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "experience_points": {
+                                    "type": "integer",
+                                    "example": 10
+                                },
+                                "lessons_finished": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "tasks_completed": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "words_learned": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "words_translate": {
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            }
+                        },
+                        "requirements": {
+                            "type": "object",
+                            "properties": {
+                                "dialog_completed_need": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "experience_points_need": {
+                                    "type": "integer",
+                                    "example": 10
+                                },
+                                "lessons_finished_need": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "tasks_completed_need": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "words_learned_need": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "words_translate_need": {
+                                    "type": "integer",
+                                    "example": 1
+                                }
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "userdailytask.GetDailyTaskWeekSummaryByTelegramIDSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "date": {
+                                "type": "string",
+                                "example": "2025-09-01T00:00:00Z"
+                            },
+                            "is_completed": {
+                                "type": "boolean",
+                                "example": true
+                            }
                         }
                     }
                 },

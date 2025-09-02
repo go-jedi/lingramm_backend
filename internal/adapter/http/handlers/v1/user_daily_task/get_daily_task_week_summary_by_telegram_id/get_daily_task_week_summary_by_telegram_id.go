@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns a weekly summary of daily task completion by Telegram ID.
+// @Summary Get daily task week summary by Telegram ID
+// @Description Returns an array of 7 entries for the current week, each with the date and whether the daily task was completed.
+// @Tags User daily task
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} []userdailytask.GetDailyTaskWeekSummaryByTelegramIDSwaggerResponse "Successful response"
+// @Failure 400 {object} userdailytask.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userdailytask.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user_daily_task/week_summary/telegram/{telegramID} [get]
 func (h *GetDailyTaskWeekSummaryByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get daily task week summary by telegram id] execute handler")
 

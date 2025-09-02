@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns today's daily task for a user by Telegram ID.
+// @Summary Get current daily task by Telegram ID
+// @Description Returns the current day's daily task for the specified Telegram ID, including requirements, progress, and percentage completion.
+// @Tags User daily task
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} userdailytask.GetCurrentDailyTaskByTelegramIDSwaggerResponse "Successful response"
+// @Failure 400 {object} userdailytask.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} userdailytask.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/user_daily_task/telegram/{telegramID} [get]
 func (h *GetCurrentDailyTaskByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get current daily task by telegram id] execute handler")
 
