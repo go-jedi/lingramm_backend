@@ -1402,6 +1402,55 @@ definitions:
         example: true
         type: boolean
     type: object
+  user.CreateDailyTaskSwaggerResponse:
+    properties:
+      data:
+        properties:
+          created_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          first_name:
+            example: some first name
+            type: string
+          id:
+            example: 1
+            type: integer
+          last_name:
+            example: some last name
+            type: string
+          telegram_id:
+            example: "1"
+            type: string
+          updated_at:
+            example: "2025-09-02T15:30:20.095307198+03:00"
+            type: string
+          username:
+            example: some username
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  user.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
   userbalance.ErrorSwaggerResponse:
     properties:
       data: {}
@@ -2535,4 +2584,39 @@ paths:
       summary: Get subscription by Telegram ID
       tags:
       - Subscription
+  /v1/user/telegram/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns the user record for the specified Telegram ID.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/user.CreateDailyTaskSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/user.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/user.ErrorSwaggerResponse'
+      summary: Get user by Telegram ID
+      tags:
+      - User
 swagger: "2.0"
