@@ -430,6 +430,81 @@ definitions:
         example: true
         type: boolean
     type: object
+  dailytask.CreateDTO:
+    properties:
+      dialog_completed_need:
+        type: integer
+      experience_points_need:
+        type: integer
+      is_active:
+        type: boolean
+      lessons_finished_need:
+        type: integer
+      tasks_completed_need:
+        type: integer
+      words_learned_need:
+        type: integer
+      words_translate_need:
+        type: integer
+    type: object
+  dailytask.CreateDailyTaskSwaggerResponse:
+    properties:
+      data:
+        properties:
+          created_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+          dialog_completed_need:
+            example: 1
+            type: integer
+          experience_points_need:
+            example: 1
+            type: integer
+          id:
+            example: 1
+            type: integer
+          is_active:
+            example: true
+            type: boolean
+          lessons_finished_need:
+            example: 1
+            type: integer
+          tasks_completed_need:
+            example: 1
+            type: integer
+          updated_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+          words_learned_need:
+            example: 1
+            type: integer
+          words_translate_need:
+            example: 1
+            type: integer
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  dailytask.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
 host: localhost:50050
 info:
   contact: {}
@@ -803,4 +878,41 @@ paths:
       summary: Iterate BigCache (admin)
       tags:
       - BigCache
+  /v1/daily_task:
+    post:
+      consumes:
+      - application/json
+      description: Creates a daily task record. **At least one** of the `*_need` fields
+        must be provided and greater than 0.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Daily task data
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/dailytask.CreateDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/dailytask.CreateDailyTaskSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/dailytask.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/dailytask.ErrorSwaggerResponse'
+      summary: Create daily task (admin)
+      tags:
+      - DailyTask
 swagger: "2.0"

@@ -32,6 +32,18 @@ func New(
 	}
 }
 
+// Execute creates a new daily task (admin).
+// @Summary Create daily task (admin)
+// @Description Creates a daily task record. **At least one** of the `*_need` fields must be provided and greater than 0.
+// @Tags DailyTask
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param payload body dailytask.CreateDTO true "Daily task data"
+// @Success 200 {object} dailytask.CreateDailyTaskSwaggerResponse "Successful response"
+// @Failure 400 {object} dailytask.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} dailytask.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/daily_task [post]
 func (h *Create) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a new daily task] execute handler")
 
