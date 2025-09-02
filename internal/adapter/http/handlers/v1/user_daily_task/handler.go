@@ -2,6 +2,7 @@ package userdailytask
 
 import (
 	getcurrentdailytaskbytelegramid "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_daily_task/get_current_daily_task_by_telegram_id"
+	getdailytaskweeksummarybytelegramid "github.com/go-jedi/lingramm_backend/internal/adapter/http/handlers/v1/user_daily_task/get_daily_task_week_summary_by_telegram_id"
 	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	userdailytaskservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_daily_task"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -9,7 +10,8 @@ import (
 )
 
 type Handler struct {
-	getCurrentDailyTaskByTelegramID *getcurrentdailytaskbytelegramid.GetCurrentDailyTaskByTelegramID
+	getCurrentDailyTaskByTelegramID     *getcurrentdailytaskbytelegramid.GetCurrentDailyTaskByTelegramID
+	getDailyTaskWeekSummaryByTelegramID *getdailytaskweeksummarybytelegramid.GetDailyTaskWeekSummaryByTelegramID
 }
 
 func New(
@@ -19,7 +21,8 @@ func New(
 	middleware *middleware.Middleware,
 ) *Handler {
 	h := &Handler{
-		getCurrentDailyTaskByTelegramID: getcurrentdailytaskbytelegramid.New(userDailyTaskService, logger),
+		getCurrentDailyTaskByTelegramID:     getcurrentdailytaskbytelegramid.New(userDailyTaskService, logger),
+		getDailyTaskWeekSummaryByTelegramID: getdailytaskweeksummarybytelegramid.New(userDailyTaskService, logger),
 	}
 
 	h.initRoutes(app, middleware)
@@ -34,5 +37,6 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 	)
 	{
 		api.Get("/telegram/:telegramID", h.getCurrentDailyTaskByTelegramID.Execute)
+		api.Get("/week_summary/telegram/:telegramID", h.getDailyTaskWeekSummaryByTelegramID.Execute)
 	}
 }

@@ -86,3 +86,12 @@ type SyncUserDailyTaskProgressDTO struct {
 	TelegramID string  `json:"telegram_id"`
 	Actions    Actions `json:"actions"`
 }
+
+//
+// GET DAILY TASK WEEK SUMMARY BY TELEGRAM ID
+//
+
+type GetDailyTaskWeekSummaryByTelegramIDResponse struct {
+	Date        time.Time `json:"date"`
+	IsCompleted bool      `json:"is_completed"`
+}

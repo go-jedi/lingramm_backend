@@ -62,6 +62,7 @@
 - `migrate create -ext sql -dir migrations -seq assign_daily_task_function`
 - `migrate create -ext sql -dir migrations -seq daily_task_current_get_function`
 - `migrate create -ext sql -dir migrations -seq sync_user_daily_task_progress_function`
+- `migrate create -ext sql -dir migrations -seq daily_task_week_summary_get_function`
 
 #### execute:
 - `migrate -database postgresql://admin:test@localhost:54320/lingvogramm_db?sslmode=disable -path migrations up`
