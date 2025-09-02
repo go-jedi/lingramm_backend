@@ -35,7 +35,7 @@ func New(
 // Execute creates a new daily task (admin).
 // @Summary Create daily task (admin)
 // @Description Creates a daily task record. **At least one** of the `*_need` fields must be provided and greater than 0.
-// @Tags DailyTask
+// @Tags Daily task
 // @Accept json
 // @Produce json
 // @Param Authorization header string true "Authorization token" default(Bearer <token>)
