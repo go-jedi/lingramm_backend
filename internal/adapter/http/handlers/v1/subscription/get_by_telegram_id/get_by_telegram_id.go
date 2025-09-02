@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute returns a user's subscription by Telegram ID.
+// @Summary Get subscription by Telegram ID
+// @Description Returns the subscription record for the specified Telegram ID.
+// @Tags Subscription
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} subscription.GetByTelegramIDSwaggerResponse "Successful response"
+// @Failure 400 {object} subscription.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} subscription.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/subscription/telegram/{telegramID} [get]
 func (h *GetByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get subscription by telegram id] execute handler")
 

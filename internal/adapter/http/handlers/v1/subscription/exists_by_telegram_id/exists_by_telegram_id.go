@@ -28,6 +28,18 @@ func New(
 	}
 }
 
+// Execute checks if a subscription exists by Telegram ID.
+// @Summary Check subscription existence by Telegram ID
+// @Description Returns true if the specified Telegram ID has an active subscription, false otherwise.
+// @Tags Subscription
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} subscription.ExistsByTelegramIDSwaggerResponse "Successful response"
+// @Failure 400 {object} subscription.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} subscription.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/subscription/exists/telegram/{telegramID} [get]
 func (h *ExistsByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[check subscription exists by telegram id] execute handler")
 
