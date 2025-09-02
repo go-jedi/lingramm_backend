@@ -2091,6 +2091,55 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/ws/notification/stream/{telegramID}": {
+            "get": {
+                "description": "Upgrades the connection to WebSocket and streams notifications for the specified Telegram ID.\nServer sends periodic pings; client may send ` + "`" + `{\"type\":\"ACK\",\"id\":\u003cnotification_id\u003e}` + "`" + ` to confirm delivery\nand ` + "`" + `{\"type\":\"PONG\"}` + "`" + ` to refresh presence.",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Notification"
+                ],
+                "summary": "Notifications WebSocket stream",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "101": {
+                        "description": "Switching Protocols (WebSocket established)",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/notification.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/notification.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {

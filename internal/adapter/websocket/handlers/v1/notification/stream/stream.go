@@ -62,7 +62,19 @@ func New(
 	}
 }
 
-// Execute handles WebSocket upgrade and delegates the session handling.
+// Execute opens a WebSocket stream for user notifications.
+// @Summary Notifications WebSocket stream
+// @Description Upgrades the connection to WebSocket and streams notifications for the specified Telegram ID.
+// @Description Server sends periodic pings; client may send `{"type":"ACK","id":<notification_id>}` to confirm delivery
+// @Description and `{"type":"PONG"}` to refresh presence.
+// @Tags Notification
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 101 {string} string "Switching Protocols (WebSocket established)"
+// @Failure 400 {object} notification.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} notification.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/ws/notification/stream/{telegramID} [get]
 func (h *Stream) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get notifications stream] execute handler")
 

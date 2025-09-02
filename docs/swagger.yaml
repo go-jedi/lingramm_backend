@@ -3347,4 +3347,40 @@ paths:
       summary: Get user studied language by Telegram ID
       tags:
       - User studied language
+  /v1/ws/notification/stream/{telegramID}:
+    get:
+      description: |-
+        Upgrades the connection to WebSocket and streams notifications for the specified Telegram ID.
+        Server sends periodic pings; client may send `{"type":"ACK","id":<notification_id>}` to confirm delivery
+        and `{"type":"PONG"}` to refresh presence.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "101":
+          description: Switching Protocols (WebSocket established)
+          schema:
+            type: string
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/notification.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/notification.ErrorSwaggerResponse'
+      summary: Notifications WebSocket stream
+      tags:
+      - Notification
 swagger: "2.0"
