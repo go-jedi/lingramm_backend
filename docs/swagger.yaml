@@ -1451,6 +1451,54 @@ definitions:
         example: false
         type: boolean
     type: object
+  userachievement.AllDetailByTelegramIDSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            achievement_path_file:
+              example: /images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp
+              type: string
+            award_path_file:
+              example: /images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp
+              type: string
+            description:
+              example: some description
+              type: string
+            id:
+              example: 1
+              type: integer
+            name:
+              example: some name
+              type: string
+            telegram_id:
+              example: "1"
+              type: string
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  userachievement.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
   userbalance.ErrorSwaggerResponse:
     properties:
       data: {}
@@ -1484,6 +1532,129 @@ definitions:
             example: "2025-09-02T12:48:06.37622+03:00"
             type: string
         type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  userdailytask.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  userdailytask.GetCurrentDailyTaskByTelegramIDSwaggerResponse:
+    properties:
+      data:
+        properties:
+          date:
+            example: "2025-09-02T00:00:00Z"
+            type: string
+          id:
+            example: 1
+            type: integer
+          is_completed:
+            example: true
+            type: boolean
+          progress:
+            properties:
+              dialog_completed:
+                example: 1
+                type: integer
+              experience_points:
+                example: 10
+                type: integer
+              lessons_finished:
+                example: 1
+                type: integer
+              tasks_completed:
+                example: 1
+                type: integer
+              words_learned:
+                example: 1
+                type: integer
+              words_translate:
+                example: 1
+                type: integer
+            type: object
+          progress_percent:
+            properties:
+              dialog_completed:
+                example: 1
+                type: integer
+              experience_points:
+                example: 10
+                type: integer
+              lessons_finished:
+                example: 1
+                type: integer
+              tasks_completed:
+                example: 1
+                type: integer
+              words_learned:
+                example: 1
+                type: integer
+              words_translate:
+                example: 1
+                type: integer
+            type: object
+          requirements:
+            properties:
+              dialog_completed_need:
+                example: 1
+                type: integer
+              experience_points_need:
+                example: 10
+                type: integer
+              lessons_finished_need:
+                example: 1
+                type: integer
+              tasks_completed_need:
+                example: 1
+                type: integer
+              words_learned_need:
+                example: 1
+                type: integer
+              words_translate_need:
+                example: 1
+                type: integer
+            type: object
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  userdailytask.GetDailyTaskWeekSummaryByTelegramIDSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            date:
+              example: "2025-09-01T00:00:00Z"
+              type: string
+            is_completed:
+              example: true
+              type: boolean
+          type: object
+        type: array
       error:
         example: ""
         type: string
@@ -2619,4 +2790,114 @@ paths:
       summary: Get user by Telegram ID
       tags:
       - User
+  /v1/user_achievement/all/telegram/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns a list of user's achievements with name, description, and
+        asset paths for the specified Telegram ID.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/userachievement.AllDetailByTelegramIDSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/userachievement.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/userachievement.ErrorSwaggerResponse'
+      summary: Get all user achievements detail by Telegram ID (admin)
+      tags:
+      - User achievement
+  /v1/user_daily_task/telegram/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns the current day's daily task for the specified Telegram
+        ID, including requirements, progress, and percentage completion.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/userdailytask.GetCurrentDailyTaskByTelegramIDSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/userdailytask.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/userdailytask.ErrorSwaggerResponse'
+      summary: Get current daily task by Telegram ID
+      tags:
+      - User daily task
+  /v1/user_daily_task/week_summary/telegram/{telegramID}:
+    get:
+      consumes:
+      - application/json
+      description: Returns an array of 7 entries for the current week, each with the
+        date and whether the daily task was completed.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Telegram ID
+        in: path
+        name: telegramID
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            items:
+              $ref: '#/definitions/userdailytask.GetDailyTaskWeekSummaryByTelegramIDSwaggerResponse'
+            type: array
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/userdailytask.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/userdailytask.ErrorSwaggerResponse'
+      summary: Get daily task week summary by Telegram ID
+      tags:
+      - User daily task
 swagger: "2.0"
