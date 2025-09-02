@@ -28,6 +28,16 @@ func New(
 	}
 }
 
+// Execute returns all studied languages (admin).
+// @Summary Get all studied languages (admin)
+// @Description Returns a full list of studied languages.
+// @Tags Studied language
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Success 200 {object} studiedlanguage.AllSwaggerResponse "Successful response"
+// @Failure 500 {object} studiedlanguage.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/studied_language/all [get]
 func (h *All) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get all studied languages] execute handler")
 

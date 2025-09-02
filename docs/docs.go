@@ -1369,6 +1369,99 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/studied_language": {
+            "post": {
+                "description": "Creates a studied language with required ` + "`" + `name` + "`" + `, ` + "`" + `description` + "`" + `, and a 2-letter ` + "`" + `lang` + "`" + ` code.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Studied language"
+                ],
+                "summary": "Create studied language (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Studied language data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/studiedlanguage.CreateDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/studiedlanguage.CreateSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/studiedlanguage.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/studiedlanguage.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/studied_language/all": {
+            "get": {
+                "description": "Returns a full list of studied languages.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Studied language"
+                ],
+                "summary": "Get all studied languages (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/studiedlanguage.AllSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/studiedlanguage.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -3106,6 +3199,140 @@ const docTemplate = `{
                 },
                 "title": {
                     "type": "string"
+                }
+            }
+        },
+        "studiedlanguage.AllSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "created_at": {
+                                "type": "string",
+                                "example": "2025-09-02T15:30:20.095307198+03:00"
+                            },
+                            "description": {
+                                "type": "string",
+                                "example": "some description"
+                            },
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "lang": {
+                                "type": "string",
+                                "example": "eu"
+                            },
+                            "name": {
+                                "type": "string",
+                                "example": "some name"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "example": "2025-09-02T15:30:20.095307198+03:00"
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "studiedlanguage.CreateDTO": {
+            "type": "object",
+            "required": [
+                "description",
+                "lang",
+                "name"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string",
+                    "minLength": 1
+                },
+                "lang": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string",
+                    "minLength": 1
+                }
+            }
+        },
+        "studiedlanguage.CreateSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "description": {
+                            "type": "string",
+                            "example": "some description"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "lang": {
+                            "type": "string",
+                            "example": "eu"
+                        },
+                        "name": {
+                            "type": "string",
+                            "example": "some name"
+                        },
+                        "updated_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "studiedlanguage.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         },
