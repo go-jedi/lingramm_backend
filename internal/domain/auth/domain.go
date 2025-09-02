@@ -81,24 +81,38 @@ type RefreshResponse struct {
 //
 
 type SignInSwaggerResponse struct {
-	Status  bool       `json:"status" example:"true"`
-	Message string     `json:"message" example:"success"`
-	Error   string     `json:"error" example:""`
-	Data    SignInResp `json:"data"`
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		AccessExpAt  time.Time `json:"access_exp_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+		RefreshExpAt time.Time `json:"refresh_exp_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+		AccessToken  string    `json:"access_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTY4MTYyMjAsImlhdCI6MTc1NjgxMjYyMH0.F39iYi6QaEEeQ9pTBO4HL_sOyfaAjRJs7IQiCSQihGE"`
+		RefreshToken string    `json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTc0MTc0MjAsImlhdCI6MTc1NjgxMjYyMH0.BTdkTO_6gMG_zmGi1kse2bXoTJ9iU5SZUSl6Pp4upYk"`
+	} `json:"data"`
 }
 
 type CheckSwaggerResponse struct {
-	Status  bool          `json:"status" example:"true"`
-	Message string        `json:"message" example:"success"`
-	Error   string        `json:"error" example:""`
-	Data    CheckResponse `json:"data"`
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		TelegramID string    `json:"telegram_id" example:"1"`
+		Token      string    `json:"token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTY4MTYyMjAsImlhdCI6MTc1NjgxMjYyMH0.F39iYi6QaEEeQ9pTBO4HL_sOyfaAjRJs7IQiCSQihGE"`
+		ExpAt      time.Time `json:"exp_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+	} `json:"data"`
 }
 
 type RefreshSwaggerResponse struct {
-	Status  bool            `json:"status" example:"true"`
-	Message string          `json:"message" example:"success"`
-	Error   string          `json:"error" example:""`
-	Data    RefreshResponse `json:"data"`
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		AccessExpAt  time.Time `json:"access_exp_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+		RefreshExpAt time.Time `json:"refresh_exp_at" example:"2025-09-02T15:30:20.095307198+03:00"`
+		AccessToken  string    `json:"access_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTY4MTYyMjAsImlhdCI6MTc1NjgxMjYyMH0.F39iYi6QaEEeQ9pTBO4HL_sOyfaAjRJs7IQiCSQihGE"`
+		RefreshToken string    `json:"refresh_token" example:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTc0MTc0MjAsImlhdCI6MTc1NjgxMjYyMH0.BTdkTO_6gMG_zmGi1kse2bXoTJ9iU5SZUSl6Pp4upYk"`
+	} `json:"data"`
 }
 
 type ErrorSwaggerResponse struct {

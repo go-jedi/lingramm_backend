@@ -29,6 +29,18 @@ func New(
 	}
 }
 
+// Execute adds a new admin user by Telegram ID (admin).
+// @Summary Add admin user (admin)
+// @Description Grants admin role to the user with the given Telegram ID and returns the created admin record.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} admin.AddAdminUserSwaggerResponse "Successful response"
+// @Failure 400 {object} admin.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} admin.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/admin/add/{telegramID} [get]
 func (h *AddAdminUser) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[add a new admin user] execute handler")
 

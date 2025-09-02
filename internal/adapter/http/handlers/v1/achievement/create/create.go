@@ -37,6 +37,22 @@ func New(
 	}
 }
 
+// Execute creates a new achievement with metadata and two images.
+// @Summary Create achievement (admin)
+// @Description Creates an achievement with name, type, optional description, and uploads for achievement & award images (multipart/form-data).
+// @Tags Achievement
+// @Accept multipart/form-data
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param name formData string true "Achievement name"
+// @Param achievement_type formData string true "Achievement type identifier"
+// @Param description formData string false "Optional description"
+// @Param file_achievement formData file true "Achievement image file"
+// @Param file_award formData file true "Award image file"
+// @Success 200 {object} achievement.DetailSwaggerResponse "Successful response"
+// @Failure 400 {object} achievement.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} achievement.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/achievement [post]
 func (h *Create) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[create a achievement] execute handler")
 

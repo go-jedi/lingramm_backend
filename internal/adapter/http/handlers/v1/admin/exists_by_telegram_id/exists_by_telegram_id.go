@@ -28,6 +28,18 @@ func New(
 	}
 }
 
+// Execute checks if an admin exists by Telegram ID (admin).
+// @Summary Check admin existence by Telegram ID (admin)
+// @Description Returns true if a user with the given Telegram ID is an admin, false otherwise.
+// @Tags Admin
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param telegramID path string true "Telegram ID"
+// @Success 200 {object} admin.ExistsSwaggerResponse "Successful response"
+// @Failure 400 {object} admin.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} admin.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/admin/exists/{telegramID}/exists [get]
 func (h *ExistsByTelegramID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[check admin exists by telegram id] execute handler")
 

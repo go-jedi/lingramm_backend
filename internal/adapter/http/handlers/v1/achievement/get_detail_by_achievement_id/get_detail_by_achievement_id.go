@@ -30,6 +30,18 @@ func New(
 	}
 }
 
+// Execute returns achievement detail by achievement ID (admin).
+// @Summary Get achievement detail by ID (admin)
+// @Description Returns the achievement and its related assets (achievement & award) by the given achievementID.
+// @Tags Achievement
+// @Accept json
+// @Produce json
+// @Param Authorization header string true "Authorization token" default(Bearer <token>)
+// @Param achievementID path int true "Achievement ID"
+// @Success 200 {object} achievement.DetailSwaggerResponse "Successful response"
+// @Failure 400 {object} achievement.ErrorSwaggerResponse "Bad request error"
+// @Failure 500 {object} achievement.ErrorSwaggerResponse "Internal server error"
+// @Router /v1/achievement/id/{achievementID} [get]
 func (h *GetDetailByAchievementID) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get detail by achievement id] execute handler")
 

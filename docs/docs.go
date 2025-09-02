@@ -15,19 +15,19 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/v1/achievement/all": {
-            "get": {
-                "description": "Returns a full list of achievements with their condition, achievement assets and award assets",
+        "/v1/achievement": {
+            "post": {
+                "description": "Creates an achievement with name, type, optional description, and uploads for achievement \u0026 award images (multipart/form-data).",
                 "consumes": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Achievements"
+                    "Achievement"
                 ],
-                "summary": "Get all achievement details (admin)",
+                "summary": "Create achievement (admin)",
                 "parameters": [
                     {
                         "type": "string",
@@ -35,6 +35,40 @@ const docTemplate = `{
                         "description": "Authorization token",
                         "name": "Authorization",
                         "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Achievement name",
+                        "name": "name",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Achievement type identifier",
+                        "name": "achievement_type",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Optional description",
+                        "name": "description",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "file",
+                        "description": "Achievement image file",
+                        "name": "file_achievement",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Award image file",
+                        "name": "file_award",
+                        "in": "formData",
                         "required": true
                     }
                 ],
@@ -55,6 +89,257 @@ const docTemplate = `{
                         "description": "Internal server error",
                         "schema": {
                             "$ref": "#/definitions/achievement.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/achievement/all": {
+            "get": {
+                "description": "Returns a full list of achievements with their condition, achievement assets and award assets",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Achievement"
+                ],
+                "summary": "Get all achievement details (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.AllDetailSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/achievement/id/{achievementID}": {
+            "get": {
+                "description": "Returns the achievement and its related assets (achievement \u0026 award) by the given achievementID.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Achievement"
+                ],
+                "summary": "Get achievement detail by ID (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Achievement ID",
+                        "name": "achievementID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.DetailSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "Deletes the achievement and its related assets by the given achievementID. Returns the deleted record.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Achievement"
+                ],
+                "summary": "Delete achievement detail by ID (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Achievement ID",
+                        "name": "achievementID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.DetailSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/achievement.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/add/{telegramID}": {
+            "get": {
+                "description": "Grants admin role to the user with the given Telegram ID and returns the created admin record.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Add admin user (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/admin.AddAdminUserSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/admin/exists/{telegramID}/exists": {
+            "get": {
+                "description": "Returns true if a user with the given Telegram ID is an admin, false otherwise.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Admin"
+                ],
+                "summary": "Check admin existence by Telegram ID (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Telegram ID",
+                        "name": "telegramID",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ExistsSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/admin.ErrorSwaggerResponse"
                         }
                     }
                 }
@@ -216,62 +501,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "achievement.Achievement": {
-            "type": "object",
-            "properties": {
-                "achievement_assets_id": {
-                    "type": "integer"
-                },
-                "award_assets_id": {
-                    "type": "integer"
-                },
-                "code": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "description": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                }
-            }
-        },
-        "achievement.Condition": {
-            "type": "object",
-            "properties": {
-                "achievement_id": {
-                    "type": "integer"
-                },
-                "condition_type": {
-                    "type": "string"
-                },
-                "created_at": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "operator": {
-                    "type": "string"
-                },
-                "updated_at": {
-                    "type": "string"
-                },
-                "value": {
-                    "type": "integer"
-                }
-            }
-        },
-        "achievement.DetailSwaggerResponse": {
+        "achievement.AllDetailSwaggerResponse": {
             "type": "object",
             "properties": {
                 "data": {
@@ -280,43 +510,88 @@ const docTemplate = `{
                         "type": "object",
                         "properties": {
                             "achievement": {
-                                "$ref": "#/definitions/achievement.Achievement"
+                                "type": "object",
+                                "properties": {
+                                    "achievement_assets_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "achievement_type_id": {
+                                        "type": "integer",
+                                        "example": 3
+                                    },
+                                    "award_assets_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "created_at": {
+                                        "type": "string",
+                                        "example": "2025-09-02T12:48:06.37622+03:00"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "description"
+                                    },
+                                    "id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "name": {
+                                        "type": "string",
+                                        "example": "two dialogs"
+                                    },
+                                    "updated_at": {
+                                        "type": "string",
+                                        "example": "2025-09-02T12:48:06.37622+03:00"
+                                    }
+                                }
                             },
                             "achievement_assets": {
                                 "type": "object",
                                 "properties": {
                                     "client_path_file": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "/images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp"
                                     },
                                     "created_at": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "2025-09-02T12:48:06.37622+03:00"
                                     },
                                     "extension": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": ".webp"
                                     },
                                     "id": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "name_file": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "01K44X76FBXJYK4D153WHZFXH7.webp"
                                     },
                                     "name_file_without_extension": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "01K44X76FBXJYK4D153WHZFXH7"
                                     },
                                     "old_extension": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": ".png"
                                     },
                                     "old_name_file": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "img.png"
                                     },
                                     "quality": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 30
                                     },
                                     "server_path_file": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "testdata/file_server/images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp"
                                     },
                                     "updated_at": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "2025-09-02T12:48:06.37622+03:00"
                                     }
                                 }
                             },
@@ -324,42 +599,207 @@ const docTemplate = `{
                                 "type": "object",
                                 "properties": {
                                     "client_path_file": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "/images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp"
                                     },
                                     "created_at": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "2025-09-02T12:48:06.37622+03:00"
                                     },
                                     "extension": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": ".webp"
                                     },
                                     "id": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 1
                                     },
                                     "name_file": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "01K44X76GAFBZBJ1W1WX4NSJT4.webp"
                                     },
                                     "name_file_without_extension": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "01K44X76GAFBZBJ1W1WX4NSJT4"
                                     },
                                     "old_extension": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": ".jpg"
                                     },
                                     "old_name_file": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "img.jpg"
                                     },
                                     "quality": {
-                                        "type": "integer"
+                                        "type": "integer",
+                                        "example": 30
                                     },
                                     "server_path_file": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "testdata/file_server/images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp"
                                     },
                                     "updated_at": {
-                                        "type": "string"
+                                        "type": "string",
+                                        "example": "2025-09-02T12:48:06.37622+03:00"
                                     }
                                 }
-                            },
-                            "condition": {
-                                "$ref": "#/definitions/achievement.Condition"
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "achievement.DetailSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "achievement": {
+                            "type": "object",
+                            "properties": {
+                                "achievement_assets_id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "achievement_type_id": {
+                                    "type": "integer",
+                                    "example": 3
+                                },
+                                "award_assets_id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "created_at": {
+                                    "type": "string",
+                                    "example": "2025-09-02T12:48:06.37622+03:00"
+                                },
+                                "description": {
+                                    "type": "string",
+                                    "example": "description"
+                                },
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "name": {
+                                    "type": "string",
+                                    "example": "two dialogs"
+                                },
+                                "updated_at": {
+                                    "type": "string",
+                                    "example": "2025-09-02T12:48:06.37622+03:00"
+                                }
+                            }
+                        },
+                        "achievement_assets": {
+                            "type": "object",
+                            "properties": {
+                                "client_path_file": {
+                                    "type": "string",
+                                    "example": "/images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp"
+                                },
+                                "created_at": {
+                                    "type": "string",
+                                    "example": "2025-09-02T12:48:06.37622+03:00"
+                                },
+                                "extension": {
+                                    "type": "string",
+                                    "example": ".webp"
+                                },
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "name_file": {
+                                    "type": "string",
+                                    "example": "01K44X76FBXJYK4D153WHZFXH7.webp"
+                                },
+                                "name_file_without_extension": {
+                                    "type": "string",
+                                    "example": "01K44X76FBXJYK4D153WHZFXH7"
+                                },
+                                "old_extension": {
+                                    "type": "string",
+                                    "example": ".png"
+                                },
+                                "old_name_file": {
+                                    "type": "string",
+                                    "example": "img.png"
+                                },
+                                "quality": {
+                                    "type": "integer",
+                                    "example": 30
+                                },
+                                "server_path_file": {
+                                    "type": "string",
+                                    "example": "testdata/file_server/images/achievement/01K44X76FBXJYK4D153WHZFXH7.webp"
+                                },
+                                "updated_at": {
+                                    "type": "string",
+                                    "example": "2025-09-02T12:48:06.37622+03:00"
+                                }
+                            }
+                        },
+                        "award_assets": {
+                            "type": "object",
+                            "properties": {
+                                "client_path_file": {
+                                    "type": "string",
+                                    "example": "/images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp"
+                                },
+                                "created_at": {
+                                    "type": "string",
+                                    "example": "2025-09-02T12:48:06.37622+03:00"
+                                },
+                                "extension": {
+                                    "type": "string",
+                                    "example": ".webp"
+                                },
+                                "id": {
+                                    "type": "integer",
+                                    "example": 1
+                                },
+                                "name_file": {
+                                    "type": "string",
+                                    "example": "01K44X76GAFBZBJ1W1WX4NSJT4.webp"
+                                },
+                                "name_file_without_extension": {
+                                    "type": "string",
+                                    "example": "01K44X76GAFBZBJ1W1WX4NSJT4"
+                                },
+                                "old_extension": {
+                                    "type": "string",
+                                    "example": ".jpg"
+                                },
+                                "old_name_file": {
+                                    "type": "string",
+                                    "example": "img.jpg"
+                                },
+                                "quality": {
+                                    "type": "integer",
+                                    "example": 30
+                                },
+                                "server_path_file": {
+                                    "type": "string",
+                                    "example": "testdata/file_server/images/award/01K44X76GAFBZBJ1W1WX4NSJT4.webp"
+                                },
+                                "updated_at": {
+                                    "type": "string",
+                                    "example": "2025-09-02T12:48:06.37622+03:00"
+                                }
                             }
                         }
                     }
@@ -396,6 +836,83 @@ const docTemplate = `{
                 }
             }
         },
+        "admin.AddAdminUserSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "telegram_id": {
+                            "type": "string",
+                            "example": "1"
+                        },
+                        "updated_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "admin.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
+                }
+            }
+        },
+        "admin.ExistsSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "boolean",
+                    "example": true
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
         "auth.CheckDTO": {
             "type": "object",
             "required": [
@@ -413,25 +930,25 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.CheckResponse": {
-            "type": "object",
-            "properties": {
-                "exp_at": {
-                    "type": "string"
-                },
-                "telegram_id": {
-                    "type": "string"
-                },
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
         "auth.CheckSwaggerResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/auth.CheckResponse"
+                    "type": "object",
+                    "properties": {
+                        "exp_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "telegram_id": {
+                            "type": "string",
+                            "example": "1"
+                        },
+                        "token": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTY4MTYyMjAsImlhdCI6MTc1NjgxMjYyMH0.F39iYi6QaEEeQ9pTBO4HL_sOyfaAjRJs7IQiCSQihGE"
+                        }
+                    }
                 },
                 "error": {
                     "type": "string",
@@ -482,28 +999,29 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.RefreshResponse": {
-            "type": "object",
-            "properties": {
-                "access_exp_at": {
-                    "type": "string"
-                },
-                "access_token": {
-                    "type": "string"
-                },
-                "refresh_exp_at": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                }
-            }
-        },
         "auth.RefreshSwaggerResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/auth.RefreshResponse"
+                    "type": "object",
+                    "properties": {
+                        "access_exp_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "access_token": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTY4MTYyMjAsImlhdCI6MTc1NjgxMjYyMH0.F39iYi6QaEEeQ9pTBO4HL_sOyfaAjRJs7IQiCSQihGE"
+                        },
+                        "refresh_exp_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "refresh_token": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTc0MTc0MjAsImlhdCI6MTc1NjgxMjYyMH0.BTdkTO_6gMG_zmGi1kse2bXoTJ9iU5SZUSl6Pp4upYk"
+                        }
+                    }
                 },
                 "error": {
                     "type": "string",
@@ -543,28 +1061,29 @@ const docTemplate = `{
                 }
             }
         },
-        "auth.SignInResp": {
-            "type": "object",
-            "properties": {
-                "access_exp_at": {
-                    "type": "string"
-                },
-                "access_token": {
-                    "type": "string"
-                },
-                "refresh_exp_at": {
-                    "type": "string"
-                },
-                "refresh_token": {
-                    "type": "string"
-                }
-            }
-        },
         "auth.SignInSwaggerResponse": {
             "type": "object",
             "properties": {
                 "data": {
-                    "$ref": "#/definitions/auth.SignInResp"
+                    "type": "object",
+                    "properties": {
+                        "access_exp_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "access_token": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTY4MTYyMjAsImlhdCI6MTc1NjgxMjYyMH0.F39iYi6QaEEeQ9pTBO4HL_sOyfaAjRJs7IQiCSQihGE"
+                        },
+                        "refresh_exp_at": {
+                            "type": "string",
+                            "example": "2025-09-02T15:30:20.095307198+03:00"
+                        },
+                        "refresh_token": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0ZWxlZ3JhbV9pZCI6IjEyMzQ1Njc4OTAiLCJleHAiOjE3NTc0MTc0MjAsImlhdCI6MTc1NjgxMjYyMH0.BTdkTO_6gMG_zmGi1kse2bXoTJ9iU5SZUSl6Pp4upYk"
+                        }
+                    }
                 },
                 "error": {
                     "type": "string",
