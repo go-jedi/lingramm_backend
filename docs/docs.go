@@ -902,6 +902,149 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/fs/client_assets": {
+            "post": {
+                "description": "Uploads a single image file (multipart/form-data) to create a client asset. Only supported image content types are accepted.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client asset"
+                ],
+                "summary": "Upload client asset (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "file",
+                        "description": "Image file to upload",
+                        "name": "file",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/clientassets.CreateSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/clientassets.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/clientassets.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/fs/client_assets/all": {
+            "get": {
+                "description": "Returns a full list of uploaded client asset images and their metadata.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client asset"
+                ],
+                "summary": "Get all client assets (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/clientassets.AllSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/clientassets.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/fs/client_assets/id/{id}": {
+            "delete": {
+                "description": "Deletes the client asset with the given ID and returns the deleted record.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client asset"
+                ],
+                "summary": "Delete client asset by ID (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Client asset ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/clientassets.DeleteByIDSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/clientassets.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/clientassets.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1500,6 +1643,228 @@ const docTemplate = `{
                 "status": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "clientassets.AllSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "client_path_file": {
+                                "type": "string",
+                                "example": "/images/client/01K44X76FBXJYK4D153WHZFXH7.webp"
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "example": "2025-09-02T12:48:06.37622+03:00"
+                            },
+                            "extension": {
+                                "type": "string",
+                                "example": ".webp"
+                            },
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name_file": {
+                                "type": "string",
+                                "example": "01K44X76FBXJYK4D153WHZFXH7.webp"
+                            },
+                            "name_file_without_extension": {
+                                "type": "string",
+                                "example": "01K44X76FBXJYK4D153WHZFXH7"
+                            },
+                            "old_extension": {
+                                "type": "string",
+                                "example": ".png"
+                            },
+                            "old_name_file": {
+                                "type": "string",
+                                "example": "img.png"
+                            },
+                            "quality": {
+                                "type": "integer",
+                                "example": 30
+                            },
+                            "server_path_file": {
+                                "type": "string",
+                                "example": "testdata/file_server/images/client/01K44X76FBXJYK4D153WHZFXH7.webp"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "example": "2025-09-02T12:48:06.37622+03:00"
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "clientassets.CreateSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "client_path_file": {
+                            "type": "string",
+                            "example": "/images/client/01K44X76FBXJYK4D153WHZFXH7.webp"
+                        },
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
+                        },
+                        "extension": {
+                            "type": "string",
+                            "example": ".webp"
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "name_file": {
+                            "type": "string",
+                            "example": "01K44X76FBXJYK4D153WHZFXH7.webp"
+                        },
+                        "name_file_without_extension": {
+                            "type": "string",
+                            "example": "01K44X76FBXJYK4D153WHZFXH7"
+                        },
+                        "old_extension": {
+                            "type": "string",
+                            "example": ".png"
+                        },
+                        "old_name_file": {
+                            "type": "string",
+                            "example": "img.png"
+                        },
+                        "quality": {
+                            "type": "integer",
+                            "example": 30
+                        },
+                        "server_path_file": {
+                            "type": "string",
+                            "example": "testdata/file_server/images/client/01K44X76FBXJYK4D153WHZFXH7.webp"
+                        },
+                        "updated_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "clientassets.DeleteByIDSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "client_path_file": {
+                                "type": "string",
+                                "example": "/images/client/01K44X76FBXJYK4D153WHZFXH7.webp"
+                            },
+                            "created_at": {
+                                "type": "string",
+                                "example": "2025-09-02T12:48:06.37622+03:00"
+                            },
+                            "extension": {
+                                "type": "string",
+                                "example": ".webp"
+                            },
+                            "id": {
+                                "type": "integer",
+                                "example": 1
+                            },
+                            "name_file": {
+                                "type": "string",
+                                "example": "01K44X76FBXJYK4D153WHZFXH7.webp"
+                            },
+                            "name_file_without_extension": {
+                                "type": "string",
+                                "example": "01K44X76FBXJYK4D153WHZFXH7"
+                            },
+                            "old_extension": {
+                                "type": "string",
+                                "example": ".png"
+                            },
+                            "old_name_file": {
+                                "type": "string",
+                                "example": "img.png"
+                            },
+                            "quality": {
+                                "type": "integer",
+                                "example": 30
+                            },
+                            "server_path_file": {
+                                "type": "string",
+                                "example": "testdata/file_server/images/client/01K44X76FBXJYK4D153WHZFXH7.webp"
+                            },
+                            "updated_at": {
+                                "type": "string",
+                                "example": "2025-09-02T12:48:06.37622+03:00"
+                            }
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "clientassets.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         },

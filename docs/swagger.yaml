@@ -430,6 +430,167 @@ definitions:
         example: true
         type: boolean
     type: object
+  clientassets.AllSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            client_path_file:
+              example: /images/client/01K44X76FBXJYK4D153WHZFXH7.webp
+              type: string
+            created_at:
+              example: "2025-09-02T12:48:06.37622+03:00"
+              type: string
+            extension:
+              example: .webp
+              type: string
+            id:
+              example: 1
+              type: integer
+            name_file:
+              example: 01K44X76FBXJYK4D153WHZFXH7.webp
+              type: string
+            name_file_without_extension:
+              example: 01K44X76FBXJYK4D153WHZFXH7
+              type: string
+            old_extension:
+              example: .png
+              type: string
+            old_name_file:
+              example: img.png
+              type: string
+            quality:
+              example: 30
+              type: integer
+            server_path_file:
+              example: testdata/file_server/images/client/01K44X76FBXJYK4D153WHZFXH7.webp
+              type: string
+            updated_at:
+              example: "2025-09-02T12:48:06.37622+03:00"
+              type: string
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  clientassets.CreateSwaggerResponse:
+    properties:
+      data:
+        properties:
+          client_path_file:
+            example: /images/client/01K44X76FBXJYK4D153WHZFXH7.webp
+            type: string
+          created_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+          extension:
+            example: .webp
+            type: string
+          id:
+            example: 1
+            type: integer
+          name_file:
+            example: 01K44X76FBXJYK4D153WHZFXH7.webp
+            type: string
+          name_file_without_extension:
+            example: 01K44X76FBXJYK4D153WHZFXH7
+            type: string
+          old_extension:
+            example: .png
+            type: string
+          old_name_file:
+            example: img.png
+            type: string
+          quality:
+            example: 30
+            type: integer
+          server_path_file:
+            example: testdata/file_server/images/client/01K44X76FBXJYK4D153WHZFXH7.webp
+            type: string
+          updated_at:
+            example: "2025-09-02T12:48:06.37622+03:00"
+            type: string
+        type: object
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  clientassets.DeleteByIDSwaggerResponse:
+    properties:
+      data:
+        items:
+          properties:
+            client_path_file:
+              example: /images/client/01K44X76FBXJYK4D153WHZFXH7.webp
+              type: string
+            created_at:
+              example: "2025-09-02T12:48:06.37622+03:00"
+              type: string
+            extension:
+              example: .webp
+              type: string
+            id:
+              example: 1
+              type: integer
+            name_file:
+              example: 01K44X76FBXJYK4D153WHZFXH7.webp
+              type: string
+            name_file_without_extension:
+              example: 01K44X76FBXJYK4D153WHZFXH7
+              type: string
+            old_extension:
+              example: .png
+              type: string
+            old_name_file:
+              example: img.png
+              type: string
+            quality:
+              example: 30
+              type: integer
+            server_path_file:
+              example: testdata/file_server/images/client/01K44X76FBXJYK4D153WHZFXH7.webp
+              type: string
+            updated_at:
+              example: "2025-09-02T12:48:06.37622+03:00"
+              type: string
+          type: object
+        type: array
+      error:
+        example: ""
+        type: string
+      message:
+        example: success
+        type: string
+      status:
+        example: true
+        type: boolean
+    type: object
+  clientassets.ErrorSwaggerResponse:
+    properties:
+      data: {}
+      error:
+        example: some error
+        type: string
+      message:
+        example: some error
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
   dailytask.CreateDTO:
     properties:
       dialog_completed_need:
@@ -1474,4 +1635,102 @@ paths:
       summary: Get weekly leaderboard for user (XP)
       tags:
       - Experience point
+  /v1/fs/client_assets:
+    post:
+      consumes:
+      - multipart/form-data
+      description: Uploads a single image file (multipart/form-data) to create a client
+        asset. Only supported image content types are accepted.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Image file to upload
+        in: formData
+        name: file
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/clientassets.CreateSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/clientassets.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/clientassets.ErrorSwaggerResponse'
+      summary: Upload client asset (admin)
+      tags:
+      - Client asset
+  /v1/fs/client_assets/all:
+    get:
+      consumes:
+      - application/json
+      description: Returns a full list of uploaded client asset images and their metadata.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/clientassets.AllSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/clientassets.ErrorSwaggerResponse'
+      summary: Get all client assets (admin)
+      tags:
+      - Client asset
+  /v1/fs/client_assets/id/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Deletes the client asset with the given ID and returns the deleted
+        record.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: Client asset ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response
+          schema:
+            $ref: '#/definitions/clientassets.DeleteByIDSwaggerResponse'
+        "400":
+          description: Bad request error
+          schema:
+            $ref: '#/definitions/clientassets.ErrorSwaggerResponse'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/clientassets.ErrorSwaggerResponse'
+      summary: Delete client asset by ID (admin)
+      tags:
+      - Client asset
 swagger: "2.0"

@@ -39,6 +39,7 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 	api := app.Group(
 		"/v1/fs/client_assets",
 		middleware.Auth.AuthMiddleware,
+		middleware.AdminGuard.AdminGuardMiddleware,
 	)
 	{
 		api.Post("", h.create.Execute)
