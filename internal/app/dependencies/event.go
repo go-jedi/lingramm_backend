@@ -15,6 +15,7 @@ func (d *Dependencies) EventService() *eventservice.Service {
 			d.LevelRepository(),
 			d.InternalCurrencyRepository(),
 			d.UserAchievementRepository(),
+			d.UserDailyTaskRepository(),
 			d.NotificationRepository(),
 			d.logger,
 			d.rabbitMQ,

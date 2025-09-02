@@ -15,8 +15,24 @@ INSERT INTO daily_tasks(
     words_translate_need,
     dialog_completed_need
 ) VALUES(
-    6,
+    2,
     1
+);
+
+INSERT INTO daily_tasks(
+    words_translate_need,
+    dialog_completed_need
+) VALUES(
+    4,
+    2
+);
+
+INSERT INTO daily_tasks(
+    words_translate_need,
+    dialog_completed_need
+) VALUES(
+    6,
+    4
 );
 
 INSERT INTO daily_tasks(
@@ -24,5 +40,29 @@ INSERT INTO daily_tasks(
     experience_points_need
 ) VALUES(
     2,
-    50
+    5
+);
+
+INSERT INTO daily_tasks(
+    dialog_completed_need,
+    experience_points_need
+) VALUES(
+    3,
+    10
+);
+
+INSERT INTO daily_tasks(
+    dialog_completed_need,
+    experience_points_need
+) VALUES(
+    4,
+    15
+);
+
+INSERT INTO daily_tasks(
+    dialog_completed_need,
+    experience_points_need
+) VALUES(
+    5,
+    20
 );

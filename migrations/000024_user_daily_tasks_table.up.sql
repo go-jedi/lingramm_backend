@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS user_daily_tasks( -- Содержит ежеднев�
     dialog_completed BIGINT NOT NULL DEFAULT 0, -- Пройдено диалогов.
     experience_points BIGINT NOT NULL DEFAULT 0, -- Шкала опыта.
     is_completed BOOLEAN NOT NULL DEFAULT FALSE, -- Было ли выполнено ежедневное задание.
-    created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата создания записи.
-    updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(), -- Дата обновления записи.
+    occurred_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(), -- Когда событие произошло.
+    week_start DATE GENERATED ALWAYS AS (date_trunc('week', occurred_at AT TIME ZONE 'Europe/Moscow')::DATE) STORED,
     FOREIGN KEY (daily_task_id) REFERENCES daily_tasks(id)
 );

@@ -1,0 +1,5 @@
+DROP INDEX IF EXISTS idx_user_daily_tasks_telegram_id_occurred_at;
+
+DROP INDEX IF EXISTS idx_user_daily_tasks_telegram_id_daily_task_id_occurred_at;
+
+DROP INDEX IF EXISTS idx_user_daily_tasks_telegram_id_occurred_at_unique;

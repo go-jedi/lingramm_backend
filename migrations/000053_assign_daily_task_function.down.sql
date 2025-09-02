@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.assign_daily_task(TEXT);

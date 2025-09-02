@@ -50,12 +50,12 @@ func (r *BackFillMissingLevelHistoryByTelegramID) Execute(ctx context.Context, t
 
 	q := `SELECT * FROM public.back_fill_missing_level_history($1);`
 
-	var response level.BackFillMissingLevelHistoryByTelegramIDResponse
+	var result level.BackFillMissingLevelHistoryByTelegramIDResponse
 
 	if err := tx.QueryRow(
 		ctxTimeout, q,
 		telegramID,
-	).Scan(&response); err != nil {
+	).Scan(&result); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
 			r.logger.Error("request timed out while back fill missing level history by telegram id", "err", err)
 			return level.BackFillMissingLevelHistoryByTelegramIDResponse{}, fmt.Errorf("the request timed out: %w", err)
@@ -64,5 +64,5 @@ func (r *BackFillMissingLevelHistoryByTelegramID) Execute(ctx context.Context, t
 		return level.BackFillMissingLevelHistoryByTelegramIDResponse{}, fmt.Errorf("could not back fill missing level history by telegram id: %w", err)
 	}
 
-	return response, nil
+	return result, nil
 }

@@ -52,6 +52,7 @@ func (d *Dependencies) NotificationWebSocket() *notificationwebsockethandler.Han
 		d.notificationWebSocketHandler = notificationwebsockethandler.New(
 			d.NotificationService(),
 			d.UserStatsService(),
+			d.UserDailyTaskService(),
 			d.app,
 			d.logger,
 			d.rabbitMQ,

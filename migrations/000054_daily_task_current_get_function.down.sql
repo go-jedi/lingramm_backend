@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.daily_task_current_get(TEXT);

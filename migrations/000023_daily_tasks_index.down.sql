@@ -1,0 +1,1 @@
+DROP INDEX IF EXISTS idx_daily_tasks_is_active;

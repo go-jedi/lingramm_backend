@@ -1,0 +1,1 @@
+DROP FUNCTION IF EXISTS public.sync_user_daily_task_progress(TEXT, JSONB);

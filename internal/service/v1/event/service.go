@@ -8,6 +8,7 @@ import (
 	notificationrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/notification"
 	userrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
 	userachievementrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_achievement"
+	userdailytaskrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_daily_task"
 	userstatsrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_stats"
 	createevents "github.com/go-jedi/lingramm_backend/internal/service/v1/event/create_events"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
@@ -28,6 +29,7 @@ func New(
 	levelRepository *levelrepository.Repository,
 	internalCurrencyRepository *internalcurrency.Repository,
 	userAchievementRepository *userachievementrepository.Repository,
+	userDailyTaskRepository *userdailytaskrepository.Repository,
 	notificationRepository *notificationrepository.Repository,
 	logger logger.ILogger,
 	rabbitMQ *rabbitmq.RabbitMQ,
@@ -43,6 +45,7 @@ func New(
 			levelRepository,
 			internalCurrencyRepository,
 			userAchievementRepository,
+			userDailyTaskRepository,
 			notificationRepository,
 			logger,
 			rabbitMQ,

@@ -3,6 +3,7 @@ package auth
 import (
 	levelrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/level"
 	"github.com/go-jedi/lingramm_backend/internal/repository/v1/user"
+	userdailytaskrepository "github.com/go-jedi/lingramm_backend/internal/repository/v1/user_daily_task"
 	"github.com/go-jedi/lingramm_backend/internal/service/v1/auth/check"
 	"github.com/go-jedi/lingramm_backend/internal/service/v1/auth/refresh"
 	"github.com/go-jedi/lingramm_backend/internal/service/v1/auth/sign_in"
@@ -22,6 +23,7 @@ type Service struct {
 func New(
 	userRepository *user.Repository,
 	levelRepository *levelrepository.Repository,
+	userDailyTaskRepository *userdailytaskrepository.Repository,
 	logger logger.ILogger,
 	postgres *postgres.Postgres,
 	redis *redis.Redis,
@@ -31,6 +33,6 @@ func New(
 	return &Service{
 		Check:   check.New(userRepository, logger, postgres, bigCache, jwt),
 		Refresh: refresh.New(userRepository, logger, postgres, redis, bigCache, jwt),
-		SignIn:  signin.New(userRepository, levelRepository, logger, postgres, redis, bigCache, jwt),
+		SignIn:  signin.New(userRepository, levelRepository, userDailyTaskRepository, logger, postgres, redis, bigCache, jwt),
 	}
 }
