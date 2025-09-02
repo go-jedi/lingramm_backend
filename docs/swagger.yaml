@@ -773,4 +773,34 @@ paths:
       summary: Sign in user
       tags:
       - Authentication
+  /v1/bigcache/info:
+    get:
+      consumes:
+      - application/json
+      description: Iterates over BigCache and returns a map of entries (keys/values)
+        for inspection.
+      parameters:
+      - default: Bearer <token>
+        description: Authorization token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successful response with BigCache entries
+          schema:
+            additionalProperties: true
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Iterate BigCache (admin)
+      tags:
+      - BigCache
 swagger: "2.0"
