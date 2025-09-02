@@ -28,3 +28,32 @@ type CreateDTO struct {
 	ExperiencePointsNeed *int64 `json:"experience_points_need,omitempty" validate:"omitempty,gt=0"`
 	IsActive             bool   `json:"is_active"`
 }
+
+//
+// SWAGGER
+//
+
+type CreateDailyTaskSwaggerResponse struct {
+	Status  bool   `json:"status" example:"true"`
+	Message string `json:"message" example:"success"`
+	Error   string `json:"error" example:""`
+	Data    struct {
+		ID                   int64     `json:"id" example:"1"`
+		WordsLearnedNeed     *int64    `json:"words_learned_need,omitempty" example:"1"`
+		TasksCompletedNeed   *int64    `json:"tasks_completed_need,omitempty" example:"1"`
+		LessonsFinishedNeed  *int64    `json:"lessons_finished_need,omitempty" example:"1"`
+		WordsTranslateNeed   *int64    `json:"words_translate_need,omitempty" example:"1"`
+		DialogCompletedNeed  *int64    `json:"dialog_completed_need,omitempty" example:"1"`
+		ExperiencePointsNeed *int64    `json:"experience_points_need,omitempty" example:"1"`
+		IsActive             bool      `json:"is_active" example:"true"`
+		CreatedAt            time.Time `json:"created_at" example:"2025-09-02T12:48:06.37622+03:00"`
+		UpdatedAt            time.Time `json:"updated_at" example:"2025-09-02T12:48:06.37622+03:00"`
+	} `json:"data"`
+}
+
+type ErrorSwaggerResponse struct {
+	Status  bool        `json:"status" example:"false"`
+	Message string      `json:"message" example:"some error"`
+	Error   string      `json:"error" example:"some error"`
+	Data    interface{} `json:"data"`
+}

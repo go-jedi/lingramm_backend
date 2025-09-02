@@ -541,6 +541,60 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/v1/daily_task": {
+            "post": {
+                "description": "Creates a daily task record. **At least one** of the ` + "`" + `*_need` + "`" + ` fields must be provided and greater than 0.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "DailyTask"
+                ],
+                "summary": "Create daily task (admin)",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "Bearer \u003ctoken\u003e",
+                        "description": "Authorization token",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    },
+                    {
+                        "description": "Daily task data",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dailytask.CreateDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful response",
+                        "schema": {
+                            "$ref": "#/definitions/dailytask.CreateDailyTaskSwaggerResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request error",
+                        "schema": {
+                            "$ref": "#/definitions/dailytask.ErrorSwaggerResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/dailytask.ErrorSwaggerResponse"
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -1139,6 +1193,112 @@ const docTemplate = `{
                 "status": {
                     "type": "boolean",
                     "example": true
+                }
+            }
+        },
+        "dailytask.CreateDTO": {
+            "type": "object",
+            "properties": {
+                "dialog_completed_need": {
+                    "type": "integer"
+                },
+                "experience_points_need": {
+                    "type": "integer"
+                },
+                "is_active": {
+                    "type": "boolean"
+                },
+                "lessons_finished_need": {
+                    "type": "integer"
+                },
+                "tasks_completed_need": {
+                    "type": "integer"
+                },
+                "words_learned_need": {
+                    "type": "integer"
+                },
+                "words_translate_need": {
+                    "type": "integer"
+                }
+            }
+        },
+        "dailytask.CreateDailyTaskSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "object",
+                    "properties": {
+                        "created_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
+                        },
+                        "dialog_completed_need": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "experience_points_need": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "id": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "is_active": {
+                            "type": "boolean",
+                            "example": true
+                        },
+                        "lessons_finished_need": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "tasks_completed_need": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "updated_at": {
+                            "type": "string",
+                            "example": "2025-09-02T12:48:06.37622+03:00"
+                        },
+                        "words_learned_need": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "words_translate_need": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                },
+                "error": {
+                    "type": "string",
+                    "example": ""
+                },
+                "message": {
+                    "type": "string",
+                    "example": "success"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "dailytask.ErrorSwaggerResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "error": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "some error"
+                },
+                "status": {
+                    "type": "boolean",
+                    "example": false
                 }
             }
         }
