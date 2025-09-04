@@ -18,8 +18,8 @@ rabbitmq:
   notification:
     consumer:
       url: amqp://guest:guest@localhost:5672/
-      timeout_check_connect: 20 # second.
-      timeout_publish_message: 5 # second.
+      timeout_check_connect: 20 # second
+      timeout_publish_message: 5 # second
       amqp:
         dialer:
           timeout: 5 # second
@@ -154,7 +154,7 @@ file_server:
   client_assets:
     path: /images/client*
     url: /images/client
-    dir: testdata/file_server/images/client
+    dir: /opt/file_server/lingramm/images/client
     max_file_size: 5242880 # 5 MB
     image_quality: 30
     browse: false
@@ -164,7 +164,7 @@ file_server:
   achievement_assets:
     path: /images/achievement*
     url: /images/achievement
-    dir: testdata/file_server/images/achievement
+    dir: /opt/file_server/lingramm/images/achievement
     max_file_size: 5242880 # 5 MB
     image_quality: 30
     browse: false
@@ -174,7 +174,7 @@ file_server:
   award_assets:
     path: /images/award*
     url: /images/award
-    dir: testdata/file_server/images/award
+    dir: /opt/file_server/lingramm/images/award
     max_file_size: 5242880 # 5 MB
     image_quality: 30
     browse: false
@@ -219,8 +219,9 @@ cookie:
     partitioned: false
     session_only: false
 
-allowed_ips:
-  - 127.0.0.1
+ips:
+  allowed:
+    - 127.0.0.1
 
 swagger_server:
   host: 127.0.0.1
