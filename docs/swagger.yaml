@@ -1746,13 +1746,13 @@ definitions:
     type: object
   userstudiedlanguage.CreateDTO:
     properties:
-      studied_languages_id:
+      studied_language_id:
         type: integer
       telegram_id:
         minLength: 1
         type: string
     required:
-    - studied_languages_id
+    - studied_language_id
     - telegram_id
     type: object
   userstudiedlanguage.CreateSwaggerResponse:
@@ -1765,7 +1765,7 @@ definitions:
           id:
             example: 1
             type: integer
-          studied_languages_id:
+          studied_language_id:
             example: 1
             type: integer
           telegram_id:
@@ -1832,7 +1832,7 @@ definitions:
           name:
             example: some name
             type: string
-          studied_languages_id:
+          studied_language_id:
             example: 1
             type: integer
           telegram_id:
@@ -1854,13 +1854,13 @@ definitions:
     type: object
   userstudiedlanguage.UpdateDTO:
     properties:
-      studied_languages_id:
+      studied_language_id:
         type: integer
       telegram_id:
         minLength: 1
         type: string
     required:
-    - studied_languages_id
+    - studied_language_id
     - telegram_id
     type: object
   userstudiedlanguage.UpdateSwaggerResponse:
@@ -1873,7 +1873,7 @@ definitions:
           id:
             example: 1
             type: integer
-          studied_languages_id:
+          studied_language_id:
             example: 1
             type: integer
           telegram_id:
@@ -2909,7 +2909,7 @@ paths:
           description: Internal server error
           schema:
             $ref: '#/definitions/studiedlanguage.ErrorSwaggerResponse'
-      summary: Get all studied languages (admin)
+      summary: Get all studied languages
       tags:
       - Studied language
   /v1/subscription/exists/telegram/{telegramID}:

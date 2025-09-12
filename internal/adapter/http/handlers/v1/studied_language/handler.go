@@ -36,10 +36,9 @@ func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) 
 	api := app.Group(
 		"/v1/studied_language",
 		middleware.Auth.AuthMiddleware,
-		middleware.AdminGuard.AdminGuardMiddleware,
 	)
 	{
-		api.Post("", h.create.Execute)
+		api.Post("", middleware.AdminGuard.AdminGuardMiddleware, h.create.Execute)
 		api.Get("/all", h.all.Execute)
 	}
 }

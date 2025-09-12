@@ -28,8 +28,8 @@ func New(
 	}
 }
 
-// Execute returns all studied languages (admin).
-// @Summary Get all studied languages (admin)
+// Execute returns all studied languages.
+// @Summary Get all studied languages
 // @Description Returns a full list of studied languages.
 // @Tags Studied language
 // @Accept json

@@ -51,7 +51,7 @@ func (r *GetByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID str
 	q := `
 		SELECT
 			usl.id,
-			usl.studied_languages_id,
+			usl.studied_language_id,
 			usl.telegram_id,
 			sl.name,
 			sl.description,
@@ -59,7 +59,7 @@ func (r *GetByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID str
 			usl.created_at,
 			usl.updated_at
 		FROM user_studied_languages usl
-		INNER JOIN studied_languages sl ON usl.studied_languages_id = sl.id
+		INNER JOIN studied_languages sl ON usl.studied_language_id = sl.id
 		WHERE telegram_id = $1;
 	`
 
@@ -69,7 +69,7 @@ func (r *GetByTelegramID) Execute(ctx context.Context, tx pgx.Tx, telegramID str
 		ctxTimeout, q,
 		telegramID,
 	).Scan(
-		&response.ID, &response.StudiedLanguagesID,
+		&response.ID, &response.StudiedLanguageID,
 		&response.TelegramID, &response.Name,
 		&response.Description, &response.Lang,
 		&response.CreatedAt, &response.UpdatedAt,
