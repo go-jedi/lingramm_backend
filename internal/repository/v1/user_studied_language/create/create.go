@@ -51,7 +51,7 @@ func (r *Create) Execute(ctx context.Context, tx pgx.Tx, dto userstudiedlanguage
 	q := `
 		INSERT INTO user_studied_languages(
 		    telegram_id,
-		    studied_languages_id
+		    studied_language_id
 		) VALUES($1, $2)
 		RETURNING *;
 	`
@@ -60,9 +60,9 @@ func (r *Create) Execute(ctx context.Context, tx pgx.Tx, dto userstudiedlanguage
 
 	if err := tx.QueryRow(
 		ctxTimeout, q,
-		dto.TelegramID, dto.StudiedLanguagesID,
+		dto.TelegramID, dto.StudiedLanguageID,
 	).Scan(
-		&nusl.ID, &nusl.TelegramID, &nusl.StudiedLanguagesID,
+		&nusl.ID, &nusl.TelegramID, &nusl.StudiedLanguageID,
 		&nusl.CreatedAt, &nusl.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {

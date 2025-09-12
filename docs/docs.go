@@ -1436,7 +1436,7 @@ const docTemplate = `{
                 "tags": [
                     "Studied language"
                 ],
-                "summary": "Get all studied languages (admin)",
+                "summary": "Get all studied languages",
                 "parameters": [
                     {
                         "type": "string",
@@ -4583,11 +4583,11 @@ const docTemplate = `{
         "userstudiedlanguage.CreateDTO": {
             "type": "object",
             "required": [
-                "studied_languages_id",
+                "studied_language_id",
                 "telegram_id"
             ],
             "properties": {
-                "studied_languages_id": {
+                "studied_language_id": {
                     "type": "integer"
                 },
                 "telegram_id": {
@@ -4610,7 +4610,7 @@ const docTemplate = `{
                             "type": "integer",
                             "example": 1
                         },
-                        "studied_languages_id": {
+                        "studied_language_id": {
                             "type": "integer",
                             "example": 1
                         },
@@ -4703,7 +4703,7 @@ const docTemplate = `{
                             "type": "string",
                             "example": "some name"
                         },
-                        "studied_languages_id": {
+                        "studied_language_id": {
                             "type": "integer",
                             "example": 1
                         },
@@ -4734,11 +4734,11 @@ const docTemplate = `{
         "userstudiedlanguage.UpdateDTO": {
             "type": "object",
             "required": [
-                "studied_languages_id",
+                "studied_language_id",
                 "telegram_id"
             ],
             "properties": {
-                "studied_languages_id": {
+                "studied_language_id": {
                     "type": "integer"
                 },
                 "telegram_id": {
@@ -4761,7 +4761,7 @@ const docTemplate = `{
                             "type": "integer",
                             "example": 1
                         },
-                        "studied_languages_id": {
+                        "studied_language_id": {
                             "type": "integer",
                             "example": 1
                         },

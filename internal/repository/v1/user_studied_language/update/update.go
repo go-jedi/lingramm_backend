@@ -50,7 +50,7 @@ func (r *Update) Execute(ctx context.Context, tx pgx.Tx, dto userstudiedlanguage
 
 	q := `
 		UPDATE user_studied_languages SET
-		    studied_languages_id = $1
+		    studied_language_id = $1
 		WHERE telegram_id = $2;
 	`
 
@@ -58,9 +58,9 @@ func (r *Update) Execute(ctx context.Context, tx pgx.Tx, dto userstudiedlanguage
 
 	if err := tx.QueryRow(
 		ctxTimeout, q,
-		dto.StudiedLanguagesID, dto.TelegramID,
+		dto.StudiedLanguageID, dto.TelegramID,
 	).Scan(
-		&usl.ID, &usl.TelegramID, &usl.StudiedLanguagesID,
+		&usl.ID, &usl.TelegramID, &usl.StudiedLanguageID,
 		&usl.CreatedAt, &usl.UpdatedAt,
 	); err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
