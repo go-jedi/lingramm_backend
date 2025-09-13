@@ -3347,7 +3347,7 @@ paths:
       summary: Get user studied language by Telegram ID
       tags:
       - User studied language
-  /v1/ws/notification/stream/{telegramID}:
+  /v1/ws/notification/stream:
     get:
       description: |-
         Upgrades the connection to WebSocket and streams notifications for the specified Telegram ID.
@@ -3358,11 +3358,6 @@ paths:
         description: Authorization token
         in: header
         name: Authorization
-        required: true
-        type: string
-      - description: Telegram ID
-        in: path
-        name: telegramID
         required: true
         type: string
       produces:

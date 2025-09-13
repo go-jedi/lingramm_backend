@@ -3,14 +3,15 @@ package stream
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/fasthttp/websocket"
 	"github.com/go-jedi/lingramm_backend/internal/domain/notification"
+	"github.com/go-jedi/lingramm_backend/internal/middleware"
 	notificationservice "github.com/go-jedi/lingramm_backend/internal/service/v1/notification"
 	userdailytaskservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_daily_task"
 	userstatsservice "github.com/go-jedi/lingramm_backend/internal/service/v1/user_stats"
-	"github.com/go-jedi/lingramm_backend/pkg/apperrors"
 	"github.com/go-jedi/lingramm_backend/pkg/logger"
 	"github.com/go-jedi/lingramm_backend/pkg/rabbitmq"
 	"github.com/go-jedi/lingramm_backend/pkg/redis"
@@ -38,6 +39,7 @@ type Stream struct {
 	logger               logger.ILogger
 	rabbitMQ             *rabbitmq.RabbitMQ
 	redis                *redis.Redis
+	middleware           *middleware.Middleware
 	hub                  *notificationhub.Hub
 }
 
@@ -49,6 +51,7 @@ func New(
 	logger logger.ILogger,
 	rabbitMQ *rabbitmq.RabbitMQ,
 	redis *redis.Redis,
+	middleware *middleware.Middleware,
 	hub *notificationhub.Hub,
 ) *Stream {
 	return &Stream{
@@ -58,6 +61,7 @@ func New(
 		logger:               logger,
 		rabbitMQ:             rabbitMQ,
 		redis:                redis,
+		middleware:           middleware,
 		hub:                  hub,
 	}
 }
@@ -70,20 +74,21 @@ func New(
 // @Tags Notification
 // @Produce json
 // @Param Authorization header string true "Authorization token" default(Bearer <token>)
-// @Param telegramID path string true "Telegram ID"
 // @Success 101 {string} string "Switching Protocols (WebSocket established)"
 // @Failure 400 {object} notification.ErrorSwaggerResponse "Bad request error"
 // @Failure 500 {object} notification.ErrorSwaggerResponse "Internal server error"
-// @Router /v1/ws/notification/stream/{telegramID} [get]
+// @Router /v1/ws/notification/stream [get]
 func (h *Stream) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get notifications stream] execute handler")
 
-	telegramID := c.Params("telegramID")
-	if telegramID == "" {
-		h.logger.Error("failed to get param telegramID", "error", apperrors.ErrParamIsRequired)
+	telegramID, err := h.middleware.AuthWebSocket.GetTelegramIDFromContext(c)
+	if err != nil {
+		h.logger.Error("failed to get telegramID", "error", "failed to get telegramID")
 		c.Status(fiber.StatusBadRequest)
-		return c.JSON(response.New[any](false, "failed to get param telegramID", apperrors.ErrParamIsRequired.Error(), nil))
+		return c.JSON(response.New[any](false, "failed to get telegramID", "failed to get telegramID", nil))
 	}
+
+	fmt.Println("telegram_id:", telegramID)
 
 	return h.upgradeAndServe(c, telegramID)
 }

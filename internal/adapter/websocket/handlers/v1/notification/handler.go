@@ -36,6 +36,7 @@ func New(
 			logger,
 			rabbitMQ,
 			redis,
+			middleware,
 			wsManager.NotificationHUB,
 		),
 	}
@@ -48,6 +49,6 @@ func New(
 func (h *Handler) initRoutes(app *fiber.App, middleware *middleware.Middleware) {
 	api := app.Group("/v1/ws/notification", middleware.AuthWebSocket.AuthWebSocketMiddleware)
 	{
-		api.Get("/stream/:telegramID", h.stream.Execute)
+		api.Get("/stream", h.stream.Execute)
 	}
 }

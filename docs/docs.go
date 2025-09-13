@@ -2092,7 +2092,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/v1/ws/notification/stream/{telegramID}": {
+        "/v1/ws/notification/stream": {
             "get": {
                 "description": "Upgrades the connection to WebSocket and streams notifications for the specified Telegram ID.\nServer sends periodic pings; client may send ` + "`" + `{\"type\":\"ACK\",\"id\":\u003cnotification_id\u003e}` + "`" + ` to confirm delivery\nand ` + "`" + `{\"type\":\"PONG\"}` + "`" + ` to refresh presence.",
                 "produces": [
@@ -2109,13 +2109,6 @@ const docTemplate = `{
                         "description": "Authorization token",
                         "name": "Authorization",
                         "in": "header",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Telegram ID",
-                        "name": "telegramID",
-                        "in": "path",
                         "required": true
                     }
                 ],
