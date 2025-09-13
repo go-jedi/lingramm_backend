@@ -2,6 +2,7 @@ package authwebsocket
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/go-jedi/lingramm_backend/pkg/jwt"
@@ -47,6 +48,7 @@ func New(
 }
 
 func (m *Middleware) AuthWebSocketMiddleware(c fiber.Ctx) error {
+	fmt.Println("1")
 	if !m.isWebSocketHandshake(c) {
 		c.Status(fiber.StatusUpgradeRequired)
 		return c.JSON(response.New[any](false, "upgrade to websocket required", "not a websocket handshake", nil))
@@ -58,6 +60,8 @@ func (m *Middleware) AuthWebSocketMiddleware(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "unauthorized: invalid or missing token", err.Error(), nil))
 	}
 
+	fmt.Println("2")
+
 	vr, err := m.jwt.ParseToken(token)
 	if err != nil {
 		c.Status(fiber.StatusUnauthorized)
@@ -65,6 +69,8 @@ func (m *Middleware) AuthWebSocketMiddleware(c fiber.Ctx) error {
 	}
 
 	c.Locals(telegramIDCtx, vr.TelegramID)
+
+	fmt.Println("3")
 
 	return c.Next()
 }
