@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	authorizationHeader       = "Authorization"
-	authorizationType         = "Bearer"
+	queryTokenParam           = "token"
 	telegramIDCtx             = "telegramID"
 	connectionHeader          = "Connection"
 	upgradeHeader             = "Upgrade"
@@ -21,9 +20,7 @@ const (
 )
 
 var (
-	ErrEmptyAuthorizationHeader              = errors.New("empty authorization header")
-	ErrInvalidAuthorizationHeader            = errors.New("invalid authorization header")
-	ErrTokenIsEmpty                          = errors.New("token is empty")
+	ErrTokenInQueryIsEmpty                   = errors.New("token in query is empty")
 	ErrTelegramIDMakingRequestNotFound       = errors.New("telegram id making request not found")
 	ErrTelegramIDMakingRequestHasInvalidType = errors.New("telegram id making request has invalid type")
 )
@@ -55,7 +52,7 @@ func (m *Middleware) AuthWebSocketMiddleware(c fiber.Ctx) error {
 		return c.JSON(response.New[any](false, "upgrade to websocket required", "not a websocket handshake", nil))
 	}
 
-	token, err := m.extractTokenFromHeader(c)
+	token, err := m.extractTokenFromQuery(c)
 	if err != nil {
 		c.Status(fiber.StatusUnauthorized)
 		return c.JSON(response.New[any](false, "unauthorized: invalid or missing token", err.Error(), nil))
@@ -100,21 +97,12 @@ func (m *Middleware) isWebSocketHandshake(c fiber.Ctx) bool {
 		key != ""
 }
 
-// extractTokenFromHeader extract token.
-func (m *Middleware) extractTokenFromHeader(c fiber.Ctx) (string, error) {
-	header := c.Get(authorizationHeader)
-	if header == "" {
-		return "", ErrEmptyAuthorizationHeader
+// extractTokenFromQuery extract token.
+func (m *Middleware) extractTokenFromQuery(c fiber.Ctx) (string, error) {
+	token := strings.TrimSpace(c.Query(queryTokenParam))
+	if len(token) == 0 {
+		return "", ErrTokenInQueryIsEmpty
 	}
 
-	headerParts := strings.Split(header, " ")
-	if len(headerParts) != 2 || headerParts[0] != authorizationType {
-		return "", ErrInvalidAuthorizationHeader
-	}
-
-	if len(headerParts[1]) == 0 {
-		return "", ErrTokenIsEmpty
-	}
-
-	return headerParts[1], nil
+	return token, nil
 }
