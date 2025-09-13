@@ -3,7 +3,6 @@ package stream
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/fasthttp/websocket"
@@ -81,17 +80,12 @@ func New(
 func (h *Stream) Execute(c fiber.Ctx) error {
 	h.logger.Debug("[get notifications stream] execute handler")
 
-	fmt.Println("WS handler reached:", c.Path())
-	fmt.Println("4")
-
 	telegramID, err := h.middleware.AuthWebSocket.GetTelegramIDFromContext(c)
 	if err != nil {
 		h.logger.Error("failed to get telegramID", "error", "failed to get telegramID")
 		c.Status(fiber.StatusBadRequest)
 		return c.JSON(response.New[any](false, "failed to get telegramID", "failed to get telegramID", nil))
 	}
-
-	fmt.Println("5")
 
 	return h.upgradeAndServe(c, telegramID)
 }
